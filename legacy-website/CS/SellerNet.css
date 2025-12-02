@@ -1,0 +1,24 @@
+﻿body{font-family:Arial,Helvetica,sans-serif; font-size:14px; background-color:#99ccff;background-image: url('../Blend/SoftBlend2.png'); background-repeat: repeat-x;}
+#Container{ width:780px; margin: 0 auto; height:1400px}
+#Header{background-color:#99ccff;font-family:Arial,Helvetica,sans-serif; font-size:1em; text-align:center; width:780px; height:79px; padding-top:10px}
+#Left{background-color:#99ccff;padding-left: 20px;float:left; width:240px; font-size:1em; padding-top:10px; text-align:left; height:510px}
+#Middle{background-color:#99ccff;float:left; width:260px; padding-top:10px; text-align:left; height:510px}
+#Right{background-color:#99ccff;float:left; width:260px; padding-top:10px; text-align:left; height:510px}
+#Buttons{background-color:#99ccff;padding-top:10px; float:left; width:780px; height:30px; border-top-style:solid; border-top-color:#00F; border-bottom-style:solid; border-bottom-color:#00F}
+#CLabelLeft{background-color:#99ccff;padding-left: 20px;float:left; width:160px; height:280px; color:#00F}
+#CCLeft{background-color:#99ccff;float:left; width:82px; height:280px}
+#CLabelMiddle{background-color:#99ccff;float:left; width:160px; height:280px; color:#00F}
+#CCMiddle{background-color:#99ccff;float:left; width:76px; height:280px}
+#CLabelRight{background-color: #99ccff;padding-top: 10px;float: left;width: 200px;height: 260px;color: #00F;text-align: left;}
+#CCRight{background-color:#99ccff;padding-top:10px; float:left; width:82px; text-align:left; height:280px}
+#ContactLeft{text-align: left; background-color:#99ccff;padding-top:10px; float:left; width:407px; height:285px; border-top-style:solid; border-top-color:#00F}
+#ContactRight{background-color:#99ccff;padding-top:10px; float:left; width:369px; height:307px;
+border-top-style:solid; border-top-color:#00F}
+ooter{background-color:#99ccff;padding-top:6px; float:left; width:780px; text-align:center}
+.Blue18{font-family:Arial,Helvetica,sans-serif; font-size:1.2em; color:#00F}
+.Red18{font-family:Arial,Helvetica,sans-serif; font-size:18px; text-align:center; color:#900}
+.ArPr{text-align: right; padding-right: 1px;font-weight: bold;}
+.AlPr{text-align: left; padding-left: 1px;font-weight: bold;}
+.Alc{text-align: center; font-weight: bold;}
+.Cc130{width: 130px;height: 18px;text-align: right;padding-right: 1px;}
+.Cc50{width: 50px;height: 18px;text-align: right;padding-right: 1px;}

@@ -1,0 +1,55 @@
+﻿*{padding:0; margin-left: 0px; margin-right: 0; margin-top: 0;} 
+.ArPr{text-align: right; padding-right: 1px;}
+.AlPr{text-align: left; padding-left: 1px;font-size: 14px} 
+.AcPr{text-align: center; padding-left: 1px;}  
+.Ar44{text-align: center; padding-right: 1px; width: 44px; background-color: #99CCFF; font-size: 10px;}
+body{text-align:center;font-family: Arial,Helvetica,sans-serif;font-size: 12px;background-image: url('../Images/Blend.png');background-repeat: repeat-x; height: 1374px;
+}
+#Container{background-color:#99CCFF;width: 822px;
+margin: 0 auto;height: 1821px;
+padding-left:10px
+} 
+
+Header{
+    height: 50px;
+    width: 841px;
+    Color: #990000;padding-top: 10px;
+    font-size: 24px;
+}
+#SubHeader
+{
+    height: 111px;
+    width: 776px;
+    text-align: left;
+    padding-left: 10px;
+    font-size: 18px;
+}
+
+#BotLeft{padding-top: 10px;float: left;width: 409px;
+height: 200px;
+}
+#BotRite{ padding-top: 10px; float: left; width: 404px; 
+height: 200px;
+}
+
+
+#Footer{ padding-top: .6em; padding-left:4%; float: left; width: 809px; 
+height: 145px; 
+text-align: left;font-size: 16px;
+}
+
+Header2{
+    height: 82px;
+    width: 841px;
+    font-size: 24px;
+    color: #990000;padding-top: 10px;
+}
+#Twilio{ padding-top: .6em; padding-left:4%; float: left; width: 810px; 
+height: 228px; 
+text-align: left;font-size: 16px;
+}
+
+
+
+
+

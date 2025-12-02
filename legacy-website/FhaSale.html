@@ -1,0 +1,365 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head id="Head1"><title>
+	FHASale
+</title><link href="./CS/FhaSale.css" rel="stylesheet" type="text/css" /><link rel="shortcut icon" href="../Pics2/ZPics/Qq.jpg" type="image/x-icon" /><meta name="HandheldFriendly" content="true" /><meta name="viewport" content="width=device-width, height=device-height, user-scalable=no" />
+<style type="text/css">
+.style1{width: 100%;height: 14px;}
+</style>
+</head>
+<body><div style="background:#2a5a8a;padding:10px;text-align:center;position:fixed;top:0;left:0;right:0;z-index:9999;"><a href="Default.html" style="color:white;text-decoration:none;font-weight:bold;">← Back to Main Menu</a></div><div style="height:40px;"></div>
+<form name="frmFhaSale" method="post" action="./FhaSale" id="frmFhaSale" onClick="javascript:history(); return false;">
+<input type="hidden" name="__VIEWSTATE" id="__VIEWSTATE" value="/wEPDwULLTEwNzA0OTQ1NjgPZBYCAgEPFgIeB29uQ2xpY2sFI2phdmFzY3JpcHQ6aGlzdG9yeSgpOyByZXR1cm4gZmFsc2U7FhoCDw8QZGQWAWZkAhUPEA8WAh4HQ2hlY2tlZGdkZGRkAiEPDxYCHgRUZXh0BQMzLjVkZAIlDw8WAh8CBQM2LjVkZAI5Dw8WAh8CBQEwZGQCtQEPZBYIAmMPDxYCHwIFAjE1ZGQCZw8PFgIfAgUBNmRkAmsPDxYCHwIFATBkZAJvDw8WAh8CBQIxNWRkAuEBDw8WAh4HVmlzaWJsZWdkZALjAQ8PFgIfA2dkZALnAQ9kFgICDQ8QZGQWAGQC6wEPDxYCHwIFY0ludGVyZXN0IHJhdGVzIGFuZCBjbG9zaW5nIGNvc3RzIGFyZSBub3QgaW50ZW5kZWQgdG8gYmUgcXVvdGVzLiBUaGV5IGFyZSBlc3RpbWF0ZWQgYXMgb2YgMTIvMi8yMDI1LmRkAvEBDw8WAh8CBQtDaHJpc01vcmVub2RkAokCDw8WAh8CBQEwZGQCpwIPD2QPEBYBZhYBFgIeDlBhcmFtZXRlclZhbHVlBQtDaHJpc01vcmVubxYBZmRkGAEFHl9fQ29udHJvbHNSZXF1aXJlUG9zdEJhY2tLZXlfXxYOBQZvcHRFbmcFBm9wdFNwYQUGb3B0U3BhBQhvcHRBcmlhbAUIb3B0VGltZXMFCG9wdFRpbWVzBQZjaGtNaXAFBmNoa0RwYQUGY2hrU2VjBQdjaGsyMDNLBQhjaGtUYXhlcwUGY2hrSW5zBQZjaGtQZGYFCGNoa05vdGVzJYdaXAokMEzUstbOVb0l9XpcnQjYqQ4QkL6yTm0u0Us=" />
+
+
+<script src="/ScriptResource.axd?d=5OVM-cizdZNFOVRxJoQ9mrQsV-EtOW49myCsYUoR_5ergg_sSVlR6ofq2wUe59SZSQt5ZBlNvfI4oGIRgkbEPEMyfU2NHgPu2rtzus7khtLFvCYFk9ebakHbaM1OP-Qv0&amp;t=23c9c237" type="text/javascript"></script>
+<script src="/ScriptResource.axd?d=ySAYOjDjO0dskua4jLfZkp7gW7jtuwuHXwu5wY8uOXKBhPKqsM1SY2eHAfC0jcQILhy723wiZDtQxdzHKP2AGChHsdiZDN5davE724RL-lsAud4yCryfcslB9dsm7rMk0&amp;t=23c9c237" type="text/javascript"></script>
+<script src="/ScriptResource.axd?d=4XKZIMClSErEwJSYoireZWoKxAgqtxbi-BPlyU6ZwHkbm4hY83Z7Hk09nZyT7BsKEObVJs6jaCtKc2HQEry03VdAGFtUPzAq3S_RGAR0n1HQW4pVt3FoPyE8v-wGRk4EXaSiGJYIqzi2LlPtBRzwyQ2&amp;t=23c9c237" type="text/javascript"></script>
+<script src="/ScriptResource.axd?d=qqsiHxsZ6aEX33meC8p5UwDlhaWXMNIGTznTj7OHS1gnLtosiXq_RevFSV9g25ARhEYItPE2TAFeGbwTJlmfL1SjrbXwfXzVGQcsU0dDJQgJayftiomW7b96GRD3FrnczvYtqgGSOMUfbahrpRr1MSL-Wppb7bUdLI0oQZKm9dw1&amp;t=23c9c237" type="text/javascript"></script>
+<input type="hidden" name="__VIEWSTATEGENERATOR" id="__VIEWSTATEGENERATOR" value="A2C8BE46" />
+<input type="hidden" name="__EVENTVALIDATION" id="__EVENTVALIDATION" value="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" />
+<div id="Container">
+<div id="Header">
+<input name="txtHeading" type="text" maxlength="95" id="txtHeading" class="Alc" /><br/><br/>
+<span id="lblPre">Prepared for </span>&nbsp;<input name="txtSubHead" type="text" maxlength="45" id="txtSubHead" class="Alc" />&nbsp;
+
+<img id="imgTr" src="" width="22" border="0" />
+
+<img id="imgBr" src="" width="22" border="0" />
+<span>&nbsp;
+<select name="ddlUnits" id="ddlUnits">
+	<option selected="selected" value="0">Single Family</option>
+	<option value="1">Duplex</option>
+	<option value="2">Triplex</option>
+	<option value="3">Fourplex</option>
+	<option value="4">203 H</option>
+
+</select></span>
+<input id="optEng" type="radio" name="Spa" value="optEng" checked="checked" /><label for="optEng">English</label>
+<input id="optSpa" type="radio" name="Spa" value="optSpa" onclick="javascript:setTimeout(&#39;__doPostBack(\&#39;optSpa\&#39;,\&#39;\&#39;)&#39;, 0)" /><label for="optSpa">Spanish</label>
+<input id="optArial" type="radio" name="Font" value="optArial" checked="checked" /><label for="optArial">Arial</label>
+<input id="optTimes" type="radio" name="Font" value="optTimes" onclick="javascript:setTimeout(&#39;__doPostBack(\&#39;optTimes\&#39;,\&#39;\&#39;)&#39;, 0)" /><label for="optTimes">Times</label><br/><br/>
+</div>
+
+<div id="Left">
+<span id="lblSalesPrice" style="display:inline-block;">Sales Price</span>  
+<span id="lblS" style="display:inline-block;">$</span>
+<input name="txtSalesPrice" type="text" id="txtSalesPrice" class="ArPr" onkeypress="return onlyNos(event,this);" />
+<span id="lblDownPmt" style="display:inline-block;">Down ($ or %)</span>
+<input name="txtDown" type="text" value="3.5" id="txtDown" class="ArPr" onkeypress="return onlyNos(event,this);" />
+<span id="lblRates" style="display:inline-block;">Interest Rate (%)</span>
+<input name="txtIntRate" type="text" value="6.5" id="txtIntRate" class="ArPr" onkeypress="return onlyNos(event,this);" />
+<input type="submit" name="btnPlus" value="+" onclick="javascript:WebForm_DoPostBackWithOptions(new WebForm_PostBackOptions(&quot;btnPlus&quot;, &quot;&quot;, true, &quot;&quot;, &quot;&quot;, false, false))" id="btnPlus" />
+<input type="submit" name="btnLess" value="-" onclick="javascript:WebForm_DoPostBackWithOptions(new WebForm_PostBackOptions(&quot;btnLess&quot;, &quot;&quot;, true, &quot;&quot;, &quot;&quot;, false, false))" id="btnLess" />
+<span id="Label12" style="display:inline-block;">Term of Loan (Yrs)</span>
+<input name="txtTerm" type="text" value="30" id="txtTerm" class="ArPr" onkeypress="return onlyNos(event,this);" />
+<span id="Label14" style="display:inline-block;">Loan fee/Disc ($or%)</span>
+<input name="txtPts" type="text" value="1" id="txtPts" class="ArPr" />
+<span id="lblSCred" title="Displays as credit from seller" style="display:inline-block;">S-Credit ($or% of Sp)</span>
+<input name="txtSCred" type="text" id="txtSCred" class="ArPr" onkeypress="return onlyNos(event,this);" />
+<span id="lblLCred" title="Displays as credit from lender" style="display:inline-block;">L-Credit ($or% of Ln)</span>
+<input name="txtLCred" type="text" value="0" id="txtLCred" class="ArPr" onkeypress="return onlyNos(event,this);" />
+<input name="txtDepoName" type="text" value="Deposit" id="txtDepoName" title="This field can be renamed." />
+<input name="txtDepo" type="text" id="txtDepo" class="ArPr" onkeypress="return onlyNos(event,this);" />
+<span id="lblEem" style="display:inline-block;">EEM ($or% of Sp)</span>
+<input name="txtEem" type="text" id="txtEem" class="ArPr" onkeypress="return onlyNos(event,this);" /><br/>
+<span title="Down payment assistance for First Time Homebuyers only" style="display:inline-block;"><input id="chkMip" type="checkbox" name="chkMip" /><label for="chkMip">MIP in cash</label></span>
+<span title="Down payment assistance for First Time Homebuyers only" style="display:inline-block;"><input id="chkDpa" type="checkbox" name="chkDpa" /><label for="chkDpa">DPA</label></span>
+<span style="display:inline-block;"><input id="chkSec" type="checkbox" name="chkSec" /><label for="chkSec">2nd</label></span>&nbsp;
+<span style="display:inline-block;"><input id="chk203K" type="checkbox" name="chk203K" /><label for="chk203K">203K</label></span><br/>
+
+</div>
+
+<div id="Middle">
+<span id="lblPi" style="display:inline-block;">P & I</span>
+<input name="txtPi" type="text" readonly="readonly" id="txtPi" style="text-align:right" />
+
+<br/>
+<span id="lblMi" style="display:inline-block;">Monthly Mtg Ins</span>
+<input name="txtMi" type="text" readonly="readonly" id="txtMi" style="text-align:right" />
+<span style="display:inline-block;"><input id="chkTaxes" type="checkbox" name="chkTaxes" /><label for="chkTaxes">Tax per mo</label></span>
+
+<input name="txtTaxes" type="text" id="txtTaxes" style="text-align:right" />
+<span style="display:inline-block;"><input id="chkIns" type="checkbox" name="chkIns" /><label for="chkIns">Ins per mo</label></span>
+
+<input name="txtIns" type="text" id="txtIns" onkeypress="return onlyNos(event,this);" style="text-align:right" />
+
+<span id="lblFlood" style="display:inline-block;">Flood/Earthquake</span>
+<input name="txtFlood" type="text" id="txtFlood" onkeypress="return onlyNos(event,this);" style="text-align:right" /><br/>
+
+<span id="lblHo" style="display:inline-block;">HOA Dues</span>
+<input name="txtHoaDues" type="text" id="txtHoaDues" onkeypress="return onlyNos(event,this);" style="text-align:right" /><br/>
+<span id="lblBonds" title="Enter a negative number for Pmt Assistance" style="display:inline-block;">Lease/Bond Pmts</span>
+<input name="txtBonds" type="text" id="txtBonds" style="text-align:right" /><br/><br/>
+<span id="lblTp" style="display:inline-block;"><b><font color="Blue">Total Payment</font></b></span>
+<input name="txtTotalPmt" type="text" readonly="readonly" id="txtTotalPmt" style="text-align:right" /><br/><br/><br/><br/><br/>
+</div>
+ 
+<div id="Right">
+<span id="lblLa" style="display:inline-block;">Loan with MIP</span>
+<input name="txtLoanAmt" type="text" readonly="readonly" id="txtLoanAmt" style="text-align:right" />
+<span id="lblBaseLoan" style="display:inline-block;">Base Loan</span>
+<input name="txtBaseLoan" type="text" readonly="readonly" id="txtBaseLoan" style="text-align:right" />
+<span id="lblDp" style="display:inline-block;">Down Payment</span>
+<input name="txtDownPmt" type="text" readonly="readonly" id="txtDownPmt" style="text-align:right" />
+<span id="lblCc" style="display:inline-block;">Closing Costs</span>
+<input name="txtTotalCc" type="text" readonly="readonly" id="txtTotalCc" style="text-align:right" />
+<span id="lblPp" style="display:inline-block;">Prepaids</span>
+<input name="txtTotalPp" type="text" readonly="readonly" id="txtTotalPp" style="text-align:right" /><br/>
+<span id="lblSecAmt" style="display:inline-block;">2nd Mortgage</span>
+<input name="txtSecAmt" type="text" readonly="readonly" id="txtSecAmt" style="text-align:right" /><br/>
+<span id="lblsc" style="display:inline-block;">- Seller Credit</span>
+<input name="txtScCredit" type="text" readonly="readonly" id="txtScCredit" style="text-align:right" /><br/>
+<span id="lblCcc0" style="display:inline-block;">- Lender Credit</span>
+<input name="txtLcCredit" type="text" readonly="readonly" id="txtLcCredit" style="text-align:right" /><br/>
+<span id="lblD" style="display:inline-block;">- Deposit</span>
+<input name="txtDDepo" type="text" readonly="readonly" id="txtDDepo" style="text-align:right" />
+<br />
+<span id="lblCcc" style="display:inline-block;">- Dn Pmt Asst</span>
+<input name="txtDDpa" type="text" readonly="readonly" id="txtDDpa" style="text-align:right" /><br/>
+<span id="lblTc" style="display:inline-block;"><b><font color="Blue">Total Cash</font></b></span>
+<input name="txtTotalCash" type="text" readonly="readonly" id="txtTotalCash" style="text-align:right" /><br/>
+
+<input name="txtEc" type="text" readonly="readonly" id="txtEc" style="text-align:right" /><br/><br/>
+</div>
+
+<div id="Buttons">&nbsp;&nbsp; 
+<input type="submit" name="btnCalculate" value="Calculate" onclick="javascript:WebForm_DoPostBackWithOptions(new WebForm_PostBackOptions(&quot;btnCalculate&quot;, &quot;&quot;, true, &quot;&quot;, &quot;&quot;, false, false))" id="btnCalculate" />&nbsp;&nbsp;
+<input type="submit" name="btnComp" value="Side by Side" onclick="javascript:WebForm_DoPostBackWithOptions(new WebForm_PostBackOptions(&quot;btnComp&quot;, &quot;&quot;, true, &quot;&quot;, &quot;&quot;, false, false))" id="btnComp" />&nbsp;
+<input type="submit" name="btnPdf1" value="PDF Pmt only" onclick="javascript:WebForm_DoPostBackWithOptions(new WebForm_PostBackOptions(&quot;btnPdf1&quot;, &quot;&quot;, true, &quot;&quot;, &quot;&quot;, false, false))" id="btnPdf1" />&nbsp;
+<input type="submit" name="btnPdf2" value="PDF Pmt + CC" onclick="javascript:WebForm_DoPostBackWithOptions(new WebForm_PostBackOptions(&quot;btnPdf2&quot;, &quot;&quot;, true, &quot;&quot;, &quot;&quot;, false, false))" id="btnPdf2" />&nbsp;
+<input type="submit" name="btnPdf3" value="PDF No CC" onclick="javascript:WebForm_DoPostBackWithOptions(new WebForm_PostBackOptions(&quot;btnPdf3&quot;, &quot;&quot;, true, &quot;&quot;, &quot;&quot;, false, false))" id="btnPdf3" />&nbsp;
+<input type="submit" name="btnViewCc" value="Hide CC &amp; PP" onclick="javascript:WebForm_DoPostBackWithOptions(new WebForm_PostBackOptions(&quot;btnViewCc&quot;, &quot;&quot;, true, &quot;&quot;, &quot;&quot;, false, false))" id="btnViewCc" />&nbsp;
+<input type="submit" name="btnMenu" value="Main Menu" onclick="javascript:WebForm_DoPostBackWithOptions(new WebForm_PostBackOptions(&quot;btnMenu&quot;, &quot;&quot;, true, &quot;&quot;, &quot;&quot;, false, false))" id="btnMenu" />
+</div>
+
+<div id="Tools">
+<div id="pnlTools" align="center">
+	
+<input type="submit" name="btnTool0" value="ARM" onclick="javascript:WebForm_DoPostBackWithOptions(new WebForm_PostBackOptions(&quot;btnTool0&quot;, &quot;&quot;, true, &quot;&quot;, &quot;&quot;, false, false))" id="btnTool0" />&nbsp;
+<input type="submit" name="btnTool1" value="Buy Down" onclick="javascript:WebForm_DoPostBackWithOptions(new WebForm_PostBackOptions(&quot;btnTool1&quot;, &quot;&quot;, true, &quot;&quot;, &quot;&quot;, false, false))" id="btnTool1" />&nbsp;
+<input type="submit" name="btnTool2" value="Faster Payoff" onclick="javascript:WebForm_DoPostBackWithOptions(new WebForm_PostBackOptions(&quot;btnTool2&quot;, &quot;&quot;, true, &quot;&quot;, &quot;&quot;, false, false))" id="btnTool2" />&nbsp;
+<input type="submit" name="btnTool4" value="Rent vs. Own" onclick="javascript:WebForm_DoPostBackWithOptions(new WebForm_PostBackOptions(&quot;btnTool4&quot;, &quot;&quot;, true, &quot;&quot;, &quot;&quot;, false, false))" id="btnTool4" />&nbsp;
+<input type="submit" name="btnTool5" value="Pmt Table" onclick="javascript:WebForm_DoPostBackWithOptions(new WebForm_PostBackOptions(&quot;btnTool5&quot;, &quot;&quot;, true, &quot;&quot;, &quot;&quot;, false, false))" id="btnTool5" />&nbsp;
+<input type="submit" name="btnTool6" value="Amortization" onclick="javascript:WebForm_DoPostBackWithOptions(new WebForm_PostBackOptions(&quot;btnTool6&quot;, &quot;&quot;, true, &quot;&quot;, &quot;&quot;, false, false))" id="btnTool6" />&nbsp;
+<input type="submit" name="btnTool8" value="Income Calc" onclick="javascript:WebForm_DoPostBackWithOptions(new WebForm_PostBackOptions(&quot;btnTool8&quot;, &quot;&quot;, true, &quot;&quot;, &quot;&quot;, false, false))" id="btnTool8" />&nbsp;
+<input type="submit" name="btnTool9" value="Extra Points" onclick="javascript:WebForm_DoPostBackWithOptions(new WebForm_PostBackOptions(&quot;btnTool9&quot;, &quot;&quot;, true, &quot;&quot;, &quot;&quot;, false, false))" id="btnTool9" />&nbsp;
+<input type="submit" name="btnTool7" value="Items List" onclick="javascript:WebForm_DoPostBackWithOptions(new WebForm_PostBackOptions(&quot;btnTool7&quot;, &quot;&quot;, true, &quot;&quot;, &quot;&quot;, false, false))" id="btnTool7" />
+
+</div>
+</div>
+
+<div id="pnlViewCc">
+	
+<div id="CLabelLeft"><br/>Non-Recurring Costs<br/><br/>
+<input name="TBox34" type="text" value="Loan fee" readonly="readonly" id="TBox34" CcsClass="Cc130" /><br/>
+<input name="TBox9" type="text" value="Appraisal fee" readonly="readonly" id="TBox9" CcsClass="Cc130" /><br/>
+<input name="TBox10" type="text" value="Credit report fee" readonly="readonly" id="TBox10" CcsClass="Cc130" /><br/>
+<input name="TBox11" type="text" value="Owner&#39;s title policy" readonly="readonly" id="TBox11" CcsClass="Cc130" /><br/>
+<input name="TBox12" type="text" value="Lender&#39;s title policy" readonly="readonly" id="TBox12" CcsClass="Cc130" /><br/>
+<input name="TBox13" type="text" value="Escrow/closing fee" readonly="readonly" id="TBox13" CcsClass="Cc130" /><br/>
+<input name="TBox14" type="text" value="Recording fee" readonly="readonly" id="TBox14" CcsClass="Cc130" /><br/>
+<input name="TBox15" type="text" value="Notary fee" readonly="readonly" id="TBox15" CcsClass="Cc130" /><br/>
+<input name="TBox16" type="text" value="Transfer tax" readonly="readonly" id="TBox16" CcsClass="Cc130" /><br/>
+<input name="TBox17" type="text" value="Mortgage tax" readonly="readonly" id="TBox17" CcsClass="Cc130" /><br/>
+<br/>
+<br/><br/>
+</div>
+
+<div id="CCLeft"><br/><br/><br/>
+<input name="txtLoanFee" type="text" readonly="readonly" id="txtLoanFee" class="Cc50B" /><br/>
+<input name="txtApprFee" type="text" id="txtApprFee" class="Cc50" onkeypress="return onlyNos(event,this);" /><br/>
+<input name="txtCreditFee" type="text" id="txtCreditFee" class="Cc50" onkeypress="return onlyNos(event,this);" /><br/>
+<input name="txtClta" type="text" id="txtClta" class="Cc50" onkeypress="return onlyNos(event,this);" /><br/>
+<input name="txtAlta" type="text" id="txtAlta" class="Cc50" onkeypress="return onlyNos(event,this);" /><br/>
+<input name="txtEscrow" type="text" id="txtEscrow" class="Cc50" onkeypress="return onlyNos(event,this);" /><br/>
+<input name="txtRecord" type="text" id="txtRecord" class="Cc50" onkeypress="return onlyNos(event,this);" /><br/>
+<input name="txtNotary" type="text" id="txtNotary" class="Cc50" onkeypress="return onlyNos(event,this);" /><br/>
+<input name="txtTxTax" type="text" id="txtTxTax" class="Cc50" onkeypress="return onlyNos(event,this);" /><br/>
+<input name="txtMtgTax" type="text" id="txtMtgTax" class="Cc50" onkeypress="return onlyNos(event,this);" /><br/>
+<br/>
+<br/>
+</div>
+
+<div id="CLabelMiddle"><br/>Enter 0 to delete a fee<br/><br/>
+<input name="txtName0" type="text" id="txtName0" CcsClass="Cc130" /><br/>
+<input name="txtName1" type="text" id="txtName1" CcsClass="Cc130" /><br/>
+<input name="txtName2" type="text" id="txtName2" CcsClass="Cc130" /><br/>
+<input name="txtName3" type="text" id="txtName3" CcsClass="Cc130" /><br/>
+<input name="txtName4" type="text" id="txtName4" CcsClass="Cc130" /><br/>
+<input name="txtName5" type="text" id="txtName5" CcsClass="Cc130" /><br/>
+<input name="txtName6" type="text" id="txtName6" CcsClass="Cc130" /><br/>
+<input name="txtName7" type="text" id="txtName7" CcsClass="Cc130" /><br/>
+<input name="txtName8" type="text" id="txtName8" CcsClass="Cc130" /><br/>
+<input name="txtName9" type="text" id="txtName9" CcsClass="Cc130" /><br/><br/>
+<input name="TBox35" type="text" value="Total Non-Recurring" readonly="readonly" id="TBox35" CcsClass="Cc130" />
+</div>
+
+<div id="CCMiddle"><br/>.01 = 1%<br/><br/>
+<input name="txtPurCc0" type="text" id="txtPurCc0" class="Cc50" onkeypress="return onlyNos(event,this);" /><br/>
+<input name="txtPurCc1" type="text" id="txtPurCc1" class="Cc50" onkeypress="return onlyNos(event,this);" /><br/>
+<input name="txtPurCc2" type="text" id="txtPurCc2" class="Cc50" onkeypress="return onlyNos(event,this);" /><br/>
+<input name="txtPurCc3" type="text" id="txtPurCc3" class="Cc50" onkeypress="return onlyNos(event,this);" /><br/>
+<input name="txtPurCc4" type="text" id="txtPurCc4" class="Cc50" onkeypress="return onlyNos(event,this);" /><br/>
+<input name="txtPurCc5" type="text" id="txtPurCc5" class="Cc50" onkeypress="return onlyNos(event,this);" /><br/>
+<input name="txtPurCc6" type="text" id="txtPurCc6" class="Cc50" onkeypress="return onlyNos(event,this);" /><br/>
+<input name="txtPurCc7" type="text" id="txtPurCc7" class="Cc50" onkeypress="return onlyNos(event,this);" /><br/>
+<input name="txtPurCc8" type="text" id="txtPurCc8" class="Cc50" onkeypress="return onlyNos(event,this);" /><br/>
+<input name="txtPurCc9" type="text" id="txtPurCc9" class="Cc50" onkeypress="return onlyNos(event,this);" /><br/><br/>
+<input name="txtTotalCc2" type="text" readonly="readonly" id="txtTotalCc2" style="text-align:right" /><br/>
+</div>
+
+<div id="CLabelRight">Basis for Prepaid Costs<br/><br/>
+<input name="TBox2" type="text" value="Property tax/year" id="TBox2" /><br/>
+<input name="TBox3" type="text" value="Hazard ins/yr" id="TBox3" /><br/><br/>Proration amounts<br/><br/>
+<input name="TBox5" type="text" value="Prorated interest" readonly="readonly" id="TBox5" />
+<input name="txtInd" type="text" value="15" id="txtInd" class="ArPr" />&nbsp;days<br/>
+<input name="TBox6" type="text" value="Prepaid property tax" readonly="readonly" id="TBox6" />
+<input name="txtTnm" type="text" value="6" id="txtTnm" class="ArPr" />&nbsp;mo<br/>
+<input name="TBox7" type="text" value="Prepaid mtg ins/mo" readonly="readonly" id="TBox7" />
+<input name="txtMnm" type="text" value="0" id="txtMnm" class="ArPr" />&nbsp;mo<br/>
+<input name="TBox8" type="text" value="Prepaid hazard ins" readonly="readonly" id="TBox8" />
+<input name="txtInm" type="text" value="15" id="txtInm" class="ArPr" />&nbsp;mo<br/><br/><br/>
+<input name="TBox36" type="text" value="Total Prepaid Costs" readonly="readonly" id="TBox36" /><br/><br/><br/><br/><br/><br/><br/><br/><br/>
+</div>
+
+<div id="CCRight"><br/><br/>
+<input name="txtTaxPerYr" type="text" readonly="readonly" id="txtTaxPerYr" style="text-align:right" /><br/>
+<input name="txtInsPerYr" type="text" readonly="readonly" id="txtInsPerYr" style="text-align:right" /><br/><br/><br/><br/>
+<input name="txtIntPro" type="text" readonly="readonly" id="txtIntPro" style="text-align:right" /><br/>
+<input name="txtTaxPro" type="text" readonly="readonly" id="txtTaxPro" style="text-align:right" /><br/>
+<input name="txtMiPro" type="text" readonly="readonly" id="txtMiPro" style="text-align:right" /><br/>
+<input name="txtInsPro" type="text" readonly="readonly" id="txtInsPro" style="text-align:right" /><br/><br/><br/>
+<input name="txtTotalPp2" type="text" readonly="readonly" id="txtTotalPp2" style="text-align:right" /><br/><br/>
+</div>
+
+</div>
+<div id="ContactLeft">
+
+<span id="lblCustName" style="display:inline-block;">Name</span>
+<input name="txtCustName" type="text" id="txtCustName" class="AlPr" /><br/>
+<span id="lblCustPho" style="display:inline-block;">Phone (10 digits)</span>
+<input name="txtCustPho" type="text" id="txtCustPho" class="AlPr" /><br/>
+<span id="lblCustEmail" style="display:inline-block;">Email</span>
+<input name="txtCustEmail" type="text" id="txtCustEmail" class="AlPr" style="width: 198px; height: 21px" />    <br />    <br/>
+<input type="submit" name="btnSend" value="Send Email" id="btnSend" style="margin-bottom: 0px" />&nbsp;
+<input type="submit" name="btnSendText" value="Send Text" onclick="javascript:WebForm_DoPostBackWithOptions(new WebForm_PostBackOptions(&quot;btnSendText&quot;, &quot;&quot;, true, &quot;&quot;, &quot;&quot;, false, false))" id="btnSendText" />&nbsp;
+<input type="submit" name="btnShortApp" value="Loan App" onclick="javascript:WebForm_DoPostBackWithOptions(new WebForm_PostBackOptions(&quot;btnShortApp&quot;, &quot;&quot;, true, &quot;&quot;, &quot;&quot;, false, false))" id="btnShortApp" /><br/>
+&nbsp;
+&nbsp; <br />
+<span style="display:inline-block;"><input id="chkPdf" type="checkbox" name="chkPdf" /><label for="chkPdf">Attach PDF</label></span>
+<span style="display:inline-block;"><input id="chkNotes" type="checkbox" name="chkNotes" /><label for="chkNotes">Add notes to PDF or PQ</label></span><br/>
+<textarea name="txtNotes" rows="2" cols="20" id="txtNotes" class="AlPr">
+</textarea><br/><br/>
+<input type="submit" name="btnPq" value="Email PQ letter" onclick="javascript:WebForm_DoPostBackWithOptions(new WebForm_PostBackOptions(&quot;btnPq&quot;, &quot;&quot;, true, &quot;&quot;, &quot;&quot;, false, false))" id="btnPq" />&nbsp;
+<input type="submit" name="btnPqPdf" value="PQ PDF Only" onclick="javascript:WebForm_DoPostBackWithOptions(new WebForm_PostBackOptions(&quot;btnPqPdf&quot;, &quot;&quot;, true, &quot;&quot;, &quot;&quot;, false, false))" id="btnPqPdf" /><br /><br />
+<span id="lblTrIn" style="display:inline-block;">Required Income</span>
+<span id="lblBrIn" style="display:inline-block;">Required with Debts</span><br />
+<div id="pnlIncome">
+	
+<table class="style1">
+<tr><td>Income #1</td>
+<td><input name="txtInc0" type="text" id="txtInc0" class="Cc50" keypress="return onlyNos(event,this);" /></td>
+<td>Payment #1</td>
+<td><input name="txtDeb0" type="text" id="txtDeb0" class="Cc50" keypress="return onlyNos(event,this);" /></td></tr>
+<tr><td>Income #2</td>
+<td><input name="txtInc1" type="text" id="txtInc1" class="Cc50" keypress="return onlyNos(event,this);" /></td>
+<td>Payment #2</td>
+<td><input name="txtDeb1" type="text" id="txtDeb1" class="Cc50" keypress="return onlyNos(event,this);" /></td></tr>
+<tr><td>Income #3</td>
+<td><input name="txtInc2" type="text" id="txtInc2" class="Cc50" keypress="return onlyNos(event,this);" /></td>
+<td>Payment #3</td>
+<td><input name="txtDeb2" type="text" id="txtDeb2" class="Cc50" keypress="return onlyNos(event,this);" /></td></tr>
+<tr><td>Income #4</td>
+<td><input name="txtInc3" type="text" id="txtInc3" class="Cc50" keypress="return onlyNos(event,this);" /></td>
+<td>Payment #4</td>
+<td><input name="txtDeb3" type="text" id="txtDeb3" class="Cc50" keypress="return onlyNos(event,this);" /></td></tr>
+<tr><td>Income #5</td>
+<td><input name="txtInc4" type="text" id="txtInc4" class="Cc50" keypress="return onlyNos(event,this);" /></td>
+<td>Payment #5</td>
+<td><input name="txtDeb4" type="text" id="txtDeb4" class="Cc50" keypress="return onlyNos(event,this);" /></td></tr>
+<tr><td>Income #6</td>
+<td><input name="txtInc5" type="text" id="txtInc5" class="Cc50" keypress="return onlyNos(event,this);" /></td>
+<td>Payment #6</td>
+<td><input name="txtDeb5" type="text" id="txtDeb5" class="Cc50" keypress="return onlyNos(event,this);" /></td></tr>
+<tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+<tr><td class="Alc">Total/Mo</td>
+<td><input name="txtTrIn" type="text" id="txtTrIn" class="ArPr" keypress="return onlyNos(event,this);" /></td>
+<td class="Alc">Total/Mo</td>
+<td><input name="txtBrIn" type="text" id="txtBrIn" class="ArPr" keypress="return onlyNos(event,this);" /></td></tr>
+<tr><td class="Alc">Pmt Ratio</td>
+<td><input name="txtTrOut" type="text" id="txtTrOut" class="ArPr" /></td>
+<td class="Alc">Debt Ratio</td>
+<td><input name="txtBrOut" type="text" id="txtBrOut" class="ArPr" /></td></tr>
+</table> 
+<input type="submit" name="btnCalcRatios" value="Calculate Totals &amp; View Ratios" onclick="javascript:WebForm_DoPostBackWithOptions(new WebForm_PostBackOptions(&quot;btnCalcRatios&quot;, &quot;&quot;, true, &quot;&quot;, &quot;&quot;, false, false))" id="btnCalcRatios" />&nbsp;
+<br />
+<input type="submit" name="btnImport" value="Click to Open Income Calculator Tool" onclick="javascript:WebForm_DoPostBackWithOptions(new WebForm_PostBackOptions(&quot;btnImport&quot;, &quot;&quot;, true, &quot;&quot;, &quot;&quot;, false, false))" id="btnImport" />
+
+</div>
+</div>
+
+<div id="ContactRight">
+<br/>
+<span id="lblControls" class="Alc" style="display:inline-block;"><b><font color="#990000">Data Controls are Hidden!</font></b></span>
+<input type="submit" name="btnDatabase" value="Click to Unlock Data Controls" onclick="javascript:WebForm_DoPostBackWithOptions(new WebForm_PostBackOptions(&quot;btnDatabase&quot;, &quot;&quot;, true, &quot;&quot;, &quot;&quot;, false, false))" id="btnDatabase" />
+
+
+
+
+</div> 
+
+<span id="lblDisclaimer">Interest rates and closing costs are not intended to be quotes. They are estimated as of 12/2/2025.</span><br/><br/>
+<span id="lblLimit" style="display:inline-block;">The FHA single family loan ceiling is $1,209,750</span><br/><br/><br/>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<br/>
+
+
+
+<input type="hidden" name="Watermark1_ClientState" id="Watermark1_ClientState" />
+
+
+<script type="text/javascript">
+//<![CDATA[
+Sys.Application.add_init(function() {
+    $create(Sys.Extended.UI.TextBoxWatermarkBehavior, {"ClientStateFieldID":"Watermark1_ClientState","WatermarkText":"FHA Home Loan Financing - This heading can be edited.","id":"Watermark1"}, null, null, $get("txtHeading"));
+});
+//]]>
+</script>
+</form></body></html>
+<script type = "text/javascript" src="./JS/JScript.js"></script>
+<script type = "text/javascript" src="./JS/onlyNos.js"></script>
+<script type = "text/javascript" src="./JS/PlaySound.js"></script>
+<script type="text/javascript">
+window.onload = function () { CacheItems("ListBox1") };
+</script>

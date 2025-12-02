@@ -1,0 +1,12 @@
+﻿body{font-family:Arial,Helvetica,sans-serif; font-size:12px;background-color:#99ccff;background-image: url('../Blend/SoftBlend.jpg'); background-repeat: repeat-x;}
+#Container{background-color:#99ccff; width:840px;height: 100%;margin: 0 auto;}
+#Header{background-color:#99ccff; font-family:Arial,Helvetica,sans-serif; text-align:center; width:840px; height:86px; 
+padding-top:10px; font-size:14px; color:#FFF}
+#Flexdiv{border-style: solid;
+        float: left; background-color: #99cccf; text-align: left; width: 817px; height: 100%; 
+    color: #0000FF; font-size: .6em; }
+#Table{padding-top: .2em;float: left;background-color: #99cfff;color: #000080;font-size: 1.2em;text-align: center;}
+
+.Alc{text-align: center;}
+ArPr{text-align: right; padding-right: 1px;font-weight: bold;}
+.AlPr{text-align: left; padding-left: 1px;}

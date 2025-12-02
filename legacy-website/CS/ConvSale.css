@@ -1,0 +1,30 @@
+﻿*{padding:0;margin-left: 0;margin-right: 0;}  
+body{font-family:Arial,Helvetica,sans-serif; font-size:14px; background-color:#99ccff;background-image: url('../Blend/SoftBlend2.png'); background-repeat: repeat-x;}
+#Container{ width:780px; margin: 0 auto; height:1968px}
+#Header{background-color:#99ccff;font-family:Arial,Helvetica,sans-serif; text-align:center; width:780px; height:113px; padding-top:10px}
+#Left{background-color:#99ccff;padding-left: 20px;float:left; width:290px; font-size:1em; padding-top:10px; text-align:left; height:290px}
+#Middle{background-color:#99ccff;float:left; width:249px; padding-top:10px; text-align:left; height:290px}
+#Right{background-color:#99ccff;float:left; width:221px; padding-top:10px; text-align:left; height:290px}
+#Buttons{background-color:#99ccff;padding-top:10px; float:left; width:780px; height:30px; border-top-style:solid; border-top-color:#00F; border-bottom-style:solid; border-bottom-color:#00F}
+#Tools{background-color: #99ccff;padding-top: 4px;float: left;width: 780px;height: 22px;border-bottom-style: groove;border-bottom-width: medium;border-bottom-color: #0066FF;}
+#CLabelLeft{background-color:#99ccff;padding-left: 20px;float:left; width:160px; height:320px; color:#00F}
+#CCLeft{background-color:#99ccff;float:left; width:82px;height:320px}
+#CLabelMiddle{background-color:#99ccff;float:left; width:160px; height:310px; color:#00F}
+#CCMiddle{background-color:#99ccff;float:left; width:76px;height:310px}
+#CLabelRight{background-color: #99ccff;padding-top: 10px;float: left;width: 200px;height: 280px;color: #00F;text-align: left;}
+#CCRight{background-color:#99ccff;padding-top:10px; float:left; width:82px; text-align:left; height:310px}
+#ContactLeft{background-color:#99ccff;padding-top:10px;padding-left: 20px; float:left; width:356px; height:546px; border-top-style:solid; border-top-color:#00F}
+#ContactRight{text-align: left;background-color:#99ccff;padding-top:10px;padding-left: 30px; float:left; width:373px; height:614px;border-top-style:solid; border-top-color:#00F}
+#Footer{background-color:#99ccff;padding-top:6px; float:left; width:780px; height:132px; text-align:center}
+.ArPr{text-align: right; padding-right: 1px;font-weight: bold;}
+.Inc{text-align: right; height: 18px;}
+.Al{text-align: left; padding-left: 1px}
+.AlPr{text-align: left; padding-left: 1px;font-weight: bold;}
+.AlP{text-align: left; padding-left: 1px}
+.Alc{text-align: center; font-weight: bold;}
+.Cc130{width: 130px;height: 18px;text-align: right;padding-right: 1px; background-color:#99CCFF; border:none;}
+.Cc50{width: 50px;height: 18px;text-align: right;padding-right: 1px; background-color:white}
+.Cc50B{width: 50px;height: 18px;text-align: right;padding-right: 1px;background-color:#99ccff}
+
+
+

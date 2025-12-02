@@ -1,0 +1,30 @@
+﻿*{margin:0;padding:0;}  
+body{font-family:Arial,Helvetica,sans-serif; font-size:14px;padding-left: 0%; margin: 0; background-color:#99ccff;background-image: url('../Blend/SoftBlend.jpg'); background-repeat: repeat-x;}
+#Container{ width:793px; margin: 0 auto; height:1794px
+}
+#Header{background-color:#99ccff; padding-top:8px;font-family:Arial,Helvetica,sans-serif; font-size:1em; text-align:center; width:780px; height:89px;color:#00F}
+#SubHeader{background-color:#99ccff; float:left; font-size:1em; text-align:center; width:780px; height:90px}
+#SubHeader2{background-color:#99ccff; padding-top:12px; padding-left:12px; float:left; font-size:small; text-align:center; width:768px; height:82px}
+#SubHeaderV{background-color:#99ccff; float:left; text-align:left; width:780px; height:23px}
+#SubSLeft{background-color:#99ccff; float:left; text-align:left; width:296px; height:70px}
+#SubSMiddle{background-color:#99ccff; float:left; text-align:left; width:473px; height:70px}
+#SubSRight{background-color:#99ccff; float:left; text-align:left; width:206px; height:64px}
+#Left{float:left; width:244px; padding-top:1em; padding-left:14px; text-align:left; background-color:#6FF; height:892px}
+#Middle{ float:left; width:244px; padding-top:1em; padding-left:14px; background-color:#FFC;height:892px}
+#Right{ float:left; width:244px; padding-top:1em; padding-left:14px; background-color:#C9F;height:892px}
+#Buttons{background-color:#99ccff; padding-top:10px; float:left; width:780px; height:40px; border-top-style:solid; border-top-color:#00F; border-bottom-style:solid; border-bottom-color:#00F}
+#CLabelLeft{ float:left; width:140px; height:282px; color:#00F}
+#CCLeft{ float:left; width:114px; height:282px}
+#CLabelMiddle{ float:left; width:146px; height:282px; color:#00F}
+#CCMiddle{ float:left; width:108px; height:282px}
+#CLabelRight{ padding-top:10px; float:left; width:146px; height:258px; color:#00F}
+#CCRight{ padding-top:10px; float:left; width:88px; height:258px}
+#ContactLeft{ padding-top:10px; padding-left:10px; float:left; width:403px; height:360px}
+#ContactRight{ padding-top:10px; float:left; width:358px; height:352px}
+#Footer{text-align:center; padding-top:10px; float:left; width:780px; height:166px;}
+.Blue18{font-family:Arial,Helvetica,sans-serif; font-size:1.2em; color:#00F}
+.Red18{font-family:Arial,Helvetica,sans-serif; font-size:18px; color:#900}
+.Alc{text-align: center;}
+.ArPr{text-align: right; padding-right: 1px;font-weight: bold;}
+.Ar10(font-weight: 10px)
+.AlPr{text-align: left; padding-left: 1px;font-weight: bold;}

@@ -1,0 +1,11 @@
+﻿*{margin:0;padding:0;}  
+body{text-align:center;font-family: Arial,Helvetica,sans-serif;font-size: 18px;background-image: url('../Blend/Blend.png');background-repeat: repeat-x;}
+#Container{background-color:#06F; padding-top:20px; width: 791px;margin: 0 auto;height: 838px;} 
+#Logo{padding-top:.6em; float:left; width:100px; height:71px; text-align:center; }
+#Header{padding-top:.6em;padding-left:.100px; float:left; width:578px; 
+height:71px; text-align:center; }
+#TopLeft{padding-top:44px; float:left; text-align:center; width:388px; height:206px;}
+#TopRite{padding-top:44px; float:left; text-align:center; width:388px; height:206px; }
+#BotLeft{padding-top:44px; float:left; text-align:center; width:388px; height:141px; }
+#BotRite{padding-top:44px; float:left; text-align:center; width:388px; height:141px; }
+#Footer{padding-top:.6em; float:left; width:779px; height:297px; color:white; text-align:center;    font-weight: 700;}

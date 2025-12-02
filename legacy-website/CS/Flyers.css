@@ -1,0 +1,28 @@
+﻿*{padding:0; margin-left: 0px; margin-right: 0; } 
+.ArPr{text-align: right; padding-right: 1px;}
+.AlPr{text-align: left; padding-left: 1px;} 
+.AcPr{text-align: center; padding-left: 1px;}  
+.Ar44{text-align: center; padding-right: 1px; width: 44px; background-color: #99CCFF; font-size: 10px;}
+body{text-align:center;font-family: Arial,Helvetica,sans-serif;font-size: 12px;background-image: url('../Images/Blend.png');background-repeat: repeat-x; height: 1593px;
+}
+#Container{background-color:#99CCFF;width: 846px;
+margin: 0 auto;height: 1471px;
+padding-left:10px
+} 
+#HeaderLeft{float: left;text-align: left;width:280px;height: 260px;padding-top: 8px;padding-left:12px}
+#HeaderMiddle{float: left;text-align: center; width:198px; height: 260px; padding-top: 8px;}
+#HeaderRight{float: left;width: 320px;height: 260px;padding-top: 8px;}
+#Options{float: left;text-align: left;width: 786px; height: 305px; padding-top: 8px;}
+#OptL{float: left;width: 122px; height: 305px; padding-top: 8px; }
+#Opt1{float: left;width: 119px; height: 305px; padding-top: 8px;}
+#Arm1{float: left;width: 110px; height: 305px; padding-top: 24px;}
+#Opt2{float: left;width: 119px; height: 305px; padding-top: 8px;}
+#Arm2{float: left;width: 110px; height: 305px; padding-top: 24px;}
+#Opt3{float: left;width: 119px; height: 305px; padding-top: 8px;}
+#Arm3{float: left;width: 110px; height: 305px; padding-top: 24px;}
+#Results{float: left; width: 838px; height: 94px;}
+#Center{ padding-top: 20px; float: left; width: 397px; height: 180px; background-color: #66FFFF;}
+#Center2{ padding-top: 20px; float: left; width: 397px; height: 180px; background-color: #66FFFF;}
+#BotLeft{padding-top: 10px;float: left;width: 397px;height: 208px;background-color: #CCFFFF;}
+#BotRite{ padding-top: 10px; float: left; width: 397px; height: 208px; background-color: #CCFFFF;}
+#Footer{ padding-top: .6em; float: left; width: 789px; height: 161px; text-align: center;}

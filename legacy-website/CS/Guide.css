@@ -1,0 +1,14 @@
+﻿*{margin:0;padding:0;}
+body{font-family:Arial,Helvetica,sans-serif; font-size:14px;padding-left: 0%; margin: 0; background-color:#99ccff;background-image: url('../Blend/SoftBlend.jpg'); background-repeat: repeat-x;}
+#Container{background-color:#99ccff; width:840px; height:813px;margin: 0 auto;}
+#Header{background-color:#99ccff; font-family:Arial,Helvetica,sans-serif; text-align:center; width:840px; height:42px; padding-top:10px; font-size:24px; color:#FFF}
+#SubHeader{padding-top:10px; float: left; background-color: #99ccff; font-family: Arial,Helvetica,sans-serif; text-align: left; width: 289px; height: 38px; color: #0000FF; 
+font-size: 1.1em; border-top-style: solid; border-bottom-style: solid; border-left-style: solid;border-left-width: thin; border-right-width: thin; border-top-width: thin; border-bottom-width: thin;}
+#SubHeader1{padding-top:10px; padding-left:10px; border-style: solid; border-width: thin; float:left; background-color: #99ccff;font-family: Arial,Helvetica,sans-serif; text-align: left;
+width: 532px; height: 39px; color: #0000FF; font-size: 1.1em;}
+#Conv{ float:left; width:260px; font-size:1em; padding-top:1em; padding-left:1.3em; height:484px; background-color:#6FF; color:#000}
+#Fha{ float:left; width:260px; font-size:1em; padding-top:1em; padding-left:1.3em; height:484px; background-color:#FFC; color:#000}
+#Va{ float:left; width:260px; font-size:1em; padding-top:1em; padding-left:1.3em; height:484px; background-color:#C9F; color:#000}
+#Footer{padding-top: .2em;float: left;width: 840px;height: 192px;color: #000080;font-size: 1.2em;text-align: center;}
+.ArPr{text-align: right; padding-right: 1px;font-weight: bold;}
+.AlPr{text-align: left; padding-left: 1px;font-weight: bold;}

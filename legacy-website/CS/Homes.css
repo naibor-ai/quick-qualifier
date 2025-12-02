@@ -1,0 +1,11 @@
+﻿body{ font-family:Arial,Helvetica,sans-serif; font-size:14px; background-color: #06F; background-image: url('../Blend/Blend4.jpg'); background-repeat: repeat-x;}
+#Container{ width:800px; margin: 0 auto; height:1074px}
+#Header{font-family: Arial,Helvetica,sans-serif; text-align: center; width: 789px; height: 1.4em; padding-top: 12px; color: #FFFFFF; font-size: 36px;}
+#Matrix{ padding-top:.6em; float:left; width:815px; height:847px; text-align:center}
+#Matrix1{ padding-top:.6em; float:left; width:815px; height:847px; text-align:center}
+#ContactLeft{ font-size:14px; color:white; padding-top:10px; float:left; width:415px; height:180px}
+#ContactRight{ font-size:14px; color:white; padding-top:10px; float:left; width:341px; height:180px}
+#Footer{ padding-top:.6em; float:left; width:814px; height:293px; color:white; font-size:1.4em; text-align:center}
+.BlueL{ color:#FFF; font-size:1.8em}
+.ArPr{text-align: right; padding-right: 1px;font-weight: bold;}
+.AlPr{text-align: left; padding-left: 1px;font-weight: bold;}
