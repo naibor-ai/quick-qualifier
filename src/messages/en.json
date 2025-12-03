@@ -1,0 +1,68 @@
+{
+  "common": {
+    "appName": "Quick Qualifier",
+    "loading": "Loading...",
+    "save": "Save",
+    "cancel": "Cancel",
+    "calculate": "Calculate",
+    "reset": "Reset",
+    "download": "Download PDF",
+    "print": "Print",
+    "language": "Language",
+    "english": "English",
+    "spanish": "Spanish"
+  },
+  "nav": {
+    "home": "Home",
+    "conventional": "Conventional",
+    "conventionalRefi": "Conv. Refinance",
+    "fha": "FHA",
+    "fhaRefi": "FHA Refinance",
+    "va": "VA",
+    "vaRefi": "VA Refinance",
+    "sellerNet": "Seller Net Sheet",
+    "compare": "Compare"
+  },
+  "calculator": {
+    "purchasePrice": "Purchase Price",
+    "salesPrice": "Sales Price",
+    "downPayment": "Down Payment",
+    "downPaymentPercent": "Down Payment %",
+    "loanAmount": "Loan Amount",
+    "interestRate": "Interest Rate",
+    "term": "Loan Term (Years)",
+    "propertyTax": "Property Tax (Annual)",
+    "homeInsurance": "Hazard Insurance (Annual)",
+    "hoaDues": "HOA Dues (Monthly)",
+    "creditScore": "Credit Score Tier",
+    "loanProgram": "Loan Program"
+  },
+  "results": {
+    "monthlyPayment": "Monthly Payment",
+    "principalInterest": "Principal & Interest",
+    "mortgageInsurance": "Mortgage Insurance",
+    "propertyTax": "Property Tax",
+    "homeInsurance": "Home Insurance",
+    "hoaDues": "HOA",
+    "totalPayment": "Total Monthly Payment",
+    "loanToValue": "Loan-to-Value (LTV)",
+    "closingCosts": "Estimated Closing Costs",
+    "cashToClose": "Cash to Close"
+  },
+  "creditTiers": {
+    "760plus": "760+",
+    "740to759": "740-759",
+    "720to739": "720-739",
+    "700to719": "700-719",
+    "680to699": "680-699",
+    "660to679": "660-679",
+    "640to659": "640-659",
+    "620to639": "620-639"
+  },
+  "errors": {
+    "required": "This field is required",
+    "invalidNumber": "Please enter a valid number",
+    "minValue": "Value must be at least {min}",
+    "maxValue": "Value must be at most {max}"
+  }
+}

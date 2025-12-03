@@ -1,0 +1,68 @@
+{
+  "common": {
+    "appName": "Calificador Rápido",
+    "loading": "Cargando...",
+    "save": "Guardar",
+    "cancel": "Cancelar",
+    "calculate": "Calcular",
+    "reset": "Reiniciar",
+    "download": "Descargar PDF",
+    "print": "Imprimir",
+    "language": "Idioma",
+    "english": "Inglés",
+    "spanish": "Español"
+  },
+  "nav": {
+    "home": "Inicio",
+    "conventional": "Convencional",
+    "conventionalRefi": "Refinanciamiento Conv.",
+    "fha": "FHA",
+    "fhaRefi": "Refinanciamiento FHA",
+    "va": "VA",
+    "vaRefi": "Refinanciamiento VA",
+    "sellerNet": "Hoja Neta del Vendedor",
+    "compare": "Comparar"
+  },
+  "calculator": {
+    "purchasePrice": "Precio de Compra",
+    "salesPrice": "Precio de Venta",
+    "downPayment": "Enganche",
+    "downPaymentPercent": "Enganche %",
+    "loanAmount": "Monto del Préstamo",
+    "interestRate": "Tasa de Interés",
+    "term": "Plazo del Préstamo (Años)",
+    "propertyTax": "Impuesto Predial (Anual)",
+    "homeInsurance": "Seguro de Hogar (Anual)",
+    "hoaDues": "Cuota HOA (Mensual)",
+    "creditScore": "Rango de Crédito",
+    "loanProgram": "Programa de Préstamo"
+  },
+  "results": {
+    "monthlyPayment": "Pago Mensual",
+    "principalInterest": "Capital e Interés",
+    "mortgageInsurance": "Seguro Hipotecario",
+    "propertyTax": "Impuesto Predial",
+    "homeInsurance": "Seguro de Hogar",
+    "hoaDues": "HOA",
+    "totalPayment": "Pago Mensual Total",
+    "loanToValue": "Préstamo-Valor (LTV)",
+    "closingCosts": "Costos de Cierre Estimados",
+    "cashToClose": "Efectivo para Cerrar"
+  },
+  "creditTiers": {
+    "760plus": "760+",
+    "740to759": "740-759",
+    "720to739": "720-739",
+    "700to719": "700-719",
+    "680to699": "680-699",
+    "660to679": "660-679",
+    "640to659": "640-659",
+    "620to639": "620-639"
+  },
+  "errors": {
+    "required": "Este campo es requerido",
+    "invalidNumber": "Por favor ingrese un número válido",
+    "minValue": "El valor debe ser al menos {min}",
+    "maxValue": "El valor debe ser como máximo {max}"
+  }
+}
