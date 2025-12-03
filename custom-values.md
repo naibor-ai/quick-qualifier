@@ -69,10 +69,6 @@ This document lists the Custom Values required in GoHighLevel to configure the Q
 | `calc_lo_phone` | Default Loan Officer Phone Number |
 | `calc_lo_address` | Company Physical Address |
 
----
-
-### New Missing Values (From Legacy Setup)
-
 #### 7. Conventional MI Factors - Standard Balance (≤ $650k)
 *Naming Convention:* `calc_mi_std_{type}_{ltv}_{fico}`
 *Type:* `mo` (Monthly) or `sg` (Single Premium)
