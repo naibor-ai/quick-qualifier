@@ -251,5 +251,11 @@ export function sanitizeGhlConfig(rawValues: Record<string, unknown>) {
       loPhone: getStr('calc_lo_phone', ''),
       address: getStr('calc_lo_address', ''),
     },
+
+    blurbs: {
+      home1: getStr('calc_blurb_home_1', ''),
+      home2: getStr('calc_blurb_home_2', ''),
+      home3: getStr('calc_blurb_home_3', ''),
+    },
   };
 }

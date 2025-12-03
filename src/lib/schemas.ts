@@ -334,6 +334,13 @@ export const GhlConfigSchema = z.object({
     loPhone: z.string(),
     address: z.string(),
   }),
+
+  // Homepage Blurbs
+  blurbs: z.object({
+    home1: z.string(),
+    home2: z.string(),
+    home3: z.string(),
+  }),
 });
 export type GhlConfig = z.infer<typeof GhlConfigSchema>;
 
