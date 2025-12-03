@@ -107,6 +107,8 @@
       "titleFees": "Cargos de Título",
       "titleInsurance": "Seguro de Título",
       "settlementFee": "Cargo de Cierre",
+      "escrowFee": "Cargo de Escrow",
+      "recordingFee": "Cargo de Registro",
       "recordingFees": "Cargos de Registro",
       "credits": "Créditos",
       "sellerCredit": "Crédito del Vendedor",
