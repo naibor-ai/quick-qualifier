@@ -28,6 +28,19 @@
     "sellerNet": "Hoja Neta del Vendedor",
     "compare": "Comparar"
   },
+  "home": {
+    "selectCalculator": "Seleccione una calculadora para comenzar",
+    "loanCalculators": "Calculadoras de Préstamos",
+    "additionalTools": "Herramientas Adicionales",
+    "sideBySide": "Lado a Lado (Ventas)",
+    "sideBySideDesc": "Compare programas de préstamos",
+    "shoppingGuide": "Guía de Compras",
+    "shoppingGuideDesc": "Hoja neta del vendedor",
+    "showcaseHomes": "Exhibición de Casas",
+    "showcaseHomesDesc": "Explorar listados",
+    "bulletinBoard": "Tablero de Anuncios",
+    "bulletinBoardDesc": "Noticias y actualizaciones"
+  },
   "calculator": {
     "purchasePrice": "Precio de Compra",
     "salesPrice": "Precio de Venta",

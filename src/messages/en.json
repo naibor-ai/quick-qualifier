@@ -28,6 +28,19 @@
     "sellerNet": "Seller Net Sheet",
     "compare": "Compare"
   },
+  "home": {
+    "selectCalculator": "Select a calculator to get started",
+    "loanCalculators": "Loan Calculators",
+    "additionalTools": "Additional Tools",
+    "sideBySide": "Side by Side (Sales)",
+    "sideBySideDesc": "Compare loan programs",
+    "shoppingGuide": "Shopping Guide",
+    "shoppingGuideDesc": "Seller net sheet",
+    "showcaseHomes": "Showcase of Homes",
+    "showcaseHomesDesc": "Browse listings",
+    "bulletinBoard": "Bulletin Board",
+    "bulletinBoardDesc": "News and updates"
+  },
   "calculator": {
     "purchasePrice": "Purchase Price",
     "salesPrice": "Sales Price",
