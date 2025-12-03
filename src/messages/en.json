@@ -12,7 +12,10 @@
     "english": "English",
     "spanish": "Spanish",
     "amount": "Amount",
-    "percent": "Percent"
+    "percent": "Percent",
+    "annual": "Annual",
+    "yes": "Yes",
+    "no": "No"
   },
   "nav": {
     "home": "Home",
@@ -49,6 +52,16 @@
     "vaUsage": "VA Loan Usage",
     "isDisabledVeteran": "Disabled Veteran",
     "isReservist": "National Guard/Reservist",
+    "readyToCalculate": "Ready to Calculate",
+    "enterDetails": "Enter your loan details and click Calculate to see your estimated payment breakdown.",
+    "sections": {
+      "propertyLoan": "Property & Loan",
+      "monthlyCosts": "Monthly Costs",
+      "pmiCredit": "PMI & Credit",
+      "creditsPoints": "Credits & Points",
+      "credit": "Credit",
+      "vaEligibility": "VA Eligibility"
+    },
     "results": {
       "title": "Loan Summary",
       "loanAmount": "Loan Amount",
@@ -104,11 +117,49 @@
     "title": "VA Purchase Calculator",
     "description": "Calculate payments and closing costs for VA loans",
     "fundingFee": "VA Funding Fee",
+    "fundingFeeWaived": "VA Funding Fee is waived for disabled veterans.",
     "usage": {
       "first": "First Time Use",
       "subsequent": "Subsequent Use",
       "refinance": "Refinance (IRRRL)"
     }
+  },
+  "conventionalRefi": {
+    "title": "Conventional Refinance Calculator",
+    "description": "Calculate payments and closing costs for conventional refinance loans"
+  },
+  "fhaRefi": {
+    "title": "FHA Refinance Calculator",
+    "description": "Calculate payments and closing costs for FHA refinance loans"
+  },
+  "vaRefi": {
+    "title": "VA Refinance Calculator",
+    "description": "Calculate payments and closing costs for VA refinance loans"
+  },
+  "refinance": {
+    "propertyValue": "Property Value",
+    "existingBalance": "Existing Loan Balance",
+    "newLoanAmount": "New Loan Amount",
+    "type": "Refinance Type",
+    "rateAndTerm": "Rate & Term",
+    "cashOut": "Cash-Out",
+    "cashOutAmount": "Cash-Out Amount",
+    "cashOutRefi": "Cash-Out Refinance",
+    "standardRefi": "Standard Refinance",
+    "streamline": "FHA Streamline",
+    "streamlineNote": "FHA Streamline refinance offers reduced documentation and lower UFMIP rates.",
+    "irrrl": "VA IRRRL",
+    "irrrlNote": "VA Interest Rate Reduction Refinance Loan (IRRRL) offers reduced funding fees and streamlined processing.",
+    "fhaRefiType": "FHA Refinance Type",
+    "vaRefiType": "VA Refinance Type",
+    "enterDetails": "Enter your refinance details and click Calculate to see your estimated payment breakdown."
+  },
+  "terms": {
+    "30yr": "30 Years",
+    "25yr": "25 Years",
+    "20yr": "20 Years",
+    "15yr": "15 Years",
+    "10yr": "10 Years"
   },
   "sellerNet": {
     "title": "Seller Net Sheet",
@@ -149,7 +200,9 @@
   "pmiTypes": {
     "monthly": "Monthly PMI",
     "upfront": "Upfront (LPMI)",
-    "split": "Split Premium"
+    "split": "Split Premium",
+    "singleFinanced": "Single Premium (Financed)",
+    "singleCash": "Single Premium (Cash)"
   },
   "creditTiers": {
     "760plus": "760+",

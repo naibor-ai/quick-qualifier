@@ -146,8 +146,8 @@ export function VaForm() {
         </CardHeader>
         <CardContent>
           {!config && !configLoading && (
-            <div className="mb-4 p-4 bg-red-50 dark:bg-red-900/20 rounded-lg">
-              <p className="text-sm text-red-700 dark:text-red-300">
+            <div className="mb-4 p-4 bg-red-50 rounded-lg">
+              <p className="text-sm text-red-600">
                 {t('errors.configLoadError')}. Please check your GHL configuration.
               </p>
             </div>
@@ -155,7 +155,7 @@ export function VaForm() {
           <form onSubmit={handleSubmit(onCalculate)} className="space-y-6">
             {/* Property & Loan */}
             <div className="space-y-4">
-              <h3 className="text-sm font-semibold text-zinc-700 dark:text-zinc-300 uppercase tracking-wide">
+              <h3 className="text-sm font-semibold text-slate-700 uppercase tracking-wide">
                 Property & Loan
               </h3>
 
@@ -264,7 +264,7 @@ export function VaForm() {
 
             {/* Monthly Costs */}
             <div className="space-y-4">
-              <h3 className="text-sm font-semibold text-zinc-700 dark:text-zinc-300 uppercase tracking-wide">
+              <h3 className="text-sm font-semibold text-slate-700 uppercase tracking-wide">
                 Monthly Costs
               </h3>
 
@@ -337,7 +337,7 @@ export function VaForm() {
 
             {/* VA Options */}
             <div className="space-y-4">
-              <h3 className="text-sm font-semibold text-zinc-700 dark:text-zinc-300 uppercase tracking-wide">
+              <h3 className="text-sm font-semibold text-slate-700 uppercase tracking-wide">
                 VA Loan Details
               </h3>
 
@@ -387,11 +387,11 @@ export function VaForm() {
             </div>
 
             {/* VA Fee Info */}
-            <div className="bg-green-50 dark:bg-green-900/20 rounded-lg p-4">
-              <h4 className="text-sm font-medium text-green-800 dark:text-green-200 mb-2">
+            <div className="bg-green-50 rounded-lg p-4">
+              <h4 className="text-sm font-medium text-green-800 mb-2">
                 VA Loan Benefits
               </h4>
-              <ul className="text-sm text-green-700 dark:text-green-300 space-y-1">
+              <ul className="text-sm text-green-700 space-y-1">
                 <li>• No down payment required</li>
                 <li>• No monthly mortgage insurance (PMI)</li>
                 <li>• Funding fee can be financed into loan</li>
@@ -421,10 +421,10 @@ export function VaForm() {
             <CardContent>
               <div className="text-center py-12">
                 <div className="text-6xl mb-4">🎖️</div>
-                <h3 className="text-lg font-medium text-zinc-900 dark:text-zinc-100 mb-2">
+                <h3 className="text-lg font-medium text-slate-800 mb-2">
                   Ready to Calculate
                 </h3>
-                <p className="text-sm text-zinc-500 dark:text-zinc-400">
+                <p className="text-sm text-slate-500">
                   Enter your VA loan details and click Calculate to see your estimated payment breakdown.
                 </p>
               </div>

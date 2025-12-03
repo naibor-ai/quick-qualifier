@@ -43,7 +43,7 @@ export function InputGroup({
     <div className="space-y-1">
       <label
         htmlFor={id}
-        className="block text-sm font-medium text-zinc-700 dark:text-zinc-300"
+        className="block text-sm font-medium text-slate-700"
       >
         {label}
         {required && <span className="ml-1 text-red-500">*</span>}
@@ -51,7 +51,7 @@ export function InputGroup({
 
       <div className="relative flex items-center">
         {prefix && (
-          <span className="absolute left-3 text-zinc-500 dark:text-zinc-400">
+          <span className="absolute left-3 text-slate-500">
             {prefix}
           </span>
         )}
@@ -69,22 +69,21 @@ export function InputGroup({
           step={step}
           required={required}
           className={`
-            w-full rounded-lg border bg-white px-3 py-2 text-sm
+            w-full rounded-lg border bg-white px-3 py-2 text-sm text-slate-800
             transition-colors focus:outline-none focus:ring-2
-            dark:bg-zinc-900
             ${prefix ? 'pl-8' : ''}
             ${suffix ? 'pr-12' : ''}
             ${
               error
-                ? 'border-red-500 focus:border-red-500 focus:ring-red-200 dark:focus:ring-red-800'
-                : 'border-zinc-300 focus:border-blue-500 focus:ring-blue-200 dark:border-zinc-700 dark:focus:ring-blue-800'
+                ? 'border-red-500 focus:border-red-500 focus:ring-red-200'
+                : 'border-slate-300 focus:border-blue-500 focus:ring-blue-200'
             }
-            ${disabled ? 'cursor-not-allowed bg-zinc-100 dark:bg-zinc-800' : ''}
+            ${disabled ? 'cursor-not-allowed bg-slate-100' : ''}
           `}
         />
 
         {suffix && (
-          <span className="absolute right-3 text-zinc-500 dark:text-zinc-400">
+          <span className="absolute right-3 text-slate-500">
             {suffix}
           </span>
         )}
@@ -95,7 +94,7 @@ export function InputGroup({
       )}
 
       {helperText && !error && (
-        <p className="text-sm text-zinc-500 dark:text-zinc-400">{helperText}</p>
+        <p className="text-sm text-slate-500">{helperText}</p>
       )}
     </div>
   );
@@ -130,7 +129,7 @@ export function SelectGroup({
     <div className="space-y-1">
       <label
         htmlFor={id}
-        className="block text-sm font-medium text-zinc-700 dark:text-zinc-300"
+        className="block text-sm font-medium text-slate-700"
       >
         {label}
         {required && <span className="ml-1 text-red-500">*</span>}
@@ -144,15 +143,14 @@ export function SelectGroup({
         disabled={disabled}
         required={required}
         className={`
-          w-full rounded-lg border bg-white px-3 py-2 text-sm
+          w-full rounded-lg border bg-white px-3 py-2 text-sm text-slate-800
           transition-colors focus:outline-none focus:ring-2
-          dark:bg-zinc-900
           ${
             error
-              ? 'border-red-500 focus:border-red-500 focus:ring-red-200 dark:focus:ring-red-800'
-              : 'border-zinc-300 focus:border-blue-500 focus:ring-blue-200 dark:border-zinc-700 dark:focus:ring-blue-800'
+              ? 'border-red-500 focus:border-red-500 focus:ring-red-200'
+              : 'border-slate-300 focus:border-blue-500 focus:ring-blue-200'
           }
-          ${disabled ? 'cursor-not-allowed bg-zinc-100 dark:bg-zinc-800' : ''}
+          ${disabled ? 'cursor-not-allowed bg-slate-100' : ''}
         `}
       >
         {options.map((option) => (
@@ -165,7 +163,7 @@ export function SelectGroup({
       {error && <p className="text-sm text-red-500">{error}</p>}
 
       {helperText && !error && (
-        <p className="text-sm text-zinc-500 dark:text-zinc-400">{helperText}</p>
+        <p className="text-sm text-slate-500">{helperText}</p>
       )}
     </div>
   );
@@ -199,17 +197,17 @@ export function CheckboxGroup({
         checked={checked}
         onChange={(e) => onChange(e.target.checked)}
         disabled={disabled}
-        className="mt-1 h-4 w-4 rounded border-zinc-300 text-blue-600 focus:ring-blue-500 dark:border-zinc-700"
+        className="mt-1 h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500"
       />
       <div>
         <label
           htmlFor={id}
-          className="text-sm font-medium text-zinc-700 dark:text-zinc-300"
+          className="text-sm font-medium text-slate-700"
         >
           {label}
         </label>
         {helperText && (
-          <p className="text-sm text-zinc-500 dark:text-zinc-400">
+          <p className="text-sm text-slate-500">
             {helperText}
           </p>
         )}

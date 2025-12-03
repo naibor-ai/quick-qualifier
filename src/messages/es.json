@@ -12,7 +12,10 @@
     "english": "Inglés",
     "spanish": "Español",
     "amount": "Cantidad",
-    "percent": "Porcentaje"
+    "percent": "Porcentaje",
+    "annual": "Anual",
+    "yes": "Sí",
+    "no": "No"
   },
   "nav": {
     "home": "Inicio",
@@ -49,6 +52,16 @@
     "vaUsage": "Uso del Préstamo VA",
     "isDisabledVeteran": "Veterano Discapacitado",
     "isReservist": "Guardia Nacional/Reservista",
+    "readyToCalculate": "Listo para Calcular",
+    "enterDetails": "Ingrese los detalles de su préstamo y haga clic en Calcular para ver el desglose estimado de su pago.",
+    "sections": {
+      "propertyLoan": "Propiedad y Préstamo",
+      "monthlyCosts": "Costos Mensuales",
+      "pmiCredit": "PMI y Crédito",
+      "creditsPoints": "Créditos y Puntos",
+      "credit": "Crédito",
+      "vaEligibility": "Elegibilidad VA"
+    },
     "results": {
       "title": "Resumen del Préstamo",
       "loanAmount": "Monto del Préstamo",
@@ -104,11 +117,49 @@
     "title": "Calculadora de Compra VA",
     "description": "Calcule pagos y costos de cierre para préstamos VA",
     "fundingFee": "Cargo de Financiamiento VA",
+    "fundingFeeWaived": "El cargo de financiamiento VA está exento para veteranos discapacitados.",
     "usage": {
       "first": "Primer Uso",
       "subsequent": "Uso Subsecuente",
       "refinance": "Refinanciamiento (IRRRL)"
     }
+  },
+  "conventionalRefi": {
+    "title": "Calculadora de Refinanciamiento Convencional",
+    "description": "Calcule pagos y costos de cierre para refinanciamientos convencionales"
+  },
+  "fhaRefi": {
+    "title": "Calculadora de Refinanciamiento FHA",
+    "description": "Calcule pagos y costos de cierre para refinanciamientos FHA"
+  },
+  "vaRefi": {
+    "title": "Calculadora de Refinanciamiento VA",
+    "description": "Calcule pagos y costos de cierre para refinanciamientos VA"
+  },
+  "refinance": {
+    "propertyValue": "Valor de la Propiedad",
+    "existingBalance": "Saldo del Préstamo Existente",
+    "newLoanAmount": "Monto del Nuevo Préstamo",
+    "type": "Tipo de Refinanciamiento",
+    "rateAndTerm": "Tasa y Plazo",
+    "cashOut": "Retiro de Efectivo",
+    "cashOutAmount": "Monto del Retiro de Efectivo",
+    "cashOutRefi": "Refinanciamiento con Retiro de Efectivo",
+    "standardRefi": "Refinanciamiento Estándar",
+    "streamline": "Streamline FHA",
+    "streamlineNote": "El refinanciamiento Streamline FHA ofrece documentación reducida y tasas UFMIP más bajas.",
+    "irrrl": "VA IRRRL",
+    "irrrlNote": "El préstamo de reducción de tasa de interés VA (IRRRL) ofrece cargos de financiamiento reducidos y procesamiento simplificado.",
+    "fhaRefiType": "Tipo de Refinanciamiento FHA",
+    "vaRefiType": "Tipo de Refinanciamiento VA",
+    "enterDetails": "Ingrese los detalles de su refinanciamiento y haga clic en Calcular para ver el desglose estimado de su pago."
+  },
+  "terms": {
+    "30yr": "30 Años",
+    "25yr": "25 Años",
+    "20yr": "20 Años",
+    "15yr": "15 Años",
+    "10yr": "10 Años"
   },
   "sellerNet": {
     "title": "Hoja Neta del Vendedor",
@@ -149,7 +200,9 @@
   "pmiTypes": {
     "monthly": "PMI Mensual",
     "upfront": "PMI Pagado por Adelantado (LPMI)",
-    "split": "Prima Dividida"
+    "split": "Prima Dividida",
+    "singleFinanced": "Prima Única (Financiada)",
+    "singleCash": "Prima Única (Efectivo)"
   },
   "creditTiers": {
     "760plus": "760+",

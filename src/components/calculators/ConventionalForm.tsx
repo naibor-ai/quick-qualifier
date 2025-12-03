@@ -165,8 +165,8 @@ export function ConventionalForm() {
         </CardHeader>
         <CardContent>
           {!config && !configLoading && (
-            <div className="mb-4 p-4 bg-red-50 dark:bg-red-900/20 rounded-lg">
-              <p className="text-sm text-red-700 dark:text-red-300">
+            <div className="mb-4 p-4 bg-red-50 rounded-lg">
+              <p className="text-sm text-red-600">
                 {t('errors.configLoadError')}. Please check your GHL configuration.
               </p>
             </div>
@@ -174,7 +174,7 @@ export function ConventionalForm() {
           <form onSubmit={handleSubmit(onCalculate)} className="space-y-6">
             {/* Property & Loan */}
             <div className="space-y-4">
-              <h3 className="text-sm font-semibold text-zinc-700 dark:text-zinc-300 uppercase tracking-wide">
+              <h3 className="text-sm font-semibold text-slate-700 uppercase tracking-wide">
                 Property & Loan
               </h3>
 
@@ -289,7 +289,7 @@ export function ConventionalForm() {
 
             {/* Monthly Costs */}
             <div className="space-y-4">
-              <h3 className="text-sm font-semibold text-zinc-700 dark:text-zinc-300 uppercase tracking-wide">
+              <h3 className="text-sm font-semibold text-slate-700 uppercase tracking-wide">
                 Monthly Costs
               </h3>
 
@@ -366,7 +366,7 @@ export function ConventionalForm() {
 
             {/* PMI & Credit */}
             <div className="space-y-4">
-              <h3 className="text-sm font-semibold text-zinc-700 dark:text-zinc-300 uppercase tracking-wide">
+              <h3 className="text-sm font-semibold text-slate-700 uppercase tracking-wide">
                 PMI & Credit
               </h3>
 
@@ -405,7 +405,7 @@ export function ConventionalForm() {
 
             {/* Credits & Points */}
             <div className="space-y-4">
-              <h3 className="text-sm font-semibold text-zinc-700 dark:text-zinc-300 uppercase tracking-wide">
+              <h3 className="text-sm font-semibold text-slate-700 uppercase tracking-wide">
                 Credits & Points
               </h3>
 
@@ -484,10 +484,10 @@ export function ConventionalForm() {
             <CardContent>
               <div className="text-center py-12">
                 <div className="text-6xl mb-4">🏠</div>
-                <h3 className="text-lg font-medium text-zinc-900 dark:text-zinc-100 mb-2">
+                <h3 className="text-lg font-medium text-slate-800 mb-2">
                   Ready to Calculate
                 </h3>
-                <p className="text-sm text-zinc-500 dark:text-zinc-400">
+                <p className="text-sm text-slate-500">
                   Enter your loan details and click Calculate to see your estimated payment breakdown.
                 </p>
               </div>

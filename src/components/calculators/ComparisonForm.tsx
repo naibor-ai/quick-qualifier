@@ -148,10 +148,10 @@ export function ComparisonForm() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-zinc-900 dark:text-zinc-100">
+          <h1 className="text-2xl font-bold text-slate-800">
             {t('comparison.title')}
           </h1>
-          <p className="text-sm text-zinc-500 dark:text-zinc-400 mt-1">
+          <p className="text-sm text-slate-500 mt-1">
             {t('comparison.description')}
           </p>
         </div>
@@ -175,12 +175,12 @@ export function ComparisonForm() {
                   type="text"
                   value={scenario.name}
                   onChange={(e) => updateScenario(index, 'name', e.target.value)}
-                  className="text-lg font-semibold bg-transparent border-none focus:outline-none focus:ring-0 p-0 text-zinc-900 dark:text-zinc-100"
+                  className="text-lg font-semibold bg-transparent border-none focus:outline-none focus:ring-0 p-0 text-slate-800"
                 />
                 {scenarios.length > 2 && (
                   <button
                     onClick={() => removeScenario(index)}
-                    className="text-zinc-400 hover:text-red-500 transition-colors"
+                    className="text-slate-400 hover:text-red-500 transition-colors"
                     title={t('comparison.removeScenario')}
                   >
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -257,53 +257,53 @@ export function ComparisonForm() {
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="border-b border-zinc-200 dark:border-zinc-700">
-                    <th className="text-left py-3 px-4 font-medium text-zinc-500 dark:text-zinc-400">Metric</th>
+                  <tr className="border-b border-slate-200">
+                    <th className="text-left py-3 px-4 font-medium text-slate-500">Metric</th>
                     {results.scenarios.map((s, i) => (
-                      <th key={i} className="text-right py-3 px-4 font-medium text-zinc-900 dark:text-zinc-100">
+                      <th key={i} className="text-right py-3 px-4 font-medium text-slate-800">
                         {s.name}
                       </th>
                     ))}
                   </tr>
                 </thead>
                 <tbody>
-                  <tr className="border-b border-zinc-100 dark:border-zinc-800">
-                    <td className="py-3 px-4 text-zinc-600 dark:text-zinc-400">Loan Amount</td>
+                  <tr className="border-b border-slate-100">
+                    <td className="py-3 px-4 text-slate-600">Loan Amount</td>
                     {results.scenarios.map((s, i) => (
                       <td key={i} className="text-right py-3 px-4 font-medium">
                         {formatCurrency(s.loanAmount)}
                       </td>
                     ))}
                   </tr>
-                  <tr className="border-b border-zinc-100 dark:border-zinc-800">
-                    <td className="py-3 px-4 text-zinc-600 dark:text-zinc-400">Down Payment</td>
+                  <tr className="border-b border-slate-100">
+                    <td className="py-3 px-4 text-slate-600">Down Payment</td>
                     {results.scenarios.map((s, i) => (
                       <td key={i} className="text-right py-3 px-4">
                         {formatCurrency(s.downPayment)}
-                        <span className="text-zinc-400 text-xs ml-1">
+                        <span className="text-slate-400 text-xs ml-1">
                           ({formatPercent(s.ltv > 0 ? 100 - s.ltv : 0)})
                         </span>
                       </td>
                     ))}
                   </tr>
-                  <tr className="border-b border-zinc-100 dark:border-zinc-800 bg-blue-50 dark:bg-blue-900/20">
-                    <td className="py-3 px-4 font-medium text-blue-700 dark:text-blue-300">Monthly Payment</td>
+                  <tr className="border-b border-slate-100 bg-blue-50">
+                    <td className="py-3 px-4 font-medium text-blue-700">Monthly Payment</td>
                     {results.scenarios.map((s, i) => (
-                      <td key={i} className="text-right py-3 px-4 font-bold text-blue-700 dark:text-blue-300">
+                      <td key={i} className="text-right py-3 px-4 font-bold text-blue-700">
                         {formatCurrency(s.monthlyPayment)}
                       </td>
                     ))}
                   </tr>
-                  <tr className="border-b border-zinc-100 dark:border-zinc-800">
-                    <td className="py-3 px-4 text-zinc-600 dark:text-zinc-400 pl-8">P&I</td>
+                  <tr className="border-b border-slate-100">
+                    <td className="py-3 px-4 text-slate-600 pl-8">P&I</td>
                     {results.scenarios.map((s, i) => (
                       <td key={i} className="text-right py-3 px-4">
                         {formatCurrency(s.principalAndInterest)}
                       </td>
                     ))}
                   </tr>
-                  <tr className="border-b border-zinc-100 dark:border-zinc-800">
-                    <td className="py-3 px-4 text-zinc-600 dark:text-zinc-400 pl-8">Mortgage Insurance</td>
+                  <tr className="border-b border-slate-100">
+                    <td className="py-3 px-4 text-slate-600 pl-8">Mortgage Insurance</td>
                     {results.scenarios.map((s, i) => (
                       <td key={i} className="text-right py-3 px-4">
                         {s.mortgageInsurance > 0
@@ -313,10 +313,10 @@ export function ComparisonForm() {
                       </td>
                     ))}
                   </tr>
-                  <tr className="bg-green-50 dark:bg-green-900/20">
-                    <td className="py-3 px-4 font-medium text-green-700 dark:text-green-300">Cash to Close</td>
+                  <tr className="bg-green-50">
+                    <td className="py-3 px-4 font-medium text-green-700">Cash to Close</td>
                     {results.scenarios.map((s, i) => (
-                      <td key={i} className="text-right py-3 px-4 font-bold text-green-700 dark:text-green-300">
+                      <td key={i} className="text-right py-3 px-4 font-bold text-green-700">
                         {formatCurrency(s.cashToClose)}
                       </td>
                     ))}
@@ -327,8 +327,8 @@ export function ComparisonForm() {
 
             {/* Summary */}
             <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-4">
-                <h4 className="text-sm font-medium text-blue-800 dark:text-blue-200 mb-2">
+              <div className="bg-blue-50 rounded-lg p-4">
+                <h4 className="text-sm font-medium text-blue-800 mb-2">
                   Lowest Monthly Payment
                 </h4>
                 {(() => {
@@ -337,17 +337,17 @@ export function ComparisonForm() {
                   );
                   return (
                     <div>
-                      <p className="text-2xl font-bold text-blue-700 dark:text-blue-300">
+                      <p className="text-2xl font-bold text-blue-700">
                         {formatCurrency(lowest.monthlyPayment)}
                       </p>
-                      <p className="text-sm text-blue-600 dark:text-blue-400">{lowest.name}</p>
+                      <p className="text-sm text-blue-600">{lowest.name}</p>
                     </div>
                   );
                 })()}
               </div>
 
-              <div className="bg-green-50 dark:bg-green-900/20 rounded-lg p-4">
-                <h4 className="text-sm font-medium text-green-800 dark:text-green-200 mb-2">
+              <div className="bg-green-50 rounded-lg p-4">
+                <h4 className="text-sm font-medium text-green-800 mb-2">
                   Lowest Cash to Close
                 </h4>
                 {(() => {
@@ -356,17 +356,17 @@ export function ComparisonForm() {
                   );
                   return (
                     <div>
-                      <p className="text-2xl font-bold text-green-700 dark:text-green-300">
+                      <p className="text-2xl font-bold text-green-700">
                         {formatCurrency(lowest.cashToClose)}
                       </p>
-                      <p className="text-sm text-green-600 dark:text-green-400">{lowest.name}</p>
+                      <p className="text-sm text-green-600">{lowest.name}</p>
                     </div>
                   );
                 })()}
               </div>
 
-              <div className="bg-purple-50 dark:bg-purple-900/20 rounded-lg p-4">
-                <h4 className="text-sm font-medium text-purple-800 dark:text-purple-200 mb-2">
+              <div className="bg-purple-50 rounded-lg p-4">
+                <h4 className="text-sm font-medium text-purple-800 mb-2">
                   No Mortgage Insurance
                 </h4>
                 {(() => {
@@ -375,15 +375,15 @@ export function ComparisonForm() {
                     <div>
                       {noMI.length > 0 ? (
                         <>
-                          <p className="text-2xl font-bold text-purple-700 dark:text-purple-300">
+                          <p className="text-2xl font-bold text-purple-700">
                             {noMI.length} option{noMI.length > 1 ? 's' : ''}
                           </p>
-                          <p className="text-sm text-purple-600 dark:text-purple-400">
+                          <p className="text-sm text-purple-600">
                             {noMI.map(s => s.name).join(', ')}
                           </p>
                         </>
                       ) : (
-                        <p className="text-sm text-purple-600 dark:text-purple-400">
+                        <p className="text-sm text-purple-600">
                           All options require mortgage insurance
                         </p>
                       )}

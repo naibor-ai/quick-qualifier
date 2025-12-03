@@ -133,8 +133,8 @@ export function FhaForm() {
         </CardHeader>
         <CardContent>
           {!config && !configLoading && (
-            <div className="mb-4 p-4 bg-red-50 dark:bg-red-900/20 rounded-lg">
-              <p className="text-sm text-red-700 dark:text-red-300">
+            <div className="mb-4 p-4 bg-red-50 rounded-lg">
+              <p className="text-sm text-red-600">
                 {t('errors.configLoadError')}. Please check your GHL configuration.
               </p>
             </div>
@@ -142,7 +142,7 @@ export function FhaForm() {
           <form onSubmit={handleSubmit(onCalculate)} className="space-y-6">
             {/* Property & Loan */}
             <div className="space-y-4">
-              <h3 className="text-sm font-semibold text-zinc-700 dark:text-zinc-300 uppercase tracking-wide">
+              <h3 className="text-sm font-semibold text-slate-700 uppercase tracking-wide">
                 Property & Loan
               </h3>
 
@@ -253,7 +253,7 @@ export function FhaForm() {
 
             {/* Monthly Costs */}
             <div className="space-y-4">
-              <h3 className="text-sm font-semibold text-zinc-700 dark:text-zinc-300 uppercase tracking-wide">
+              <h3 className="text-sm font-semibold text-slate-700 uppercase tracking-wide">
                 Monthly Costs
               </h3>
 
@@ -326,7 +326,7 @@ export function FhaForm() {
 
             {/* FHA Options */}
             <div className="space-y-4">
-              <h3 className="text-sm font-semibold text-zinc-700 dark:text-zinc-300 uppercase tracking-wide">
+              <h3 className="text-sm font-semibold text-slate-700 uppercase tracking-wide">
                 FHA Options
               </h3>
 
@@ -347,11 +347,11 @@ export function FhaForm() {
             </div>
 
             {/* FHA Fee Info */}
-            <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-4">
-              <h4 className="text-sm font-medium text-blue-800 dark:text-blue-200 mb-2">
+            <div className="bg-blue-50 rounded-lg p-4">
+              <h4 className="text-sm font-medium text-blue-800 mb-2">
                 FHA Mortgage Insurance
               </h4>
-              <ul className="text-sm text-blue-700 dark:text-blue-300 space-y-1">
+              <ul className="text-sm text-blue-700 space-y-1">
                 <li>• Upfront MIP (UFMIP): 1.75% of loan amount</li>
                 <li>• Annual MIP: 0.55% (for most loans)</li>
                 <li>• MIP is required for life of loan</li>
@@ -380,10 +380,10 @@ export function FhaForm() {
             <CardContent>
               <div className="text-center py-12">
                 <div className="text-6xl mb-4">🏠</div>
-                <h3 className="text-lg font-medium text-zinc-900 dark:text-zinc-100 mb-2">
+                <h3 className="text-lg font-medium text-slate-800 mb-2">
                   Ready to Calculate
                 </h3>
-                <p className="text-sm text-zinc-500 dark:text-zinc-400">
+                <p className="text-sm text-slate-500">
                   Enter your FHA loan details and click Calculate to see your estimated payment breakdown.
                 </p>
               </div>

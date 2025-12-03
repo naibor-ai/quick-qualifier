@@ -25,15 +25,15 @@ export function Button({
 
   const variantStyles = {
     primary:
-      'bg-blue-600 text-white hover:bg-blue-700 focus:ring-blue-500 dark:bg-blue-500 dark:hover:bg-blue-600',
+      'bg-blue-600 text-white hover:bg-blue-700 focus:ring-blue-500',
     secondary:
-      'bg-zinc-100 text-zinc-900 hover:bg-zinc-200 focus:ring-zinc-500 dark:bg-zinc-800 dark:text-zinc-100 dark:hover:bg-zinc-700',
+      'bg-blue-50 text-blue-700 hover:bg-blue-100 focus:ring-blue-500',
     outline:
-      'border border-zinc-300 bg-transparent text-zinc-700 hover:bg-zinc-50 focus:ring-zinc-500 dark:border-zinc-600 dark:text-zinc-300 dark:hover:bg-zinc-800',
+      'border border-blue-200 bg-white text-blue-600 hover:bg-blue-50 focus:ring-blue-500',
     ghost:
-      'bg-transparent text-zinc-700 hover:bg-zinc-100 focus:ring-zinc-500 dark:text-zinc-300 dark:hover:bg-zinc-800',
+      'bg-transparent text-slate-600 hover:bg-slate-100 focus:ring-blue-500',
     danger:
-      'bg-red-600 text-white hover:bg-red-700 focus:ring-red-500 dark:bg-red-500 dark:hover:bg-red-600',
+      'bg-red-600 text-white hover:bg-red-700 focus:ring-red-500',
   };
 
   const sizeStyles = {
@@ -101,15 +101,15 @@ export function IconButton({
 
   const variantStyles = {
     primary:
-      'bg-blue-600 text-white hover:bg-blue-700 focus:ring-blue-500 dark:bg-blue-500 dark:hover:bg-blue-600',
+      'bg-blue-600 text-white hover:bg-blue-700 focus:ring-blue-500',
     secondary:
-      'bg-zinc-100 text-zinc-900 hover:bg-zinc-200 focus:ring-zinc-500 dark:bg-zinc-800 dark:text-zinc-100 dark:hover:bg-zinc-700',
+      'bg-blue-50 text-blue-700 hover:bg-blue-100 focus:ring-blue-500',
     outline:
-      'border border-zinc-300 bg-transparent text-zinc-700 hover:bg-zinc-50 focus:ring-zinc-500 dark:border-zinc-600 dark:text-zinc-300 dark:hover:bg-zinc-800',
+      'border border-blue-200 bg-white text-blue-600 hover:bg-blue-50 focus:ring-blue-500',
     ghost:
-      'bg-transparent text-zinc-700 hover:bg-zinc-100 focus:ring-zinc-500 dark:text-zinc-300 dark:hover:bg-zinc-800',
+      'bg-transparent text-slate-600 hover:bg-slate-100 focus:ring-blue-500',
     danger:
-      'bg-red-600 text-white hover:bg-red-700 focus:ring-red-500 dark:bg-red-500 dark:hover:bg-red-600',
+      'bg-red-600 text-white hover:bg-red-700 focus:ring-red-500',
   };
 
   const sizeStyles = {

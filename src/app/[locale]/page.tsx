@@ -17,10 +17,10 @@ export default function Home() {
   ];
 
   return (
-    <div className="min-h-screen bg-zinc-50 dark:bg-zinc-900">
-      <header className="border-b border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-950">
+    <div className="min-h-screen bg-slate-50">
+      <header className="border-b border-slate-200 bg-white">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4">
-          <h1 className="text-2xl font-bold text-zinc-900 dark:text-white">
+          <h1 className="text-2xl font-bold text-blue-600">
             {t('common.appName')}
           </h1>
           <LanguageSwitcher />
@@ -28,22 +28,24 @@ export default function Home() {
       </header>
 
       <main className="mx-auto max-w-7xl px-4 py-12">
-        <div className="mb-8">
-          <h2 className="text-xl font-semibold text-zinc-900 dark:text-white">
+        <div className="mb-8 text-center">
+          <h2 className="text-3xl font-semibold text-slate-800">
             {t('nav.home')}
           </h2>
+          <p className="mt-2 text-slate-500">Select a calculator to get started</p>
         </div>
 
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {calculators.map((calc) => (
             <Link
               key={calc.href}
               href={calc.href}
-              className="rounded-lg border border-zinc-200 bg-white p-6 shadow-sm transition-shadow hover:shadow-md dark:border-zinc-800 dark:bg-zinc-950"
+              className="group rounded-xl border border-slate-200 bg-white p-6 shadow-sm transition-all hover:shadow-lg hover:border-blue-200 hover:-translate-y-1"
             >
-              <span className="text-lg font-medium text-zinc-900 dark:text-white">
+              <span className="text-lg font-medium text-slate-800 group-hover:text-blue-600 transition-colors">
                 {calc.label}
               </span>
+              <p className="mt-2 text-sm text-slate-500">Calculate mortgage details</p>
             </Link>
           ))}
         </div>

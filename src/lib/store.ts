@@ -73,6 +73,47 @@ interface VaInputs {
   isReservist: boolean;
 }
 
+// Refinance Inputs
+interface ConventionalRefiInputs {
+  propertyValue: number;
+  existingLoanBalance: number;
+  newLoanAmount: number;
+  interestRate: number;
+  termYears: number;
+  propertyTaxAnnual: number;
+  homeInsuranceAnnual: number;
+  hoaDuesMonthly: number;
+  creditScoreTier: CreditScoreTier;
+  refinanceType: 'rate_term' | 'cash_out';
+}
+
+interface FhaRefiInputs {
+  propertyValue: number;
+  existingLoanBalance: number;
+  newLoanAmount: number;
+  interestRate: number;
+  termYears: number;
+  propertyTaxAnnual: number;
+  homeInsuranceAnnual: number;
+  hoaDuesMonthly: number;
+  isStreamline: boolean;
+}
+
+interface VaRefiInputs {
+  propertyValue: number;
+  existingLoanBalance: number;
+  newLoanAmount: number;
+  interestRate: number;
+  termYears: number;
+  propertyTaxAnnual: number;
+  homeInsuranceAnnual: number;
+  hoaDuesMonthly: number;
+  isIrrrl: boolean;
+  vaUsage: VaUsage;
+  isDisabledVeteran: boolean;
+  cashOutAmount: number;
+}
+
 interface SellerNetInputs {
   salesPrice: number;
   existingLoanPayoff: number;
@@ -116,10 +157,18 @@ interface CalculatorState {
   sellerNetInputs: SellerNetInputs;
   comparisonScenarios: ComparisonScenarioInputs[];
 
+  // Refinance Inputs
+  conventionalRefiInputs: ConventionalRefiInputs;
+  fhaRefiInputs: FhaRefiInputs;
+  vaRefiInputs: VaRefiInputs;
+
   // Results
   conventionalResult: LoanCalculationResult | null;
   fhaResult: LoanCalculationResult | null;
   vaResult: LoanCalculationResult | null;
+  conventionalRefiResult: LoanCalculationResult | null;
+  fhaRefiResult: LoanCalculationResult | null;
+  vaRefiResult: LoanCalculationResult | null;
 
   // Actions
   setConfig: (config: GhlConfig) => void;
@@ -135,12 +184,18 @@ interface CalculatorState {
   updateVaInputs: (inputs: Partial<VaInputs>) => void;
   updateSellerNetInputs: (inputs: Partial<SellerNetInputs>) => void;
   updateComparisonScenario: (index: number, inputs: Partial<ComparisonScenarioInputs>) => void;
+  updateConventionalRefiInputs: (inputs: Partial<ConventionalRefiInputs>) => void;
+  updateFhaRefiInputs: (inputs: Partial<FhaRefiInputs>) => void;
+  updateVaRefiInputs: (inputs: Partial<VaRefiInputs>) => void;
 
   setConventionalResult: (result: LoanCalculationResult | null) => void;
   setFhaResult: (result: LoanCalculationResult | null) => void;
   setVaResult: (result: LoanCalculationResult | null) => void;
+  setConventionalRefiResult: (result: LoanCalculationResult | null) => void;
+  setFhaRefiResult: (result: LoanCalculationResult | null) => void;
+  setVaRefiResult: (result: LoanCalculationResult | null) => void;
 
-  resetCalculator: (type: 'conventional' | 'fha' | 'va' | 'sellerNet' | 'comparison') => void;
+  resetCalculator: (type: 'conventional' | 'fha' | 'va' | 'sellerNet' | 'comparison' | 'conventionalRefi' | 'fhaRefi' | 'vaRefi') => void;
 }
 
 // ============================================================================
@@ -238,6 +293,46 @@ const defaultComparisonScenarios: ComparisonScenarioInputs[] = [
   },
 ];
 
+const defaultConventionalRefiInputs: ConventionalRefiInputs = {
+  propertyValue: 500000,
+  existingLoanBalance: 350000,
+  newLoanAmount: 350000,
+  interestRate: 6.5,
+  termYears: 30,
+  propertyTaxAnnual: 6000,
+  homeInsuranceAnnual: 1800,
+  hoaDuesMonthly: 0,
+  creditScoreTier: '740',
+  refinanceType: 'rate_term',
+};
+
+const defaultFhaRefiInputs: FhaRefiInputs = {
+  propertyValue: 400000,
+  existingLoanBalance: 300000,
+  newLoanAmount: 300000,
+  interestRate: 6.0,
+  termYears: 30,
+  propertyTaxAnnual: 5000,
+  homeInsuranceAnnual: 1500,
+  hoaDuesMonthly: 0,
+  isStreamline: false,
+};
+
+const defaultVaRefiInputs: VaRefiInputs = {
+  propertyValue: 450000,
+  existingLoanBalance: 320000,
+  newLoanAmount: 320000,
+  interestRate: 6.0,
+  termYears: 30,
+  propertyTaxAnnual: 5500,
+  homeInsuranceAnnual: 1600,
+  hoaDuesMonthly: 0,
+  isIrrrl: false,
+  vaUsage: 'first',
+  isDisabledVeteran: false,
+  cashOutAmount: 0,
+};
+
 // ============================================================================
 // STORE
 // ============================================================================
@@ -262,10 +357,18 @@ export const useCalculatorStore = create<CalculatorState>()(
       sellerNetInputs: defaultSellerNetInputs,
       comparisonScenarios: defaultComparisonScenarios,
 
+      // Refinance Inputs
+      conventionalRefiInputs: defaultConventionalRefiInputs,
+      fhaRefiInputs: defaultFhaRefiInputs,
+      vaRefiInputs: defaultVaRefiInputs,
+
       // Results
       conventionalResult: null,
       fhaResult: null,
       vaResult: null,
+      conventionalRefiResult: null,
+      fhaRefiResult: null,
+      vaRefiResult: null,
 
       // Actions
       setConfig: (config) => set({ config, configError: null }),
@@ -305,9 +408,27 @@ export const useCalculatorStore = create<CalculatorState>()(
           return { comparisonScenarios: scenarios };
         }),
 
+      updateConventionalRefiInputs: (inputs) =>
+        set((state) => ({
+          conventionalRefiInputs: { ...state.conventionalRefiInputs, ...inputs },
+        })),
+
+      updateFhaRefiInputs: (inputs) =>
+        set((state) => ({
+          fhaRefiInputs: { ...state.fhaRefiInputs, ...inputs },
+        })),
+
+      updateVaRefiInputs: (inputs) =>
+        set((state) => ({
+          vaRefiInputs: { ...state.vaRefiInputs, ...inputs },
+        })),
+
       setConventionalResult: (conventionalResult) => set({ conventionalResult }),
       setFhaResult: (fhaResult) => set({ fhaResult }),
       setVaResult: (vaResult) => set({ vaResult }),
+      setConventionalRefiResult: (conventionalRefiResult) => set({ conventionalRefiResult }),
+      setFhaRefiResult: (fhaRefiResult) => set({ fhaRefiResult }),
+      setVaRefiResult: (vaRefiResult) => set({ vaRefiResult }),
 
       resetCalculator: (type) => {
         switch (type) {
@@ -329,6 +450,24 @@ export const useCalculatorStore = create<CalculatorState>()(
           case 'comparison':
             set({ comparisonScenarios: defaultComparisonScenarios });
             break;
+          case 'conventionalRefi':
+            set({
+              conventionalRefiInputs: defaultConventionalRefiInputs,
+              conventionalRefiResult: null,
+            });
+            break;
+          case 'fhaRefi':
+            set({
+              fhaRefiInputs: defaultFhaRefiInputs,
+              fhaRefiResult: null,
+            });
+            break;
+          case 'vaRefi':
+            set({
+              vaRefiInputs: defaultVaRefiInputs,
+              vaRefiResult: null,
+            });
+            break;
         }
       },
     }),
@@ -341,6 +480,9 @@ export const useCalculatorStore = create<CalculatorState>()(
         vaInputs: state.vaInputs,
         sellerNetInputs: state.sellerNetInputs,
         comparisonScenarios: state.comparisonScenarios,
+        conventionalRefiInputs: state.conventionalRefiInputs,
+        fhaRefiInputs: state.fhaRefiInputs,
+        vaRefiInputs: state.vaRefiInputs,
         selectedAgent: state.selectedAgent,
       }),
     }

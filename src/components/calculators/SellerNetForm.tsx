@@ -143,7 +143,7 @@ export function SellerNetForm() {
           <form onSubmit={handleSubmit(onCalculate)} className="space-y-6">
             {/* Property */}
             <div className="space-y-4">
-              <h3 className="text-sm font-semibold text-zinc-700 dark:text-zinc-300 uppercase tracking-wide">
+              <h3 className="text-sm font-semibold text-slate-700 uppercase tracking-wide">
                 Property Sale
               </h3>
 
@@ -167,7 +167,7 @@ export function SellerNetForm() {
 
             {/* Loan Payoffs */}
             <div className="space-y-4">
-              <h3 className="text-sm font-semibold text-zinc-700 dark:text-zinc-300 uppercase tracking-wide">
+              <h3 className="text-sm font-semibold text-slate-700 uppercase tracking-wide">
                 Loan Payoffs
               </h3>
 
@@ -205,7 +205,7 @@ export function SellerNetForm() {
 
             {/* Commission & Fees */}
             <div className="space-y-4">
-              <h3 className="text-sm font-semibold text-zinc-700 dark:text-zinc-300 uppercase tracking-wide">
+              <h3 className="text-sm font-semibold text-slate-700 uppercase tracking-wide">
                 Commission & Fees
               </h3>
 
@@ -293,7 +293,7 @@ export function SellerNetForm() {
 
             {/* Other Costs */}
             <div className="space-y-4">
-              <h3 className="text-sm font-semibold text-zinc-700 dark:text-zinc-300 uppercase tracking-wide">
+              <h3 className="text-sm font-semibold text-slate-700 uppercase tracking-wide">
                 Other Costs
               </h3>
 
@@ -349,7 +349,7 @@ export function SellerNetForm() {
 
             {/* Credits */}
             <div className="space-y-4">
-              <h3 className="text-sm font-semibold text-zinc-700 dark:text-zinc-300 uppercase tracking-wide">
+              <h3 className="text-sm font-semibold text-slate-700 uppercase tracking-wide">
                 Credits to Seller
               </h3>
 
@@ -407,10 +407,10 @@ export function SellerNetForm() {
             <CardContent>
               <div className="text-center py-12">
                 <div className="text-6xl mb-4">💰</div>
-                <h3 className="text-lg font-medium text-zinc-900 dark:text-zinc-100 mb-2">
+                <h3 className="text-lg font-medium text-slate-800 mb-2">
                   Ready to Calculate
                 </h3>
-                <p className="text-sm text-zinc-500 dark:text-zinc-400">
+                <p className="text-sm text-slate-500">
                   Enter sale details and click Calculate to see estimated net proceeds.
                 </p>
               </div>

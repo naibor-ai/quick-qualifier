@@ -12,14 +12,14 @@ interface ResultItemProps {
 
 function ResultItem({ label, value, highlight = false, subtext }: ResultItemProps) {
   return (
-    <div className={`flex justify-between items-baseline py-2 ${highlight ? 'border-t border-b border-zinc-200 dark:border-zinc-700' : ''}`}>
-      <span className="text-sm text-zinc-600 dark:text-zinc-400">{label}</span>
+    <div className={`flex justify-between items-baseline py-2 ${highlight ? 'border-t border-b border-slate-200' : ''}`}>
+      <span className="text-sm text-slate-600">{label}</span>
       <div className="text-right">
-        <span className={`font-medium ${highlight ? 'text-lg text-blue-600 dark:text-blue-400' : 'text-zinc-900 dark:text-zinc-100'}`}>
+        <span className={`font-medium ${highlight ? 'text-lg text-blue-600' : 'text-slate-800'}`}>
           {value}
         </span>
         {subtext && (
-          <p className="text-xs text-zinc-500 dark:text-zinc-500">{subtext}</p>
+          <p className="text-xs text-slate-500">{subtext}</p>
         )}
       </div>
     </div>
@@ -34,10 +34,10 @@ interface ResultSectionProps {
 function ResultSection({ title, children }: ResultSectionProps) {
   return (
     <div className="space-y-1">
-      <h4 className="text-sm font-semibold text-zinc-700 dark:text-zinc-300 uppercase tracking-wide">
+      <h4 className="text-sm font-semibold text-slate-700 uppercase tracking-wide">
         {title}
       </h4>
-      <div className="bg-zinc-50 dark:bg-zinc-800/50 rounded-lg p-3">
+      <div className="bg-slate-50/50 rounded-lg p-3">
         {children}
       </div>
     </div>
@@ -73,8 +73,8 @@ export function ResultSummary({
   return (
     <div className="space-y-6">
       {/* Primary Results */}
-      <div className="bg-white dark:bg-zinc-900 rounded-xl border border-zinc-200 dark:border-zinc-700 p-6">
-        <h3 className="text-lg font-semibold text-zinc-900 dark:text-zinc-100 mb-4">
+      <div className="bg-white rounded-xl border border-slate-200 p-6">
+        <h3 className="text-lg font-semibold text-slate-800 mb-4">
           {t('results.title')}
         </h3>
 
@@ -102,8 +102,8 @@ export function ResultSummary({
 
       {/* Monthly Payment Breakdown */}
       {showMonthlyBreakdown && (
-        <div className="bg-white dark:bg-zinc-900 rounded-xl border border-zinc-200 dark:border-zinc-700 p-6">
-          <h3 className="text-lg font-semibold text-zinc-900 dark:text-zinc-100 mb-4">
+        <div className="bg-white rounded-xl border border-slate-200 p-6">
+          <h3 className="text-lg font-semibold text-slate-800 mb-4">
             {t('results.monthlyBreakdown')}
           </h3>
 
@@ -138,7 +138,7 @@ export function ResultSummary({
                 value={formatCurrency(result.monthlyPayment.floodInsurance)}
               />
             )}
-            <div className="border-t border-zinc-200 dark:border-zinc-700 pt-2 mt-2">
+            <div className="border-t border-slate-200 pt-2 mt-2">
               <ResultItem
                 label={t('results.totalPiti')}
                 value={formatCurrency(result.monthlyPayment.totalMonthly)}
@@ -151,8 +151,8 @@ export function ResultSummary({
 
       {/* Closing Costs */}
       {showClosingCosts && (
-        <div className="bg-white dark:bg-zinc-900 rounded-xl border border-zinc-200 dark:border-zinc-700 p-6">
-          <h3 className="text-lg font-semibold text-zinc-900 dark:text-zinc-100 mb-4">
+        <div className="bg-white rounded-xl border border-slate-200 p-6">
+          <h3 className="text-lg font-semibold text-slate-800 mb-4">
             {t('results.closingCosts')}
           </h3>
 
@@ -236,7 +236,7 @@ export function ResultSummary({
             </div>
           )}
 
-          <div className="border-t border-zinc-200 dark:border-zinc-700 pt-4 mt-4">
+          <div className="border-t border-slate-200 pt-4 mt-4">
             <ResultItem
               label={t('results.totalClosingCosts')}
               value={formatCurrency(result.closingCosts.totalClosingCosts)}
@@ -302,8 +302,8 @@ export function SellerNetResult({ result }: SellerNetResultProps) {
 
   return (
     <div className="space-y-6">
-      <div className="bg-white dark:bg-zinc-900 rounded-xl border border-zinc-200 dark:border-zinc-700 p-6">
-        <h3 className="text-lg font-semibold text-zinc-900 dark:text-zinc-100 mb-4">
+      <div className="bg-white rounded-xl border border-slate-200 p-6">
+        <h3 className="text-lg font-semibold text-slate-800 mb-4">
           {t('sellerNet.results.title')}
         </h3>
 
@@ -364,7 +364,7 @@ export function SellerNetResult({ result }: SellerNetResultProps) {
                 value={formatCurrency(result.breakdown.otherDebits)}
               />
             )}
-            <div className="border-t border-zinc-200 dark:border-zinc-700 pt-2 mt-2">
+            <div className="border-t border-slate-200 pt-2 mt-2">
               <ResultItem
                 label={t('sellerNet.results.totalDebits')}
                 value={formatCurrency(result.totalDebits)}
@@ -389,7 +389,7 @@ export function SellerNetResult({ result }: SellerNetResultProps) {
                   value={formatCurrency(result.breakdown.otherCredits)}
                 />
               )}
-              <div className="border-t border-zinc-200 dark:border-zinc-700 pt-2 mt-2">
+              <div className="border-t border-slate-200 pt-2 mt-2">
                 <ResultItem
                   label={t('sellerNet.results.totalCredits')}
                   value={formatCurrency(result.totalCredits)}

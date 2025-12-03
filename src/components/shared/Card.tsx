@@ -10,7 +10,7 @@ interface CardProps {
 export function Card({ children, className = '' }: CardProps) {
   return (
     <div
-      className={`bg-white dark:bg-zinc-900 rounded-xl border border-zinc-200 dark:border-zinc-700 shadow-sm ${className}`}
+      className={`bg-white rounded-xl border border-slate-200 shadow-sm ${className}`}
     >
       {children}
     </div>
@@ -25,7 +25,7 @@ interface CardHeaderProps {
 export function CardHeader({ children, className = '' }: CardHeaderProps) {
   return (
     <div
-      className={`px-6 py-4 border-b border-zinc-200 dark:border-zinc-700 ${className}`}
+      className={`px-6 py-4 border-b border-slate-200 ${className}`}
     >
       {children}
     </div>
@@ -40,7 +40,7 @@ interface CardTitleProps {
 export function CardTitle({ children, className = '' }: CardTitleProps) {
   return (
     <h2
-      className={`text-lg font-semibold text-zinc-900 dark:text-zinc-100 ${className}`}
+      className={`text-lg font-semibold text-slate-800 ${className}`}
     >
       {children}
     </h2>
@@ -54,7 +54,7 @@ interface CardDescriptionProps {
 
 export function CardDescription({ children, className = '' }: CardDescriptionProps) {
   return (
-    <p className={`text-sm text-zinc-500 dark:text-zinc-400 mt-1 ${className}`}>
+    <p className={`text-sm text-slate-500 mt-1 ${className}`}>
       {children}
     </p>
   );
@@ -77,7 +77,7 @@ interface CardFooterProps {
 export function CardFooter({ children, className = '' }: CardFooterProps) {
   return (
     <div
-      className={`px-6 py-4 border-t border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800/50 rounded-b-xl ${className}`}
+      className={`px-6 py-4 border-t border-slate-200 bg-slate-50 rounded-b-xl ${className}`}
     >
       {children}
     </div>
