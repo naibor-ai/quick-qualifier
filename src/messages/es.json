@@ -10,7 +10,9 @@
     "print": "Imprimir",
     "language": "Idioma",
     "english": "Inglés",
-    "spanish": "Español"
+    "spanish": "Español",
+    "amount": "Cantidad",
+    "percent": "Porcentaje"
   },
   "nav": {
     "home": "Inicio",
@@ -27,27 +29,127 @@
     "purchasePrice": "Precio de Compra",
     "salesPrice": "Precio de Venta",
     "downPayment": "Enganche",
+    "downPaymentAmount": "Cantidad del Enganche",
     "downPaymentPercent": "Enganche %",
+    "downPaymentMode": "Modo de Enganche",
     "loanAmount": "Monto del Préstamo",
     "interestRate": "Tasa de Interés",
     "term": "Plazo del Préstamo (Años)",
     "propertyTax": "Impuesto Predial (Anual)",
     "homeInsurance": "Seguro de Hogar (Anual)",
     "hoaDues": "Cuota HOA (Mensual)",
+    "floodInsurance": "Seguro de Inundación (Mensual)",
     "creditScore": "Rango de Crédito",
-    "loanProgram": "Programa de Préstamo"
+    "loanProgram": "Programa de Préstamo",
+    "pmiType": "Tipo de PMI",
+    "sellerCredit": "Crédito del Vendedor",
+    "lenderCredit": "Crédito del Prestamista",
+    "originationPoints": "Puntos de Originación",
+    "is203k": "Préstamo FHA 203(k)",
+    "vaUsage": "Uso del Préstamo VA",
+    "isDisabledVeteran": "Veterano Discapacitado",
+    "isReservist": "Guardia Nacional/Reservista",
+    "results": {
+      "title": "Resumen del Préstamo",
+      "loanAmount": "Monto del Préstamo",
+      "downPayment": "Enganche",
+      "ltv": "Préstamo-Valor (LTV)",
+      "monthlyPayment": "Pago Mensual",
+      "monthlyBreakdown": "Desglose del Pago Mensual",
+      "principalInterest": "Capital e Interés",
+      "propertyTax": "Impuesto Predial",
+      "homeInsurance": "Seguro de Hogar",
+      "mortgageInsurance": "Seguro Hipotecario",
+      "hoa": "Cuota HOA",
+      "floodInsurance": "Seguro de Inundación",
+      "totalPiti": "Total PITI",
+      "closingCosts": "Costos de Cierre",
+      "prepaidItems": "Elementos Prepagados",
+      "prepaidInterest": "Interés Prepagado",
+      "prepaidTaxes": "Impuestos Prepagados",
+      "prepaidInsurance": "Seguro Prepagado",
+      "escrowReserves": "Reservas de Escrow",
+      "taxReserves": "Reservas de Impuestos",
+      "insuranceReserves": "Reservas de Seguro",
+      "lenderFees": "Cargos del Prestamista",
+      "originationFee": "Cargo de Originación",
+      "processingFee": "Cargo de Procesamiento",
+      "underwritingFee": "Cargo de Suscripción",
+      "appraisalFee": "Cargo de Avalúo",
+      "creditReportFee": "Cargo del Reporte de Crédito",
+      "floodCertFee": "Cargo de Certificación de Inundación",
+      "titleFees": "Cargos de Título",
+      "titleInsurance": "Seguro de Título",
+      "settlementFee": "Cargo de Cierre",
+      "recordingFees": "Cargos de Registro",
+      "credits": "Créditos",
+      "sellerCredit": "Crédito del Vendedor",
+      "lenderCredit": "Crédito del Prestamista",
+      "totalClosingCosts": "Costos de Cierre Totales",
+      "cashToClose": "Efectivo Estimado para Cerrar",
+      "cashToCloseBreakdown": "Enganche: {downPayment} + Costos de Cierre: {closingCosts}"
+    }
   },
-  "results": {
-    "monthlyPayment": "Pago Mensual",
-    "principalInterest": "Capital e Interés",
-    "mortgageInsurance": "Seguro Hipotecario",
-    "propertyTax": "Impuesto Predial",
-    "homeInsurance": "Seguro de Hogar",
-    "hoaDues": "HOA",
-    "totalPayment": "Pago Mensual Total",
-    "loanToValue": "Préstamo-Valor (LTV)",
-    "closingCosts": "Costos de Cierre Estimados",
-    "cashToClose": "Efectivo para Cerrar"
+  "conventional": {
+    "title": "Calculadora de Compra Convencional",
+    "description": "Calcule pagos y costos de cierre para préstamos convencionales"
+  },
+  "fha": {
+    "title": "Calculadora de Compra FHA",
+    "description": "Calcule pagos y costos de cierre para préstamos FHA",
+    "ufmip": "MIP Inicial",
+    "mip": "MIP Mensual"
+  },
+  "va": {
+    "title": "Calculadora de Compra VA",
+    "description": "Calcule pagos y costos de cierre para préstamos VA",
+    "fundingFee": "Cargo de Financiamiento VA",
+    "usage": {
+      "first": "Primer Uso",
+      "subsequent": "Uso Subsecuente",
+      "refinance": "Refinanciamiento (IRRRL)"
+    }
+  },
+  "sellerNet": {
+    "title": "Hoja Neta del Vendedor",
+    "description": "Estime las ganancias netas de una venta de casa",
+    "inputs": {
+      "salesPrice": "Precio de Venta",
+      "existingLoanPayoff": "Liquidación de Préstamo Existente",
+      "secondLienPayoff": "Liquidación de Segundo Gravamen",
+      "commissionPercent": "Comisión (%)",
+      "titleInsurance": "Seguro de Título",
+      "escrowFee": "Cargo de Escrow",
+      "transferTax": "Impuesto de Transferencia",
+      "recordingFees": "Cargos de Registro",
+      "repairCredits": "Créditos de Reparación",
+      "hoaPayoff": "Liquidación HOA",
+      "propertyTaxProration": "Prorrateo de Impuesto Predial (Crédito)",
+      "otherCredits": "Otros Créditos",
+      "otherDebits": "Otros Débitos"
+    },
+    "results": {
+      "title": "Resumen de Ganancias Netas",
+      "grossSalesPrice": "Precio de Venta Bruto",
+      "debits": "Débitos",
+      "credits": "Créditos",
+      "totalDebits": "Total de Débitos",
+      "totalCredits": "Total de Créditos",
+      "netProceeds": "Ganancias Netas Estimadas",
+      "shortfall": "Advertencia: Esta venta resulta en un déficit"
+    }
+  },
+  "comparison": {
+    "title": "Comparación de Préstamos",
+    "description": "Compare múltiples escenarios de préstamos lado a lado",
+    "scenario": "Escenario",
+    "addScenario": "Agregar Escenario",
+    "removeScenario": "Eliminar Escenario"
+  },
+  "pmiTypes": {
+    "monthly": "PMI Mensual",
+    "upfront": "PMI Pagado por Adelantado (LPMI)",
+    "split": "Prima Dividida"
   },
   "creditTiers": {
     "760plus": "760+",
@@ -63,6 +165,8 @@
     "required": "Este campo es requerido",
     "invalidNumber": "Por favor ingrese un número válido",
     "minValue": "El valor debe ser al menos {min}",
-    "maxValue": "El valor debe ser como máximo {max}"
+    "maxValue": "El valor debe ser como máximo {max}",
+    "configLoadError": "Error al cargar la configuración",
+    "calculationError": "Error de cálculo"
   }
 }

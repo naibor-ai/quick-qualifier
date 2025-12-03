@@ -10,7 +10,9 @@
     "print": "Print",
     "language": "Language",
     "english": "English",
-    "spanish": "Spanish"
+    "spanish": "Spanish",
+    "amount": "Amount",
+    "percent": "Percent"
   },
   "nav": {
     "home": "Home",
@@ -27,27 +29,127 @@
     "purchasePrice": "Purchase Price",
     "salesPrice": "Sales Price",
     "downPayment": "Down Payment",
+    "downPaymentAmount": "Down Payment Amount",
     "downPaymentPercent": "Down Payment %",
+    "downPaymentMode": "Down Payment Mode",
     "loanAmount": "Loan Amount",
     "interestRate": "Interest Rate",
     "term": "Loan Term (Years)",
     "propertyTax": "Property Tax (Annual)",
     "homeInsurance": "Hazard Insurance (Annual)",
     "hoaDues": "HOA Dues (Monthly)",
+    "floodInsurance": "Flood Insurance (Monthly)",
     "creditScore": "Credit Score Tier",
-    "loanProgram": "Loan Program"
+    "loanProgram": "Loan Program",
+    "pmiType": "PMI Type",
+    "sellerCredit": "Seller Credit",
+    "lenderCredit": "Lender Credit",
+    "originationPoints": "Origination Points",
+    "is203k": "FHA 203(k) Loan",
+    "vaUsage": "VA Loan Usage",
+    "isDisabledVeteran": "Disabled Veteran",
+    "isReservist": "National Guard/Reservist",
+    "results": {
+      "title": "Loan Summary",
+      "loanAmount": "Loan Amount",
+      "downPayment": "Down Payment",
+      "ltv": "Loan-to-Value (LTV)",
+      "monthlyPayment": "Monthly Payment",
+      "monthlyBreakdown": "Monthly Payment Breakdown",
+      "principalInterest": "Principal & Interest",
+      "propertyTax": "Property Tax",
+      "homeInsurance": "Home Insurance",
+      "mortgageInsurance": "Mortgage Insurance",
+      "hoa": "HOA Dues",
+      "floodInsurance": "Flood Insurance",
+      "totalPiti": "Total PITI",
+      "closingCosts": "Closing Costs",
+      "prepaidItems": "Prepaid Items",
+      "prepaidInterest": "Prepaid Interest",
+      "prepaidTaxes": "Prepaid Taxes",
+      "prepaidInsurance": "Prepaid Insurance",
+      "escrowReserves": "Escrow Reserves",
+      "taxReserves": "Tax Reserves",
+      "insuranceReserves": "Insurance Reserves",
+      "lenderFees": "Lender Fees",
+      "originationFee": "Origination Fee",
+      "processingFee": "Processing Fee",
+      "underwritingFee": "Underwriting Fee",
+      "appraisalFee": "Appraisal Fee",
+      "creditReportFee": "Credit Report Fee",
+      "floodCertFee": "Flood Certification Fee",
+      "titleFees": "Title Fees",
+      "titleInsurance": "Title Insurance",
+      "settlementFee": "Settlement Fee",
+      "recordingFees": "Recording Fees",
+      "credits": "Credits",
+      "sellerCredit": "Seller Credit",
+      "lenderCredit": "Lender Credit",
+      "totalClosingCosts": "Total Closing Costs",
+      "cashToClose": "Estimated Cash to Close",
+      "cashToCloseBreakdown": "Down Payment: {downPayment} + Closing Costs: {closingCosts}"
+    }
   },
-  "results": {
-    "monthlyPayment": "Monthly Payment",
-    "principalInterest": "Principal & Interest",
-    "mortgageInsurance": "Mortgage Insurance",
-    "propertyTax": "Property Tax",
-    "homeInsurance": "Home Insurance",
-    "hoaDues": "HOA",
-    "totalPayment": "Total Monthly Payment",
-    "loanToValue": "Loan-to-Value (LTV)",
-    "closingCosts": "Estimated Closing Costs",
-    "cashToClose": "Cash to Close"
+  "conventional": {
+    "title": "Conventional Purchase Calculator",
+    "description": "Calculate payments and closing costs for conventional loans"
+  },
+  "fha": {
+    "title": "FHA Purchase Calculator",
+    "description": "Calculate payments and closing costs for FHA loans",
+    "ufmip": "Upfront MIP",
+    "mip": "Monthly MIP"
+  },
+  "va": {
+    "title": "VA Purchase Calculator",
+    "description": "Calculate payments and closing costs for VA loans",
+    "fundingFee": "VA Funding Fee",
+    "usage": {
+      "first": "First Time Use",
+      "subsequent": "Subsequent Use",
+      "refinance": "Refinance (IRRRL)"
+    }
+  },
+  "sellerNet": {
+    "title": "Seller Net Sheet",
+    "description": "Estimate net proceeds from a home sale",
+    "inputs": {
+      "salesPrice": "Sales Price",
+      "existingLoanPayoff": "Existing Loan Payoff",
+      "secondLienPayoff": "Second Lien Payoff",
+      "commissionPercent": "Commission (%)",
+      "titleInsurance": "Title Insurance",
+      "escrowFee": "Escrow Fee",
+      "transferTax": "Transfer Tax",
+      "recordingFees": "Recording Fees",
+      "repairCredits": "Repair Credits",
+      "hoaPayoff": "HOA Payoff",
+      "propertyTaxProration": "Property Tax Proration (Credit)",
+      "otherCredits": "Other Credits",
+      "otherDebits": "Other Debits"
+    },
+    "results": {
+      "title": "Net Proceeds Summary",
+      "grossSalesPrice": "Gross Sales Price",
+      "debits": "Debits",
+      "credits": "Credits",
+      "totalDebits": "Total Debits",
+      "totalCredits": "Total Credits",
+      "netProceeds": "Estimated Net Proceeds",
+      "shortfall": "Warning: This sale results in a shortfall"
+    }
+  },
+  "comparison": {
+    "title": "Loan Comparison",
+    "description": "Compare multiple loan scenarios side by side",
+    "scenario": "Scenario",
+    "addScenario": "Add Scenario",
+    "removeScenario": "Remove Scenario"
+  },
+  "pmiTypes": {
+    "monthly": "Monthly PMI",
+    "upfront": "Upfront (LPMI)",
+    "split": "Split Premium"
   },
   "creditTiers": {
     "760plus": "760+",
@@ -63,6 +165,8 @@
     "required": "This field is required",
     "invalidNumber": "Please enter a valid number",
     "minValue": "Value must be at least {min}",
-    "maxValue": "Value must be at most {max}"
+    "maxValue": "Value must be at most {max}",
+    "configLoadError": "Failed to load configuration",
+    "calculationError": "Calculation error"
   }
 }
