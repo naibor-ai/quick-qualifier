@@ -1,19 +1,19 @@
-import { useTranslations } from 'next-intl';
+'use client';
+
+import { useTranslations, useLocale } from 'next-intl';
 import Link from 'next/link';
 import { LanguageSwitcher } from '@/components/shared/LanguageSwitcher';
 
 export default function Home() {
   const t = useTranslations();
+  const locale = useLocale();
 
   const calculators = [
-    { href: '/calculators/conventional', label: t('nav.conventional') },
-    { href: '/calculators/conventional-refi', label: t('nav.conventionalRefi') },
-    { href: '/calculators/fha', label: t('nav.fha') },
-    { href: '/calculators/fha-refi', label: t('nav.fhaRefi') },
-    { href: '/calculators/va', label: t('nav.va') },
-    { href: '/calculators/va-refi', label: t('nav.vaRefi') },
-    { href: '/calculators/seller-net', label: t('nav.sellerNet') },
-    { href: '/calculators/compare', label: t('nav.compare') },
+    { href: `/${locale}/calculators/conventional`, label: t('nav.conventional') },
+    { href: `/${locale}/calculators/fha`, label: t('nav.fha') },
+    { href: `/${locale}/calculators/va`, label: t('nav.va') },
+    { href: `/${locale}/calculators/seller-net`, label: t('nav.sellerNet') },
+    { href: `/${locale}/calculators/comparison`, label: t('nav.compare') },
   ];
 
   return (
