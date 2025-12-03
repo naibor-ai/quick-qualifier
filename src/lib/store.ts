@@ -351,30 +351,38 @@ export const useCalculatorStore = create<CalculatorState>()(
 // HOOKS
 // ============================================================================
 
+import { useCallback, useRef } from 'react';
+
 /**
  * Hook to fetch and load config on mount.
  */
 export function useLoadConfig() {
-  const { setConfig, setConfigLoading, setConfigError, config } =
-    useCalculatorStore();
+  const loadingRef = useRef(false);
 
-  const loadConfig = async () => {
-    if (config) return; // Already loaded
+  const loadConfig = useCallback(async () => {
+    const state = useCalculatorStore.getState();
 
-    setConfigLoading(true);
+    // Already loaded or currently loading
+    if (state.config || state.configLoading || loadingRef.current) return;
+
+    loadingRef.current = true;
+    state.setConfigLoading(true);
     try {
       const response = await fetch('/api/config');
       if (!response.ok) {
         throw new Error('Failed to fetch config');
       }
       const data = await response.json();
-      setConfig(data);
+      useCalculatorStore.getState().setConfig(data);
     } catch (error) {
-      setConfigError(error instanceof Error ? error.message : 'Unknown error');
+      useCalculatorStore.getState().setConfigError(
+        error instanceof Error ? error.message : 'Unknown error'
+      );
     } finally {
-      setConfigLoading(false);
+      useCalculatorStore.getState().setConfigLoading(false);
+      loadingRef.current = false;
     }
-  };
+  }, []);
 
   return { loadConfig };
 }
@@ -383,25 +391,30 @@ export function useLoadConfig() {
  * Hook to fetch partner agents.
  */
 export function useLoadAgents() {
-  const { setAgents, setAgentsLoading, agents } = useCalculatorStore();
+  const loadingRef = useRef(false);
 
-  const loadAgents = async () => {
-    if (agents.length > 0) return; // Already loaded
+  const loadAgents = useCallback(async () => {
+    const state = useCalculatorStore.getState();
 
-    setAgentsLoading(true);
+    // Already loaded or currently loading
+    if (state.agents.length > 0 || state.agentsLoading || loadingRef.current) return;
+
+    loadingRef.current = true;
+    state.setAgentsLoading(true);
     try {
       const response = await fetch('/api/agents');
       if (!response.ok) {
         throw new Error('Failed to fetch agents');
       }
       const data = await response.json();
-      setAgents(data.agents || []);
+      useCalculatorStore.getState().setAgents(data.agents || []);
     } catch (error) {
       console.error('Error loading agents:', error);
     } finally {
-      setAgentsLoading(false);
+      useCalculatorStore.getState().setAgentsLoading(false);
+      loadingRef.current = false;
     }
-  };
+  }, []);
 
   return { loadAgents };
 }
