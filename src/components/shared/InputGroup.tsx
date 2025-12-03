@@ -7,7 +7,7 @@ interface InputGroupProps {
   label: string;
   name: string;
   type?: 'text' | 'number' | 'email' | 'tel';
-  value: string | number;
+  value: string | number | undefined;
   onChange: (value: string) => void;
   placeholder?: string;
   prefix?: string;
