@@ -19,11 +19,11 @@
   },
   "nav": {
     "home": "Inicio",
-    "conventional": "Convencional",
-    "conventionalRefi": "Refinanciamiento Conv.",
-    "fha": "FHA",
+    "conventional": "Venta Convencional",
+    "conventionalRefi": "Refi Convencional",
+    "fha": "Venta FHA",
     "fhaRefi": "Refinanciamiento FHA",
-    "va": "VA",
+    "va": "Venta VA",
     "vaRefi": "Refinanciamiento VA",
     "sellerNet": "Hoja Neta del Vendedor",
     "compare": "Comparar"

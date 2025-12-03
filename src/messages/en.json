@@ -19,11 +19,11 @@
   },
   "nav": {
     "home": "Home",
-    "conventional": "Conventional",
-    "conventionalRefi": "Conv. Refinance",
-    "fha": "FHA",
+    "conventional": "Conventional Sale",
+    "conventionalRefi": "Conventional Refi",
+    "fha": "FHA Sale",
     "fhaRefi": "FHA Refinance",
-    "va": "VA",
+    "va": "VA Sale",
     "vaRefi": "VA Refinance",
     "sellerNet": "Seller Net Sheet",
     "compare": "Compare"
