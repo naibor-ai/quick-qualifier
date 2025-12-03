@@ -7,7 +7,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useCalculatorStore } from '@/lib/store';
 import { calculateConventionalPurchase } from '@/lib/calculations/conventional';
-import { InputGroup, SelectGroup, Button, Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/shared';
+import { InputGroup, SelectGroup, Button, Card, CardHeader, CardTitle, CardDescription, CardContent, AgentSelector } from '@/components/shared';
 import { ResultSummary } from '@/components/shared/ResultSummary';
 import { CreditScoreTier, PmiType } from '@/lib/schemas';
 
@@ -462,6 +462,14 @@ export function ConventionalForm() {
               />
             </div>
 
+            {/* Partner Agent */}
+            <div className="space-y-4">
+              <h3 className="text-sm font-semibold text-slate-700 uppercase tracking-wide">
+                Partner Agent
+              </h3>
+              <AgentSelector disabled={isDisabled} />
+            </div>
+
             {/* Actions */}
             <div className="flex gap-3 pt-4">
               <Button type="submit" fullWidth disabled={isDisabled} loading={configLoading}>
@@ -478,7 +486,11 @@ export function ConventionalForm() {
       {/* Results */}
       <div>
         {conventionalResult ? (
-          <ResultSummary result={conventionalResult} />
+          <ResultSummary
+            result={conventionalResult}
+            config={config}
+            loanType={t('conventional.title')}
+          />
         ) : (
           <Card className="h-full flex items-center justify-center">
             <CardContent>

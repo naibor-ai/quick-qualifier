@@ -1,7 +1,8 @@
 'use client';
 
 import { useTranslations } from 'next-intl';
-import type { LoanCalculationResult } from '@/lib/schemas';
+import type { LoanCalculationResult, GhlConfig } from '@/lib/schemas';
+import { PdfDownloadButtons } from './PdfDownloadButtons';
 
 interface ResultItemProps {
   label: string;
@@ -48,12 +49,18 @@ interface ResultSummaryProps {
   result: LoanCalculationResult;
   showClosingCosts?: boolean;
   showMonthlyBreakdown?: boolean;
+  config?: GhlConfig | null;
+  loanType?: string;
+  propertyAddress?: string;
 }
 
 export function ResultSummary({
   result,
   showClosingCosts = true,
   showMonthlyBreakdown = true,
+  config,
+  loanType,
+  propertyAddress,
 }: ResultSummaryProps) {
   const t = useTranslations('calculator');
 
@@ -261,6 +268,18 @@ export function ResultSummary({
           })}
         </p>
       </div>
+
+      {/* PDF Download Buttons */}
+      {config && (
+        <div className="bg-white rounded-xl border border-slate-200 p-6">
+          <PdfDownloadButtons
+            result={result}
+            config={config}
+            loanType={loanType}
+            propertyAddress={propertyAddress}
+          />
+        </div>
+      )}
     </div>
   );
 }

@@ -15,7 +15,8 @@
     "percent": "Porcentaje",
     "annual": "Anual",
     "yes": "Sí",
-    "no": "No"
+    "no": "No",
+    "preparing": "Preparando..."
   },
   "nav": {
     "home": "Inicio",
@@ -67,6 +68,13 @@
     "isReservist": "Guardia Nacional/Reservista",
     "readyToCalculate": "Listo para Calcular",
     "enterDetails": "Ingrese los detalles de su préstamo y haga clic en Calcular para ver el desglose estimado de su pago.",
+    "partnerAgent": "Agente Asociado",
+    "noAgentSelected": "Ningún agente seleccionado (opcional)",
+    "agentCobrandingNote": "Seleccione un agente para incluir su información de contacto en los reportes PDF",
+    "downloadReports": "Descargar Reportes",
+    "downloadFlyer": "Descargar Volante",
+    "downloadDetailed": "Reporte Detallado",
+    "pdfIncludesAgent": "El PDF incluye co-marca para {agentName}",
     "sections": {
       "propertyLoan": "Propiedad y Préstamo",
       "monthlyCosts": "Costos Mensuales",

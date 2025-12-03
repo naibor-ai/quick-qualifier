@@ -15,7 +15,8 @@
     "percent": "Percent",
     "annual": "Annual",
     "yes": "Yes",
-    "no": "No"
+    "no": "No",
+    "preparing": "Preparing..."
   },
   "nav": {
     "home": "Home",
@@ -67,6 +68,13 @@
     "isReservist": "National Guard/Reservist",
     "readyToCalculate": "Ready to Calculate",
     "enterDetails": "Enter your loan details and click Calculate to see your estimated payment breakdown.",
+    "partnerAgent": "Partner Agent",
+    "noAgentSelected": "No agent selected (optional)",
+    "agentCobrandingNote": "Select an agent to include their contact info on PDF reports",
+    "downloadReports": "Download Reports",
+    "downloadFlyer": "Download Flyer",
+    "downloadDetailed": "Detailed Report",
+    "pdfIncludesAgent": "PDF includes co-branding for {agentName}",
     "sections": {
       "propertyLoan": "Property & Loan",
       "monthlyCosts": "Monthly Costs",

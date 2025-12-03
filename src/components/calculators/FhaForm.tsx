@@ -7,7 +7,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useCalculatorStore } from '@/lib/store';
 import { calculateFhaPurchase } from '@/lib/calculations/fha';
-import { InputGroup, SelectGroup, CheckboxGroup, Button, Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/shared';
+import { InputGroup, SelectGroup, CheckboxGroup, Button, Card, CardHeader, CardTitle, CardDescription, CardContent, AgentSelector } from '@/components/shared';
 import { ResultSummary } from '@/components/shared/ResultSummary';
 
 const formSchema = z.object({
@@ -358,6 +358,14 @@ export function FhaForm() {
               </ul>
             </div>
 
+            {/* Partner Agent */}
+            <div className="space-y-4">
+              <h3 className="text-sm font-semibold text-slate-700 uppercase tracking-wide">
+                Partner Agent
+              </h3>
+              <AgentSelector disabled={isDisabled} />
+            </div>
+
             {/* Actions */}
             <div className="flex gap-3 pt-4">
               <Button type="submit" fullWidth disabled={isDisabled} loading={configLoading}>
@@ -374,7 +382,11 @@ export function FhaForm() {
       {/* Results */}
       <div>
         {fhaResult ? (
-          <ResultSummary result={fhaResult} />
+          <ResultSummary
+            result={fhaResult}
+            config={config}
+            loanType={t('fha.title')}
+          />
         ) : (
           <Card className="h-full flex items-center justify-center">
             <CardContent>
