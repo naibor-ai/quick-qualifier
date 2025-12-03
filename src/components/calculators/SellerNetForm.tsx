@@ -6,7 +6,7 @@ import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useCalculatorStore } from '@/lib/store';
-import { calculateSellerNet } from '@/lib/calculations/seller-net';
+import { calculateSellerNet, type SellerNetResult as CalcSellerNetResult } from '@/lib/calculations/seller-net';
 import { InputGroup, Button, Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/shared';
 import { SellerNetResult } from '@/components/shared/ResultSummary';
 
@@ -46,6 +46,30 @@ interface SellerNetResultType {
     propertyTaxProration: number;
     otherCredits: number;
     otherDebits: number;
+  };
+}
+
+// Transform calculation result to component format
+function transformResult(calcResult: CalcSellerNetResult): SellerNetResultType {
+  return {
+    grossSalesPrice: calcResult.salesPrice,
+    totalDebits: calcResult.totalPayoffs + calcResult.totalCosts,
+    totalCredits: calcResult.totalCredits,
+    netProceeds: calcResult.estimatedNetProceeds,
+    breakdown: {
+      existingLoanPayoff: calcResult.firstMortgagePayoff,
+      secondLienPayoff: calcResult.secondLienPayoff,
+      commission: calcResult.realEstateCommission,
+      titleInsurance: calcResult.titleInsurance,
+      escrowFee: calcResult.escrowFee,
+      transferTax: calcResult.transferTax,
+      recordingFees: calcResult.recordingFees,
+      repairCredits: calcResult.repairCredits,
+      hoaPayoff: calcResult.hoaPayoff,
+      propertyTaxProration: calcResult.propertyTaxProration,
+      otherCredits: calcResult.otherCredits,
+      otherDebits: calcResult.otherDebits,
+    },
   };
 }
 
@@ -99,7 +123,7 @@ export function SellerNetForm() {
       otherDebits: data.otherDebits,
     });
 
-    setResult(calcResult);
+    setResult(transformResult(calcResult));
   }, [updateSellerNetInputs]);
 
   const handleReset = () => {

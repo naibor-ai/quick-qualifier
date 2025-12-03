@@ -3,9 +3,9 @@
 import { useCallback, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { useCalculatorStore } from '@/lib/store';
-import { compareScenarios } from '@/lib/calculations/comparison';
-import { InputGroup, SelectGroup, Button, Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/shared';
-import type { GhlConfig, LoanProgram, LoanCalculationResult } from '@/lib/schemas';
+import { compareScenarios, type ComparisonResult } from '@/lib/calculations/comparison';
+import { InputGroup, SelectGroup, Button, Card, CardHeader, CardTitle, CardContent } from '@/components/shared';
+import type { LoanProgram } from '@/lib/schemas';
 
 interface Scenario {
   name: string;
@@ -14,14 +14,6 @@ interface Scenario {
   downPaymentPercent: number;
   interestRate: number;
   termYears: number;
-}
-
-interface ComparisonResult {
-  scenarios: Array<{
-    name: string;
-    program: LoanProgram;
-    result: LoanCalculationResult;
-  }>;
 }
 
 export function ComparisonForm() {
@@ -66,33 +58,9 @@ export function ComparisonForm() {
   };
 
   const onCalculate = useCallback(() => {
-    // Build config for calculation
-    const calcConfig: GhlConfig = config ?? {
-      companyName: '',
-      companyNmls: '',
-      companyPhone: '',
-      companyEmail: '',
-      defaultInterestRate: 7.0,
-      defaultPropertyTaxRate: 1.2,
-      defaultHomeInsuranceRate: 0.35,
-      pmiRates: {},
-      fhaMipRates: { upfront: 1.75, annual: 0.55 },
-      vaFundingFeeRates: {},
-      closingCostDefaults: {
-        originationFeePercent: 1,
-        processingFee: 500,
-        underwritingFee: 500,
-        appraisalFee: 500,
-        creditReportFee: 50,
-        floodCertFee: 15,
-        titleInsuranceRate: 0.5,
-        settlementFee: 500,
-        recordingFees: 150,
-        prepaidInterestDays: 15,
-        escrowMonthsTaxes: 3,
-        escrowMonthsInsurance: 3,
-      },
-    };
+    if (!config) {
+      return; // Config required for calculation
+    }
 
     // Default property costs
     const propertyTaxAnnual = 6000;
@@ -100,19 +68,20 @@ export function ComparisonForm() {
 
     // Run comparison
     const comparisonResult = compareScenarios(
-      scenarios.map(s => ({
-        name: s.name,
-        program: s.program,
-        salesPrice: s.salesPrice,
-        downPayment: (s.salesPrice * s.downPaymentPercent) / 100,
-        interestRate: s.interestRate,
-        termYears: s.termYears,
+      {
+        scenarios: scenarios.map(s => ({
+          name: s.name,
+          program: s.program,
+          salesPrice: s.salesPrice,
+          downPaymentPercent: s.downPaymentPercent,
+          interestRate: s.interestRate,
+          termYears: s.termYears,
+        })),
         propertyTaxAnnual,
         homeInsuranceAnnual,
         hoaDuesMonthly: 0,
-        floodInsuranceMonthly: 0,
-      })),
-      calcConfig
+      },
+      config
     );
 
     setResults(comparisonResult);
@@ -302,7 +271,7 @@ export function ComparisonForm() {
                     <td className="py-3 px-4 text-zinc-600 dark:text-zinc-400">Loan Amount</td>
                     {results.scenarios.map((s, i) => (
                       <td key={i} className="text-right py-3 px-4 font-medium">
-                        {formatCurrency(s.result.loanAmount)}
+                        {formatCurrency(s.loanAmount)}
                       </td>
                     ))}
                   </tr>
@@ -310,9 +279,9 @@ export function ComparisonForm() {
                     <td className="py-3 px-4 text-zinc-600 dark:text-zinc-400">Down Payment</td>
                     {results.scenarios.map((s, i) => (
                       <td key={i} className="text-right py-3 px-4">
-                        {formatCurrency(s.result.downPayment)}
+                        {formatCurrency(s.downPayment)}
                         <span className="text-zinc-400 text-xs ml-1">
-                          ({formatPercent(s.result.downPaymentPercent)})
+                          ({formatPercent(s.ltv > 0 ? 100 - s.ltv : 0)})
                         </span>
                       </td>
                     ))}
@@ -321,7 +290,7 @@ export function ComparisonForm() {
                     <td className="py-3 px-4 font-medium text-blue-700 dark:text-blue-300">Monthly Payment</td>
                     {results.scenarios.map((s, i) => (
                       <td key={i} className="text-right py-3 px-4 font-bold text-blue-700 dark:text-blue-300">
-                        {formatCurrency(s.result.totalMonthlyPayment)}
+                        {formatCurrency(s.monthlyPayment)}
                       </td>
                     ))}
                   </tr>
@@ -329,23 +298,7 @@ export function ComparisonForm() {
                     <td className="py-3 px-4 text-zinc-600 dark:text-zinc-400 pl-8">P&I</td>
                     {results.scenarios.map((s, i) => (
                       <td key={i} className="text-right py-3 px-4">
-                        {formatCurrency(s.result.monthlyPI)}
-                      </td>
-                    ))}
-                  </tr>
-                  <tr className="border-b border-zinc-100 dark:border-zinc-800">
-                    <td className="py-3 px-4 text-zinc-600 dark:text-zinc-400 pl-8">Property Tax</td>
-                    {results.scenarios.map((s, i) => (
-                      <td key={i} className="text-right py-3 px-4">
-                        {formatCurrency(s.result.monthlyPropertyTax)}
-                      </td>
-                    ))}
-                  </tr>
-                  <tr className="border-b border-zinc-100 dark:border-zinc-800">
-                    <td className="py-3 px-4 text-zinc-600 dark:text-zinc-400 pl-8">Insurance</td>
-                    {results.scenarios.map((s, i) => (
-                      <td key={i} className="text-right py-3 px-4">
-                        {formatCurrency(s.result.monthlyHomeInsurance)}
+                        {formatCurrency(s.principalAndInterest)}
                       </td>
                     ))}
                   </tr>
@@ -353,18 +306,10 @@ export function ComparisonForm() {
                     <td className="py-3 px-4 text-zinc-600 dark:text-zinc-400 pl-8">Mortgage Insurance</td>
                     {results.scenarios.map((s, i) => (
                       <td key={i} className="text-right py-3 px-4">
-                        {s.result.monthlyMortgageInsurance > 0
-                          ? formatCurrency(s.result.monthlyMortgageInsurance)
+                        {s.mortgageInsurance > 0
+                          ? formatCurrency(s.mortgageInsurance)
                           : '—'
                         }
-                      </td>
-                    ))}
-                  </tr>
-                  <tr className="border-b border-zinc-100 dark:border-zinc-800">
-                    <td className="py-3 px-4 text-zinc-600 dark:text-zinc-400">Closing Costs</td>
-                    {results.scenarios.map((s, i) => (
-                      <td key={i} className="text-right py-3 px-4">
-                        {formatCurrency(s.result.closingCosts.total)}
                       </td>
                     ))}
                   </tr>
@@ -372,7 +317,7 @@ export function ComparisonForm() {
                     <td className="py-3 px-4 font-medium text-green-700 dark:text-green-300">Cash to Close</td>
                     {results.scenarios.map((s, i) => (
                       <td key={i} className="text-right py-3 px-4 font-bold text-green-700 dark:text-green-300">
-                        {formatCurrency(s.result.cashToClose)}
+                        {formatCurrency(s.cashToClose)}
                       </td>
                     ))}
                   </tr>
@@ -388,12 +333,12 @@ export function ComparisonForm() {
                 </h4>
                 {(() => {
                   const lowest = results.scenarios.reduce((min, s) =>
-                    s.result.totalMonthlyPayment < min.result.totalMonthlyPayment ? s : min
+                    s.monthlyPayment < min.monthlyPayment ? s : min
                   );
                   return (
                     <div>
                       <p className="text-2xl font-bold text-blue-700 dark:text-blue-300">
-                        {formatCurrency(lowest.result.totalMonthlyPayment)}
+                        {formatCurrency(lowest.monthlyPayment)}
                       </p>
                       <p className="text-sm text-blue-600 dark:text-blue-400">{lowest.name}</p>
                     </div>
@@ -407,12 +352,12 @@ export function ComparisonForm() {
                 </h4>
                 {(() => {
                   const lowest = results.scenarios.reduce((min, s) =>
-                    s.result.cashToClose < min.result.cashToClose ? s : min
+                    s.cashToClose < min.cashToClose ? s : min
                   );
                   return (
                     <div>
                       <p className="text-2xl font-bold text-green-700 dark:text-green-300">
-                        {formatCurrency(lowest.result.cashToClose)}
+                        {formatCurrency(lowest.cashToClose)}
                       </p>
                       <p className="text-sm text-green-600 dark:text-green-400">{lowest.name}</p>
                     </div>
@@ -425,7 +370,7 @@ export function ComparisonForm() {
                   No Mortgage Insurance
                 </h4>
                 {(() => {
-                  const noMI = results.scenarios.filter(s => s.result.monthlyMortgageInsurance === 0);
+                  const noMI = results.scenarios.filter(s => s.mortgageInsurance === 0);
                   return (
                     <div>
                       {noMI.length > 0 ? (

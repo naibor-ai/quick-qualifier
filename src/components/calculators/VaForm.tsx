@@ -9,7 +9,7 @@ import { useCalculatorStore } from '@/lib/store';
 import { calculateVaPurchase } from '@/lib/calculations/va';
 import { InputGroup, SelectGroup, CheckboxGroup, Button, Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/shared';
 import { ResultSummary } from '@/components/shared/ResultSummary';
-import type { GhlConfig, VaUsage } from '@/lib/schemas';
+import type { VaUsage } from '@/lib/schemas';
 
 const formSchema = z.object({
   salesPrice: z.number().min(10000).max(100000000),
@@ -22,7 +22,7 @@ const formSchema = z.object({
   homeInsuranceAnnual: z.number().min(0),
   hoaDuesMonthly: z.number().min(0),
   floodInsuranceMonthly: z.number().min(0),
-  vaUsage: z.enum(['first', 'subsequent', 'refinance']),
+  vaUsage: z.enum(['first', 'subsequent']),
   isDisabledVeteran: z.boolean(),
   isReservist: z.boolean(),
 });
@@ -38,6 +38,7 @@ export function VaForm() {
     setVaResult,
     resetCalculator,
     config,
+    configLoading,
   } = useCalculatorStore();
 
   const { control, handleSubmit, watch, setValue, formState: { errors } } = useForm<FormValues>({
@@ -82,47 +83,19 @@ export function VaForm() {
   }, [watchedValues.downPaymentAmount, salesPrice, downPaymentMode, setValue]);
 
   const onCalculate = useCallback((data: FormValues) => {
+    if (!config) {
+      return; // Config required for calculation
+    }
+
     // Update store with current inputs
     updateVaInputs(data);
 
-    // Build config for calculation
-    const calcConfig: GhlConfig = config ?? {
-      companyName: '',
-      companyNmls: '',
-      companyPhone: '',
-      companyEmail: '',
-      defaultInterestRate: data.interestRate,
-      defaultPropertyTaxRate: 1.2,
-      defaultHomeInsuranceRate: 0.35,
-      pmiRates: {},
-      fhaMipRates: { upfront: 1.75, annual: 0.55 },
-      vaFundingFeeRates: {},
-      closingCostDefaults: {
-        originationFeePercent: 1,
-        processingFee: 500,
-        underwritingFee: 500,
-        appraisalFee: 550,
-        creditReportFee: 50,
-        floodCertFee: 15,
-        titleInsuranceRate: 0.5,
-        settlementFee: 500,
-        recordingFees: 150,
-        prepaidInterestDays: 15,
-        escrowMonthsTaxes: 3,
-        escrowMonthsInsurance: 3,
-      },
-    };
-
-    // Calculate the down payment based on mode
-    const downPayment = data.downPaymentMode === 'percent'
-      ? (data.salesPrice * data.downPaymentPercent) / 100
-      : data.downPaymentAmount;
-
-    // Run calculation
+    // Run calculation using the GHL config
     const result = calculateVaPurchase(
       {
         salesPrice: data.salesPrice,
-        downPayment,
+        downPaymentAmount: data.downPaymentMode === 'amount' ? data.downPaymentAmount : undefined,
+        downPaymentPercent: data.downPaymentMode === 'percent' ? data.downPaymentPercent : undefined,
         interestRate: data.interestRate,
         termYears: data.termYears,
         propertyTaxAnnual: data.propertyTaxAnnual,
@@ -133,7 +106,7 @@ export function VaForm() {
         isDisabledVeteran: data.isDisabledVeteran,
         isReservist: data.isReservist,
       },
-      calcConfig
+      config
     );
 
     setVaResult(result);
@@ -159,8 +132,9 @@ export function VaForm() {
   const vaUsageOptions = [
     { value: 'first', label: t('va.usage.first') },
     { value: 'subsequent', label: t('va.usage.subsequent') },
-    { value: 'refinance', label: t('va.usage.refinance') },
   ];
+
+  const isDisabled = configLoading || !config;
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -171,6 +145,13 @@ export function VaForm() {
           <CardDescription>{t('va.description')}</CardDescription>
         </CardHeader>
         <CardContent>
+          {!config && !configLoading && (
+            <div className="mb-4 p-4 bg-red-50 dark:bg-red-900/20 rounded-lg">
+              <p className="text-sm text-red-700 dark:text-red-300">
+                {t('errors.configLoadError')}. Please check your GHL configuration.
+              </p>
+            </div>
+          )}
           <form onSubmit={handleSubmit(onCalculate)} className="space-y-6">
             {/* Property & Loan */}
             <div className="space-y-4">
@@ -381,9 +362,10 @@ export function VaForm() {
                   <CheckboxGroup
                     label={t('calculator.isDisabledVeteran')}
                     name="isDisabledVeteran"
-                    checked={field.value}
+                    checked={field.value ?? false}
                     onChange={field.onChange}
                     helperText="Exempt from VA funding fee"
+                    disabled={isDisabled}
                   />
                 )}
               />
@@ -395,10 +377,10 @@ export function VaForm() {
                   <CheckboxGroup
                     label={t('calculator.isReservist')}
                     name="isReservist"
-                    checked={field.value}
+                    checked={field.value ?? false}
                     onChange={field.onChange}
                     helperText="Higher funding fee rates apply"
-                    disabled={isDisabledVeteran}
+                    disabled={isDisabled || isDisabledVeteran}
                   />
                 )}
               />
@@ -419,10 +401,10 @@ export function VaForm() {
 
             {/* Actions */}
             <div className="flex gap-3 pt-4">
-              <Button type="submit" fullWidth>
+              <Button type="submit" fullWidth disabled={isDisabled} loading={configLoading}>
                 {t('common.calculate')}
               </Button>
-              <Button type="button" variant="outline" onClick={handleReset}>
+              <Button type="button" variant="outline" onClick={handleReset} disabled={isDisabled}>
                 {t('common.reset')}
               </Button>
             </div>

@@ -86,7 +86,7 @@ export function ResultSummary({
           <ResultItem
             label={t('results.downPayment')}
             value={formatCurrency(result.downPayment)}
-            subtext={formatPercent(result.downPaymentPercent)}
+            subtext={formatPercent(100 - result.ltv)}
           />
           <ResultItem
             label={t('results.ltv')}
@@ -94,7 +94,7 @@ export function ResultSummary({
           />
           <ResultItem
             label={t('results.monthlyPayment')}
-            value={formatCurrency(result.totalMonthlyPayment)}
+            value={formatCurrency(result.monthlyPayment.totalMonthly)}
             highlight
           />
         </div>
@@ -110,38 +110,38 @@ export function ResultSummary({
           <div className="space-y-2">
             <ResultItem
               label={t('results.principalInterest')}
-              value={formatCurrency(result.monthlyPI)}
+              value={formatCurrency(result.monthlyPayment.principalAndInterest)}
             />
             <ResultItem
               label={t('results.propertyTax')}
-              value={formatCurrency(result.monthlyPropertyTax)}
+              value={formatCurrency(result.monthlyPayment.propertyTax)}
             />
             <ResultItem
               label={t('results.homeInsurance')}
-              value={formatCurrency(result.monthlyHomeInsurance)}
+              value={formatCurrency(result.monthlyPayment.homeInsurance)}
             />
-            {result.monthlyMortgageInsurance > 0 && (
+            {result.monthlyPayment.mortgageInsurance > 0 && (
               <ResultItem
                 label={t('results.mortgageInsurance')}
-                value={formatCurrency(result.monthlyMortgageInsurance)}
+                value={formatCurrency(result.monthlyPayment.mortgageInsurance)}
               />
             )}
-            {result.monthlyHoa > 0 && (
+            {result.monthlyPayment.hoaDues > 0 && (
               <ResultItem
                 label={t('results.hoa')}
-                value={formatCurrency(result.monthlyHoa)}
+                value={formatCurrency(result.monthlyPayment.hoaDues)}
               />
             )}
-            {result.monthlyFloodInsurance > 0 && (
+            {result.monthlyPayment.floodInsurance > 0 && (
               <ResultItem
                 label={t('results.floodInsurance')}
-                value={formatCurrency(result.monthlyFloodInsurance)}
+                value={formatCurrency(result.monthlyPayment.floodInsurance)}
               />
             )}
             <div className="border-t border-zinc-200 dark:border-zinc-700 pt-2 mt-2">
               <ResultItem
                 label={t('results.totalPiti')}
-                value={formatCurrency(result.totalMonthlyPayment)}
+                value={formatCurrency(result.monthlyPayment.totalMonthly)}
                 highlight
               />
             </div>
@@ -162,27 +162,14 @@ export function ResultSummary({
               value={formatCurrency(result.closingCosts.prepaidInterest)}
             />
             <ResultItem
-              label={t('results.prepaidTaxes')}
-              value={formatCurrency(result.closingCosts.prepaidTaxes)}
+              label={t('results.taxReserves')}
+              value={formatCurrency(result.closingCosts.taxReserves)}
             />
             <ResultItem
-              label={t('results.prepaidInsurance')}
-              value={formatCurrency(result.closingCosts.prepaidInsurance)}
+              label={t('results.insuranceReserves')}
+              value={formatCurrency(result.closingCosts.insuranceReserves)}
             />
           </ResultSection>
-
-          <div className="mt-4">
-            <ResultSection title={t('results.escrowReserves')}>
-              <ResultItem
-                label={t('results.taxReserves')}
-                value={formatCurrency(result.closingCosts.escrowTaxReserves)}
-              />
-              <ResultItem
-                label={t('results.insuranceReserves')}
-                value={formatCurrency(result.closingCosts.escrowInsuranceReserves)}
-              />
-            </ResultSection>
-          </div>
 
           <div className="mt-4">
             <ResultSection title={t('results.lenderFees')}>
@@ -220,12 +207,12 @@ export function ResultSummary({
                 value={formatCurrency(result.closingCosts.titleInsurance)}
               />
               <ResultItem
-                label={t('results.settlementFee')}
-                value={formatCurrency(result.closingCosts.settlementFee)}
+                label={t('results.escrowFee')}
+                value={formatCurrency(result.closingCosts.escrowFee)}
               />
               <ResultItem
-                label={t('results.recordingFees')}
-                value={formatCurrency(result.closingCosts.recordingFees)}
+                label={t('results.recordingFee')}
+                value={formatCurrency(result.closingCosts.recordingFee)}
               />
             </ResultSection>
           </div>
@@ -252,7 +239,7 @@ export function ResultSummary({
           <div className="border-t border-zinc-200 dark:border-zinc-700 pt-4 mt-4">
             <ResultItem
               label={t('results.totalClosingCosts')}
-              value={formatCurrency(result.closingCosts.total)}
+              value={formatCurrency(result.closingCosts.totalClosingCosts)}
               highlight
             />
           </div>
@@ -270,7 +257,7 @@ export function ResultSummary({
         <p className="text-sm text-blue-100 mt-2">
           {t('results.cashToCloseBreakdown', {
             downPayment: formatCurrency(result.downPayment),
-            closingCosts: formatCurrency(result.closingCosts.total),
+            closingCosts: formatCurrency(result.closingCosts.netClosingCosts),
           })}
         </p>
       </div>

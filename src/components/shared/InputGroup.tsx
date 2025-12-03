@@ -1,7 +1,6 @@
 'use client';
 
 import { useId } from 'react';
-import { useTranslations } from 'next-intl';
 
 interface InputGroupProps {
   label: string;
@@ -39,7 +38,6 @@ export function InputGroup({
   required = false,
 }: InputGroupProps) {
   const id = useId();
-  const t = useTranslations('errors');
 
   return (
     <div className="space-y-1">
@@ -62,7 +60,7 @@ export function InputGroup({
           id={id}
           name={name}
           type={type}
-          value={value}
+          value={value ?? ''}
           onChange={(e) => onChange(e.target.value)}
           placeholder={placeholder}
           disabled={disabled}
@@ -106,7 +104,7 @@ export function InputGroup({
 interface SelectGroupProps {
   label: string;
   name: string;
-  value: string;
+  value: string | undefined;
   onChange: (value: string) => void;
   options: Array<{ value: string; label: string }>;
   error?: string;
@@ -141,7 +139,7 @@ export function SelectGroup({
       <select
         id={id}
         name={name}
-        value={value}
+        value={value ?? ''}
         onChange={(e) => onChange(e.target.value)}
         disabled={disabled}
         required={required}
