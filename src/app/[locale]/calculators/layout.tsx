@@ -5,6 +5,8 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useTranslations, useLocale } from 'next-intl';
 import { useCalculatorStore, useLoadConfig } from '@/lib/store';
+import Image from 'next/image';
+import naiborLogo from "../../../../public/logo/naibar-logo.svg";
 
 interface CalculatorsLayoutProps {
   children: React.ReactNode;
@@ -40,12 +42,22 @@ export default function CalculatorsLayout({ children }: CalculatorsLayoutProps) 
       <nav className="sticky top-0 z-50 bg-white/95 backdrop-blur-sm border-b border-slate-200 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
+                  <div className="flex items-center gap-3">
+                        <Image
+                          src={naiborLogo}
+                          alt="Naibor Logo"
+                          width={32}
+                          height={32}
+                          className="h-8 w-auto"
+                        />
+                             
             <Link
               href={`/${locale}`}
-              className="text-xl font-bold text-blue-600 hover:text-blue-700 transition-colors"
+              className="text-xl font-bold bg-linear-to-b from-[#2A8BB3] to-[#31B2E8] bg-clip-text text-transparent hover:from-[#31B2E8] hover:to-[#2A8BB3] transition-colors"
             >
               Quick Qualifier
             </Link>
+             </div>
 
             <div className="hidden md:flex items-center space-x-1">
               {navItems.map((item) => (
@@ -54,8 +66,8 @@ export default function CalculatorsLayout({ children }: CalculatorsLayoutProps) 
                   href={item.href}
                   className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
                     isActive(item.href)
-                      ? 'bg-blue-600 text-white shadow-sm'
-                      : 'text-slate-600 hover:text-blue-600 hover:bg-blue-50'
+                      ? 'bg-linear-to-b from-[#2A8BB3] to-[#31B2E8] text-white shadow-sm'
+                      : 'text-slate-600 hover:bg-linear-to-b hover:from-[#2A8BB3] hover:to-[#31B2E8] hover:bg-clip-text hover:text-transparent hover:bg-[#E6F4F9]'
                   }`}
                 >
                   {item.label}
@@ -72,8 +84,8 @@ export default function CalculatorsLayout({ children }: CalculatorsLayoutProps) 
                 href={item.href}
                 className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
                   isActive(item.href)
-                    ? 'bg-blue-600 text-white'
-                    : 'text-slate-600 hover:text-blue-600 hover:bg-blue-50'
+                    ? 'bg-linear-to-b from-[#2A8BB3] to-[#31B2E8] text-white'
+                    : 'text-slate-600 hover:bg-linear-to-b hover:from-[#2A8BB3] hover:to-[#31B2E8] hover:bg-clip-text hover:text-transparent hover:bg-[#E6F4F9]'
                 }`}
               >
                 {item.label}
@@ -85,9 +97,9 @@ export default function CalculatorsLayout({ children }: CalculatorsLayoutProps) 
 
       {/* Loading/Error states */}
       {configLoading && (
-        <div className="bg-blue-50 border-b border-blue-200">
+        <div className="bg-[#E6F4F9] border-b border-[#31B2E8]">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2">
-            <p className="text-sm text-blue-700">
+            <p className="text-sm text-[#2A8BB3]">
               Loading configuration...
             </p>
           </div>

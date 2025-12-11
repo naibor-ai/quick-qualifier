@@ -140,7 +140,7 @@ function PdfButton({
         text-sm font-medium transition-colors
         ${isLoading
           ? 'bg-slate-100 text-slate-400 cursor-wait'
-          : 'bg-blue-600 text-white hover:bg-blue-700 active:bg-blue-800'
+          : 'bg-linear-to-b from-[#2A8BB3] to-[#31B2E8] text-white hover:from-[#31B2E8] hover:to-[#2A8BB3] active:from-[#2A8BB3] active:to-[#31B2E8]'
         }
       `}
     >

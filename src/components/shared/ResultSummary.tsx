@@ -16,7 +16,7 @@ function ResultItem({ label, value, highlight = false, subtext }: ResultItemProp
     <div className={`flex justify-between items-baseline py-2 ${highlight ? 'border-t border-b border-slate-200' : ''}`}>
       <span className="text-sm text-slate-600">{label}</span>
       <div className="text-right">
-        <span className={`font-medium ${highlight ? 'text-lg text-blue-600' : 'text-slate-800'}`}>
+        <span className={`font-medium ${highlight ? 'text-lg bg-linear-to-b from-[#2A8BB3] to-[#31B2E8] bg-clip-text text-transparent' : 'text-slate-800'}`}>
           {value}
         </span>
         {subtext && (
@@ -254,14 +254,14 @@ export function ResultSummary({
       )}
 
       {/* Cash to Close */}
-      <div className="bg-gradient-to-r from-blue-500 to-blue-600 rounded-xl p-6 text-white">
+      <div className="bg-linear-to-r from-[#2A8BB3] to-[#31B2E8] rounded-xl p-6 text-white">
         <h3 className="text-lg font-semibold mb-2">
           {t('results.cashToClose')}
         </h3>
         <p className="text-3xl font-bold">
           {formatCurrency(result.cashToClose)}
         </p>
-        <p className="text-sm text-blue-100 mt-2">
+        <p className="text-sm text-white/80 mt-2">
           {t('results.cashToCloseBreakdown', {
             downPayment: formatCurrency(result.downPayment),
             closingCosts: formatCurrency(result.closingCosts.netClosingCosts),
@@ -421,7 +421,7 @@ export function SellerNetResult({ result }: SellerNetResultProps) {
       </div>
 
       {/* Net Proceeds */}
-      <div className={`rounded-xl p-6 text-white ${result.netProceeds >= 0 ? 'bg-gradient-to-r from-green-500 to-green-600' : 'bg-gradient-to-r from-red-500 to-red-600'}`}>
+      <div className={`rounded-xl p-6 text-white ${result.netProceeds >= 0 ? 'bg-linear-to-r from-green-500 to-green-600' : 'bg-linear-to-r from-red-500 to-red-600'}`}>
         <h3 className="text-lg font-semibold mb-2">
           {t('sellerNet.results.netProceeds')}
         </h3>
