@@ -284,6 +284,7 @@ export function calculateFhaRefinance(
 ): LoanCalculationResult {
   const {
     propertyValue,
+    existingLoanBalance,
     newLoanAmount,
     interestRate,
     termYears,
@@ -344,6 +345,13 @@ export function calculateFhaRefinance(
     config
   );
 
+  // Calculate cash to close
+  // Cash needed = Existing Loan + Closing Costs - New Loan
+  // Negative value means cash back to borrower (proceeds)
+  const cashToClose = roundToCents(
+    existingLoanBalance + closingCosts.netClosingCosts - newLoanAmount
+  );
+
   return {
     loanAmount: newLoanAmount,
     totalLoanAmount,
@@ -351,7 +359,7 @@ export function calculateFhaRefinance(
     downPayment: 0,
     monthlyPayment,
     closingCosts,
-    cashToClose: closingCosts.netClosingCosts,
+    cashToClose,
     ufmip: ufmipAmount,
   };
 }

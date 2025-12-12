@@ -289,6 +289,7 @@ export function calculateVaRefinance(
 ): LoanCalculationResult {
   const {
     propertyValue,
+    existingLoanBalance,
     newLoanAmount,
     interestRate,
     termYears,
@@ -355,6 +356,13 @@ export function calculateVaRefinance(
     config
   );
 
+  // Calculate cash to close
+  // Cash needed = Existing Loan + Closing Costs - New Loan
+  // Negative value means cash back to borrower (proceeds)
+  const cashToClose = roundToCents(
+    existingLoanBalance + closingCosts.netClosingCosts - newLoanAmount
+  );
+
   return {
     loanAmount: newLoanAmount,
     totalLoanAmount,
@@ -362,7 +370,7 @@ export function calculateVaRefinance(
     downPayment: 0,
     monthlyPayment,
     closingCosts,
-    cashToClose: closingCosts.netClosingCosts,
+    cashToClose,
     vaFundingFee: fundingFeeAmount,
   };
 }

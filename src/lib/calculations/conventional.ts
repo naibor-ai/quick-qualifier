@@ -325,6 +325,7 @@ export function calculateConventionalRefinance(
 ): LoanCalculationResult {
   const {
     propertyValue,
+    existingLoanBalance,
     newLoanAmount,
     interestRate,
     termYears,
@@ -388,6 +389,13 @@ export function calculateConventionalRefinance(
     config
   );
 
+  // Calculate cash to close
+  // Cash needed = Existing Loan + Closing Costs - New Loan
+  // Negative value means cash back to borrower (proceeds)
+  const cashToClose = roundToCents(
+    existingLoanBalance + closingCosts.netClosingCosts - newLoanAmount
+  );
+
   return {
     loanAmount: newLoanAmount,
     totalLoanAmount: newLoanAmount,
@@ -395,7 +403,7 @@ export function calculateConventionalRefinance(
     downPayment: 0, // No down payment on refinance
     monthlyPayment,
     closingCosts,
-    cashToClose: closingCosts.netClosingCosts,
+    cashToClose,
     pmiRate,
   };
 }
