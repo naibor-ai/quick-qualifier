@@ -120,7 +120,12 @@ export function calculateVaClosingCosts(
     fees.settlement +
     fees.notary +
     fees.recording +
-    fees.courier;
+    fees.courier +
+    fees.ownerTitlePolicy +
+    fees.lenderTitlePolicy +
+    fees.pestInspection +
+    fees.propertyInspection +
+    fees.poolInspection;
 
   // Section C - Prepaids
   const totalLoanAmount = baseLoanAmount + fundingFeeAmount;
@@ -155,11 +160,15 @@ export function calculateVaClosingCosts(
     taxServiceFee: fees.taxService,
     totalLenderFees: roundToCents(totalLenderFees),
 
-    titleInsurance: fees.docPrep,
+    ownerTitlePolicy: fees.ownerTitlePolicy,
+    lenderTitlePolicy: fees.lenderTitlePolicy,
     escrowFee: fees.settlement,
     notaryFee: fees.notary,
     recordingFee: fees.recording,
     courierFee: fees.courier,
+    pestInspectionFee: fees.pestInspection,
+    propertyInspectionFee: fees.propertyInspection,
+    poolInspectionFee: fees.poolInspection,
     totalThirdPartyFees: roundToCents(totalThirdPartyFees),
 
     prepaidInterest,

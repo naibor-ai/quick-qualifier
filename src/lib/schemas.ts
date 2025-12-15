@@ -199,11 +199,15 @@ export const ClosingCostsBreakdownSchema = z.object({
   totalLenderFees: z.number(),
 
   // Section B - Third Party Fees
-  titleInsurance: z.number(),
+  ownerTitlePolicy: z.number(),
+  lenderTitlePolicy: z.number(),
   escrowFee: z.number(),
   notaryFee: z.number(),
   recordingFee: z.number(),
   courierFee: z.number(),
+  pestInspectionFee: z.number(),
+  propertyInspectionFee: z.number(),
+  poolInspectionFee: z.number(),
   totalThirdPartyFees: z.number(),
 
   // Section C - Prepaids
@@ -267,6 +271,12 @@ export const GhlConfigSchema = z.object({
     notary: z.number(),
     recording: z.number(),
     courier: z.number(),
+    // New fields from reference images
+    ownerTitlePolicy: z.number().default(0),
+    lenderTitlePolicy: z.number().default(0),
+    pestInspection: z.number().default(0),
+    propertyInspection: z.number().default(0),
+    poolInspection: z.number().default(0),
   }),
 
   // Prepaids & Reserves

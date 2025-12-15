@@ -119,7 +119,12 @@ export function calculateFhaClosingCosts(
     fees.settlement +
     fees.notary +
     fees.recording +
-    fees.courier;
+    fees.courier +
+    fees.ownerTitlePolicy +
+    fees.lenderTitlePolicy +
+    fees.pestInspection +
+    fees.propertyInspection +
+    fees.poolInspection;
 
   // Section C - Prepaids
   // Note: For FHA, prepaid interest is on the total loan (including UFMIP)
@@ -158,11 +163,15 @@ export function calculateFhaClosingCosts(
     taxServiceFee: fees.taxService,
     totalLenderFees: roundToCents(totalLenderFees),
 
-    titleInsurance: fees.docPrep,
+    ownerTitlePolicy: fees.ownerTitlePolicy,
+    lenderTitlePolicy: fees.lenderTitlePolicy,
     escrowFee: fees.settlement,
     notaryFee: fees.notary,
     recordingFee: fees.recording,
     courierFee: fees.courier,
+    pestInspectionFee: fees.pestInspection,
+    propertyInspectionFee: fees.propertyInspection,
+    poolInspectionFee: fees.poolInspection,
     totalThirdPartyFees: roundToCents(totalThirdPartyFees),
 
     prepaidInterest,

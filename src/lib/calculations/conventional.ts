@@ -121,7 +121,12 @@ export function calculateConventionalClosingCosts(
     fees.settlement +
     fees.notary +
     fees.recording +
-    fees.courier;
+    fees.courier +
+    fees.ownerTitlePolicy +
+    fees.lenderTitlePolicy +
+    fees.pestInspection +
+    fees.propertyInspection +
+    fees.poolInspection;
 
   // Section C - Prepaids
   const prepaidInterest = calculatePrepaidInterest(
@@ -163,11 +168,15 @@ export function calculateConventionalClosingCosts(
     totalLenderFees: roundToCents(totalLenderFees),
 
     // Section B
-    titleInsurance: fees.docPrep, // Simplified - typically based on loan amount
+    ownerTitlePolicy: fees.ownerTitlePolicy,
+    lenderTitlePolicy: fees.lenderTitlePolicy,
     escrowFee: fees.settlement,
     notaryFee: fees.notary,
     recordingFee: fees.recording,
     courierFee: fees.courier,
+    pestInspectionFee: fees.pestInspection,
+    propertyInspectionFee: fees.propertyInspection,
+    poolInspectionFee: fees.poolInspection,
     totalThirdPartyFees: roundToCents(totalThirdPartyFees),
 
     // Section C
