@@ -24,6 +24,7 @@ const formSchema = z.object({
   hoaDuesMonthly: z.number().min(0),
   creditScoreTier: CreditScoreTier,
   refinanceType: ConventionalRefinanceType,
+  originationPoints: z.number().min(0).max(5).default(0),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -53,6 +54,7 @@ export function ConventionalRefiForm() {
       hoaDuesMonthly: conventionalRefiInputs.hoaDuesMonthly,
       creditScoreTier: conventionalRefiInputs.creditScoreTier,
       refinanceType: conventionalRefiInputs.refinanceType,
+      originationPoints: conventionalRefiInputs.originationPoints,
     },
   });
 
@@ -75,6 +77,7 @@ export function ConventionalRefiForm() {
         refinanceType: data.refinanceType as 'rate_term' | 'cash_out',
         payoffDays: 30,
         cashOutAmount: 0,
+        originationPoints: data.originationPoints,
       },
       config
     );
@@ -190,20 +193,40 @@ export function ConventionalRefiForm() {
                 )}
               />
 
-              <Controller
-                name="refinanceType"
-                control={control}
-                render={({ field }) => (
-                  <SelectGroup
-                    label={t('refinance.type')}
-                    name="refinanceType"
-                    value={field.value}
-                    onChange={field.onChange}
-                    options={refinanceTypeOptions}
-                    disabled={isDisabled}
-                  />
-                )}
-              />
+              <div className="grid grid-cols-2 gap-4">
+                <Controller
+                  name="refinanceType"
+                  control={control}
+                  render={({ field }) => (
+                    <SelectGroup
+                      label={t('refinance.type')}
+                      name="refinanceType"
+                      value={field.value}
+                      onChange={field.onChange}
+                      options={refinanceTypeOptions}
+                      disabled={isDisabled}
+                    />
+                  )}
+                />
+
+                <Controller
+                  name="originationPoints"
+                  control={control}
+                  render={({ field }) => (
+                    <InputGroup
+                      label={t('calculator.originationPoints')}
+                      name="originationPoints"
+                      type="number"
+                      value={field.value}
+                      onChange={(val) => field.onChange(Number(val) || 0)}
+                      suffix="pts"
+                      step="0.125"
+                      error={errors.originationPoints?.message}
+                      disabled={isDisabled}
+                    />
+                  )}
+                />
+              </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <Controller
@@ -339,7 +362,12 @@ export function ConventionalRefiForm() {
       {/* Results */}
       <div>
         {conventionalRefiResult ? (
-          <ResultSummary result={conventionalRefiResult} />
+          <ResultSummary
+            result={conventionalRefiResult}
+            config={config!}
+            loanType={t('conventionalRefi.title')}
+            formId="conventional-refi"
+          />
         ) : (
           <Card className="h-full flex items-center justify-center">
             <CardContent>

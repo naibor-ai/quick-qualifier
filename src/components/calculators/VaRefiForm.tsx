@@ -24,6 +24,7 @@ const formSchema = z.object({
   vaUsage: VaUsage,
   isDisabledVeteran: z.boolean(),
   cashOutAmount: z.number().min(0),
+  originationPoints: z.number().min(0).max(5).default(0),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -55,6 +56,7 @@ export function VaRefiForm() {
       vaUsage: vaRefiInputs.vaUsage,
       isDisabledVeteran: vaRefiInputs.isDisabledVeteran,
       cashOutAmount: vaRefiInputs.cashOutAmount,
+      originationPoints: (vaRefiInputs as any).originationPoints ?? 0,
     },
   });
 
@@ -81,6 +83,7 @@ export function VaRefiForm() {
         isDisabledVeteran: data.isDisabledVeteran,
         cashOutAmount: data.cashOutAmount,
         payoffDays: 30,
+        originationPoints: data.originationPoints,
       },
       config
     );
@@ -244,6 +247,24 @@ export function VaRefiForm() {
                 />
               )}
 
+              <Controller
+                name="originationPoints"
+                control={control}
+                render={({ field }) => (
+                  <InputGroup
+                    label={t('calculator.originationPoints')}
+                    name="originationPoints"
+                    type="number"
+                    value={field.value}
+                    onChange={(val) => field.onChange(Number(val) || 0)}
+                    suffix="pts"
+                    step="0.125"
+                    error={errors.originationPoints?.message}
+                    disabled={isDisabled}
+                  />
+                )}
+              />
+
               <div className="grid grid-cols-2 gap-4">
                 <Controller
                   name="interestRate"
@@ -403,7 +424,12 @@ export function VaRefiForm() {
       {/* Results */}
       <div>
         {vaRefiResult ? (
-          <ResultSummary result={vaRefiResult} />
+          <ResultSummary
+            result={vaRefiResult}
+            config={config!}
+            loanType={t('vaRefi.title')}
+            formId="va-refi"
+          />
         ) : (
           <Card className="h-full flex items-center justify-center">
             <CardContent>

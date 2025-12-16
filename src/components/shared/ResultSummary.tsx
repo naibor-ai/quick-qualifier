@@ -52,6 +52,7 @@ interface ResultSummaryProps {
   config?: GhlConfig | null;
   loanType?: string;
   propertyAddress?: string;
+  formId?: string;
 }
 
 export function ResultSummary({
@@ -61,8 +62,11 @@ export function ResultSummary({
   config,
   loanType,
   propertyAddress,
+  formId,
 }: ResultSummaryProps) {
   const t = useTranslations('calculator');
+
+  const isRefi = formId?.includes('refi');
 
   const formatCurrency = (value: number) => {
     return new Intl.NumberFormat('en-US', {
@@ -185,6 +189,14 @@ export function ResultSummary({
                 value={formatCurrency(result.closingCosts.originationFee)}
               />
               <ResultItem
+                label={t('results.adminFee')}
+                value={formatCurrency(result.closingCosts.adminFee)}
+              />
+              <ResultItem
+                label={t('results.docPrepFee')}
+                value={formatCurrency(result.closingCosts.docPrepFee)}
+              />
+              <ResultItem
                 label={t('results.processingFee')}
                 value={formatCurrency(result.closingCosts.processingFee)}
               />
@@ -204,15 +216,25 @@ export function ResultSummary({
                 label={t('results.floodCertFee')}
                 value={formatCurrency(result.closingCosts.floodCertFee)}
               />
+              <ResultItem
+                label={t('results.taxServiceFee')}
+                value={formatCurrency(result.closingCosts.taxServiceFee)}
+              />
             </ResultSection>
           </div>
 
           <div className="mt-4">
             <ResultSection title={t('results.titleFees')}>
               <ResultItem
-                label={t('results.titleInsurance')}
-                value={formatCurrency(result.closingCosts.titleInsurance)}
+                label={t('results.lenderTitlePolicy')}
+                value={formatCurrency(result.closingCosts.lenderTitlePolicy)}
               />
+              {!isRefi && (
+                <ResultItem
+                  label={t('results.ownerTitlePolicy')}
+                  value={formatCurrency(result.closingCosts.ownerTitlePolicy)}
+                />
+              )}
               <ResultItem
                 label={t('results.escrowFee')}
                 value={formatCurrency(result.closingCosts.escrowFee)}
@@ -221,6 +243,30 @@ export function ResultSummary({
                 label={t('results.recordingFee')}
                 value={formatCurrency(result.closingCosts.recordingFee)}
               />
+              <ResultItem
+                label={t('results.notaryFee')}
+                value={formatCurrency(result.closingCosts.notaryFee)}
+              />
+              {/* Courier Fee removed as per user request/images */}
+
+              {!isRefi && (
+                <>
+                  <ResultItem
+                    label={t('results.pestInspectionFee')}
+                    value={formatCurrency(result.closingCosts.pestInspectionFee)}
+                  />
+                  <ResultItem
+                    label={t('results.propertyInspectionFee')}
+                    value={formatCurrency(result.closingCosts.propertyInspectionFee)}
+                  />
+                  {formId !== 'va' && (
+                    <ResultItem
+                      label={t('results.poolInspectionFee')}
+                      value={formatCurrency(result.closingCosts.poolInspectionFee)}
+                    />
+                  )}
+                </>
+              )}
             </ResultSection>
           </div>
 

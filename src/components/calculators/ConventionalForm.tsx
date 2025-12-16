@@ -27,6 +27,7 @@ const formSchema = z.object({
   sellerCreditAmount: z.number().min(0),
   lenderCreditAmount: z.number().min(0),
   originationPoints: z.number().min(0).max(5),
+  depositAmount: z.number().min(0),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -61,6 +62,7 @@ export function ConventionalForm() {
       sellerCreditAmount: conventionalInputs.sellerCreditAmount,
       lenderCreditAmount: conventionalInputs.lenderCreditAmount,
       originationPoints: conventionalInputs.originationPoints,
+      depositAmount: conventionalInputs.depositAmount,
     },
   });
 
@@ -110,6 +112,7 @@ export function ConventionalForm() {
         sellerCreditAmount: data.sellerCreditAmount,
         lenderCreditAmount: data.lenderCreditAmount,
         originationPoints: data.originationPoints,
+        depositAmount: data.depositAmount,
       },
       config
     );
@@ -460,6 +463,22 @@ export function ConventionalForm() {
                   />
                 )}
               />
+
+              <Controller
+                name="depositAmount"
+                control={control}
+                render={({ field }) => (
+                  <InputGroup
+                    label="Deposit (Earnest Money)"
+                    name="depositAmount"
+                    type="number"
+                    value={field.value}
+                    onChange={(val) => field.onChange(Number(val) || 0)}
+                    prefix="$"
+                    disabled={isDisabled}
+                  />
+                )}
+              />
             </div>
 
             {/* Partner Agent */}
@@ -490,6 +509,7 @@ export function ConventionalForm() {
             result={conventionalResult}
             config={config}
             loanType={t('conventional.title')}
+            formId="conventional"
           />
         ) : (
           <Card className="h-full flex items-center justify-center">

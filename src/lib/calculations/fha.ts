@@ -31,6 +31,7 @@ import {
   calculateCashToClose,
   isHighBalanceLoan,
   roundToCents,
+  calculateOriginationFee,
 } from './common';
 
 /**
@@ -111,20 +112,20 @@ export function calculateFhaClosingCosts(
     fees.appraisal +
     fees.creditReport +
     fees.floodCert +
-    fees.taxService;
+    fees.taxService +
+    fees.docPrep;
 
   // Section B - Third Party Fees
   const totalThirdPartyFees =
-    fees.docPrep +
     fees.settlement +
     fees.notary +
     fees.recording +
-    fees.courier +
     fees.ownerTitlePolicy +
     fees.lenderTitlePolicy +
     fees.pestInspection +
     fees.propertyInspection +
     fees.poolInspection;
+  // Removed: courier
 
   // Section C - Prepaids
   // Note: For FHA, prepaid interest is on the total loan (including UFMIP)
@@ -161,6 +162,7 @@ export function calculateFhaClosingCosts(
     creditReportFee: fees.creditReport,
     floodCertFee: fees.floodCert,
     taxServiceFee: fees.taxService,
+    docPrepFee: fees.docPrep,
     totalLenderFees: roundToCents(totalLenderFees),
 
     ownerTitlePolicy: fees.ownerTitlePolicy,
@@ -301,21 +303,24 @@ export function calculateFhaRefinance(
     homeInsuranceAnnual,
     hoaDuesMonthly,
     isStreamline,
+    originationPoints,
   } = input;
+
+  const { feesRefi, prepaids } = config;
+  const fees = feesRefi || config.fees;
 
   const ltv = calculateLTV(newLoanAmount, propertyValue);
 
-  // UFMIP rate depends on streamline vs standard
+  // UFMIP calculation
   const ufmipRate = isStreamline
     ? config.fha.ufmipStreamline
     : config.fha.ufmipRefi;
   const ufmipAmount = calculateUfmip(newLoanAmount, ufmipRate);
-
   const totalLoanAmount = newLoanAmount + ufmipAmount;
 
-  // MIP rate - streamline typically has lower rates
+  // Monthly MIP
   const mipRate = isStreamline
-    ? Math.min(config.fha.mip30yrLe95, 0.55) // Streamline cap
+    ? Math.min(config.fha.mip30yrLe95, 0.55)
     : getFhaMipRate(ltv, termYears, newLoanAmount, config);
   const monthlyMip = calculateMonthlyMip(newLoanAmount, mipRate);
 
@@ -324,7 +329,6 @@ export function calculateFhaRefinance(
     interestRate,
     termYears
   );
-
   const monthlyTax = calculateMonthlyPropertyTax(propertyTaxAnnual);
   const monthlyInsurance = calculateMonthlyInsurance(homeInsuranceAnnual);
 
@@ -341,25 +345,91 @@ export function calculateFhaRefinance(
       propertyTax: monthlyTax,
       homeInsurance: monthlyInsurance,
       hoaDues: hoaDuesMonthly,
+      floodInsurance: 0,
     }),
   };
 
-  const closingCosts = calculateFhaClosingCosts(
-    newLoanAmount,
-    propertyValue,
-    interestRate,
-    propertyTaxAnnual,
-    homeInsuranceAnnual,
-    ufmipAmount,
-    config
-  );
+  // Fees Calculation
+  // Points are based on Total Loan Amount for FHA usually? Or Base?
+  // Reference implies points on total (407k -> 4070).
+  const originationFee = calculateOriginationFee(totalLoanAmount, originationPoints || 0);
 
-  // Calculate cash to close
-  // Cash needed = Existing Loan + Closing Costs - New Loan
-  // Negative value means cash back to borrower (proceeds)
-  const cashToClose = roundToCents(
-    existingLoanBalance + closingCosts.netClosingCosts - newLoanAmount
+  const totalLenderFees =
+    originationFee +
+    fees.admin +
+    fees.processing +
+    fees.underwriting +
+    fees.appraisal +
+    fees.creditReport +
+    fees.floodCert +
+    fees.taxService;
+
+  // Section B - Third Party Fees
+  // Strict filtering for Refi: Exclude Owner's title, Courier, Inspections
+  const totalThirdPartyFees =
+    fees.docPrep +
+    fees.settlement +
+    fees.notary +
+    fees.recording +
+    fees.lenderTitlePolicy;
+  // Removed: courier, ownerTitlePolicy, pest/property/pool inspections
+
+  // Prepaids
+  const prepaidInterest = calculatePrepaidInterest(
+    totalLoanAmount,
+    interestRate,
+    prepaids.interestDays
   );
+  const taxReserves = calculateTaxReserves(propertyTaxAnnual, prepaids.taxMonths);
+  const insuranceReserves = calculateInsuranceReserves(homeInsuranceAnnual, prepaids.insuranceMonths);
+  const totalPrepaids = prepaidInterest + taxReserves + insuranceReserves;
+
+  const totalClosingCosts = totalLenderFees + totalThirdPartyFees + totalPrepaids;
+  const netClosingCosts = totalClosingCosts; // No credits assumed
+
+  const closingCosts: ClosingCostsBreakdown = {
+    originationFee,
+    adminFee: fees.admin,
+    processingFee: fees.processing,
+    underwritingFee: fees.underwriting,
+    appraisalFee: fees.appraisal,
+    creditReportFee: fees.creditReport,
+    floodCertFee: fees.floodCert,
+    taxServiceFee: fees.taxService,
+    docPrepFee: fees.docPrep,
+    totalLenderFees: roundToCents(totalLenderFees),
+
+    ownerTitlePolicy: fees.ownerTitlePolicy,
+    lenderTitlePolicy: fees.lenderTitlePolicy,
+    escrowFee: fees.settlement,
+    notaryFee: fees.notary,
+    recordingFee: fees.recording,
+    courierFee: fees.courier,
+    pestInspectionFee: fees.pestInspection,
+    propertyInspectionFee: fees.propertyInspection,
+    poolInspectionFee: fees.poolInspection,
+    totalThirdPartyFees: roundToCents(totalThirdPartyFees),
+
+    prepaidInterest,
+    taxReserves,
+    insuranceReserves,
+    totalPrepaids: roundToCents(totalPrepaids),
+
+    sellerCredit: 0,
+    lenderCredit: 0,
+    totalCredits: 0,
+
+    totalClosingCosts: roundToCents(totalClosingCosts),
+    netClosingCosts: roundToCents(netClosingCosts),
+  };
+
+  // Cash To Close Calculation
+  // = (Existing Payoff + Closing Costs + Prepaids + UFMIP Paid) - Total Loan Proceeds
+  // Note: closingCosts.netClosingCosts INCLUDES Prepaids already in my schema structure above?
+  // Check schema: totalClosingCosts = Lender + ThirdParty + Prepaids. Yes.
+  // So: Needed = Payoff + NetCosts + UFMIP.
+  const amountNeeded = existingLoanBalance + netClosingCosts + ufmipAmount;
+  const cashToClose = roundToCents(amountNeeded - totalLoanAmount);
 
   return {
     loanAmount: newLoanAmount,
