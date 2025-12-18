@@ -70,7 +70,6 @@ export const ConventionalPurchaseInputSchema = BasePurchaseInputSchema.extend({
   sellerCreditPercent: z.number().min(0).max(100).optional(),
   lenderCreditAmount: z.number().min(0).default(0),
   originationPoints: z.number().min(0).max(5).default(0),
-  depositAmount: z.number().min(0).default(0),
 });
 export type ConventionalPurchaseInput = z.infer<typeof ConventionalPurchaseInputSchema>;
 
@@ -111,14 +110,12 @@ export const ConventionalRefinanceInputSchema = BaseRefinanceInputSchema.extend(
   refinanceType: RefinanceType,
   creditScoreTier: CreditScoreTier,
   cashOutAmount: z.number().min(0).default(0),
-  originationPoints: z.number().min(0).max(5).default(0),
 });
 export type ConventionalRefinanceInput = z.infer<typeof ConventionalRefinanceInputSchema>;
 
 export const FhaRefinanceInputSchema = BaseRefinanceInputSchema.extend({
   isStreamline: z.boolean().default(false),
   existingFhaLoanDate: z.string().optional(), // For MIP refund calculation
-  originationPoints: z.number().min(0).max(5).default(0),
 });
 export type FhaRefinanceInput = z.infer<typeof FhaRefinanceInputSchema>;
 
@@ -127,7 +124,6 @@ export const VaRefinanceInputSchema = BaseRefinanceInputSchema.extend({
   vaUsage: VaUsage.default('first'),
   isDisabledVeteran: z.boolean().default(false),
   cashOutAmount: z.number().min(0).default(0),
-  originationPoints: z.number().min(0).max(5).default(0),
 });
 export type VaRefinanceInput = z.infer<typeof VaRefinanceInputSchema>;
 
@@ -200,19 +196,14 @@ export const ClosingCostsBreakdownSchema = z.object({
   creditReportFee: z.number(),
   floodCertFee: z.number(),
   taxServiceFee: z.number(),
-  docPrepFee: z.number(),
   totalLenderFees: z.number(),
 
   // Section B - Third Party Fees
-  ownerTitlePolicy: z.number(),
-  lenderTitlePolicy: z.number(),
+  titleInsurance: z.number(),
   escrowFee: z.number(),
   notaryFee: z.number(),
   recordingFee: z.number(),
   courierFee: z.number(),
-  pestInspectionFee: z.number(),
-  propertyInspectionFee: z.number(),
-  poolInspectionFee: z.number(),
   totalThirdPartyFees: z.number(),
 
   // Section C - Prepaids
@@ -229,11 +220,6 @@ export const ClosingCostsBreakdownSchema = z.object({
   // Totals
   totalClosingCosts: z.number(),
   netClosingCosts: z.number(), // After credits
-
-  // New fees added for Conventional Sale
-  loanFee: z.number().optional(),
-  transferTax: z.number().optional(),
-  mortgageTax: z.number().optional(),
 });
 export type ClosingCostsBreakdown = z.infer<typeof ClosingCostsBreakdownSchema>;
 
@@ -281,34 +267,6 @@ export const GhlConfigSchema = z.object({
     notary: z.number(),
     recording: z.number(),
     courier: z.number(),
-    // New fields from reference images
-    ownerTitlePolicy: z.number().default(0),
-    lenderTitlePolicy: z.number().default(0),
-    pestInspection: z.number().default(0),
-    propertyInspection: z.number().default(0),
-    poolInspection: z.number().default(0),
-  }),
-
-  // Refinance Specific Fees (mirrors structure of fees)
-  feesRefi: z.object({
-    originationPoints: z.number().default(0),
-    admin: z.number().default(0),
-    processing: z.number().default(0),
-    underwriting: z.number().default(0),
-    appraisal: z.number().default(0),
-    creditReport: z.number().default(0),
-    floodCert: z.number().default(0),
-    taxService: z.number().default(0),
-    docPrep: z.number().default(0),
-    settlement: z.number().default(0),
-    notary: z.number().default(0),
-    recording: z.number().default(0),
-    courier: z.number().default(0),
-    ownerTitlePolicy: z.number().default(0),
-    lenderTitlePolicy: z.number().default(0),
-    pestInspection: z.number().default(0),
-    propertyInspection: z.number().default(0),
-    poolInspection: z.number().default(0),
   }),
 
   // Prepaids & Reserves

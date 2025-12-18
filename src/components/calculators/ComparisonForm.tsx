@@ -30,12 +30,6 @@ export function ComparisonForm() {
     termYears: s.termYears,
   })));
 
-  const [commonInputs, setCommonInputs] = useState({
-    propertyTaxAnnual: 6000,
-    homeInsuranceAnnual: 1800,
-    hoaDuesMonthly: 0,
-  });
-
   const updateScenario = (index: number, field: keyof Scenario, value: string | number) => {
     const updated = [...scenarios];
     updated[index] = { ...updated[index], [field]: value };
@@ -68,6 +62,10 @@ export function ComparisonForm() {
       return; // Config required for calculation
     }
 
+    // Default property costs
+    const propertyTaxAnnual = 6000;
+    const homeInsuranceAnnual = 1800;
+
     // Run comparison
     const comparisonResult = compareScenarios(
       {
@@ -79,24 +77,19 @@ export function ComparisonForm() {
           interestRate: s.interestRate,
           termYears: s.termYears,
         })),
-        propertyTaxAnnual: commonInputs.propertyTaxAnnual,
-        homeInsuranceAnnual: commonInputs.homeInsuranceAnnual,
-        hoaDuesMonthly: commonInputs.hoaDuesMonthly,
+        propertyTaxAnnual,
+        homeInsuranceAnnual,
+        hoaDuesMonthly: 0,
       },
       config
     );
 
     setResults(comparisonResult);
-  }, [scenarios, commonInputs, config]);
+  }, [scenarios, config]);
 
   const handleReset = () => {
     resetCalculator('comparison');
     setResults(null);
-    setCommonInputs({
-      propertyTaxAnnual: 6000,
-      homeInsuranceAnnual: 1800,
-      hoaDuesMonthly: 0,
-    });
     setScenarios([
       {
         name: 'Conventional 20% Down',
@@ -171,41 +164,6 @@ export function ComparisonForm() {
           </Button>
         </div>
       </div>
-
-      {/* Common Inputs */}
-      <Card>
-        <CardContent className="pt-6">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <InputGroup
-              label={t('calculator.propertyTax')}
-              name="propertyTaxAnnual"
-              type="number"
-              value={commonInputs.propertyTaxAnnual}
-              onChange={(val) => setCommonInputs({ ...commonInputs, propertyTaxAnnual: Number(val) || 0 })}
-              prefix="$"
-              helperText={t('common.annual')}
-            />
-            <InputGroup
-              label={t('calculator.homeInsurance')}
-              name="homeInsuranceAnnual"
-              type="number"
-              value={commonInputs.homeInsuranceAnnual}
-              onChange={(val) => setCommonInputs({ ...commonInputs, homeInsuranceAnnual: Number(val) || 0 })}
-              prefix="$"
-              helperText={t('common.annual')}
-            />
-            <InputGroup
-              label={t('calculator.hoaDues')}
-              name="hoaDuesMonthly"
-              type="number"
-              value={commonInputs.hoaDuesMonthly}
-              onChange={(val) => setCommonInputs({ ...commonInputs, hoaDuesMonthly: Number(val) || 0 })}
-              prefix="$"
-              helperText="Monthly"
-            />
-          </div>
-        </CardContent>
-      </Card>
 
       {/* Scenario Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">

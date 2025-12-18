@@ -41,7 +41,6 @@ interface ConventionalInputs {
   sellerCreditAmount: number;
   lenderCreditAmount: number;
   originationPoints: number;
-  depositAmount: number;
 }
 
 interface FhaInputs {
@@ -86,7 +85,6 @@ interface ConventionalRefiInputs {
   hoaDuesMonthly: number;
   creditScoreTier: CreditScoreTier;
   refinanceType: 'rate_term' | 'cash_out';
-  originationPoints: number;
 }
 
 interface FhaRefiInputs {
@@ -99,7 +97,6 @@ interface FhaRefiInputs {
   homeInsuranceAnnual: number;
   hoaDuesMonthly: number;
   isStreamline: boolean;
-  originationPoints: number;
 }
 
 interface VaRefiInputs {
@@ -115,7 +112,6 @@ interface VaRefiInputs {
   vaUsage: VaUsage;
   isDisabledVeteran: boolean;
   cashOutAmount: number;
-  originationPoints: number;
 }
 
 interface SellerNetInputs {
@@ -211,18 +207,17 @@ const defaultConventionalInputs: ConventionalInputs = {
   downPaymentAmount: 100000,
   downPaymentPercent: 20,
   downPaymentMode: 'percent',
-  interestRate: 6.875,
+  interestRate: 7.0,
   termYears: 30,
-  propertyTaxAnnual: 6250,
-  homeInsuranceAnnual: 1750,
+  propertyTaxAnnual: 6000,
+  homeInsuranceAnnual: 1800,
   hoaDuesMonthly: 0,
   floodInsuranceMonthly: 0,
   creditScoreTier: '740',
   pmiType: 'monthly',
   sellerCreditAmount: 0,
   lenderCreditAmount: 0,
-  originationPoints: 1,
-  depositAmount: 0,
+  originationPoints: 0,
 };
 
 const defaultFhaInputs: FhaInputs = {
@@ -309,7 +304,6 @@ const defaultConventionalRefiInputs: ConventionalRefiInputs = {
   hoaDuesMonthly: 0,
   creditScoreTier: '740',
   refinanceType: 'rate_term',
-  originationPoints: 1,
 };
 
 const defaultFhaRefiInputs: FhaRefiInputs = {
@@ -322,7 +316,6 @@ const defaultFhaRefiInputs: FhaRefiInputs = {
   homeInsuranceAnnual: 1500,
   hoaDuesMonthly: 0,
   isStreamline: false,
-  originationPoints: 1,
 };
 
 const defaultVaRefiInputs: VaRefiInputs = {
@@ -338,7 +331,6 @@ const defaultVaRefiInputs: VaRefiInputs = {
   vaUsage: 'first',
   isDisabledVeteran: false,
   cashOutAmount: 0,
-  originationPoints: 0,
 };
 
 // ============================================================================
