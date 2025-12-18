@@ -20,7 +20,7 @@ const formSchema = z.object({
   homeInsuranceAnnual: z.number().min(0),
   hoaDuesMonthly: z.number().min(0),
   isStreamline: z.boolean(),
-  originationPoints: z.number().min(0).max(5).default(0),
+  originationPoints: z.number().min(0).max(5),
 });
 
 type FormValues = z.infer<typeof formSchema>;
