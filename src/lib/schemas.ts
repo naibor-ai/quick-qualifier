@@ -229,6 +229,11 @@ export const ClosingCostsBreakdownSchema = z.object({
   // Totals
   totalClosingCosts: z.number(),
   netClosingCosts: z.number(), // After credits
+
+  // New fees added for Conventional Sale
+  loanFee: z.number().optional(),
+  transferTax: z.number().optional(),
+  mortgageTax: z.number().optional(),
 });
 export type ClosingCostsBreakdown = z.infer<typeof ClosingCostsBreakdownSchema>;
 

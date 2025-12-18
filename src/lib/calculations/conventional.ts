@@ -103,45 +103,101 @@ export function calculateConventionalClosingCosts(
 ): ClosingCostsBreakdown {
   const { fees, prepaids } = config;
 
+  // Fee overrides based on user request (Conventional Sale specific)
+  // Loan fee is dynamic 1% of LOAN AMOUNT
+  const loanFee = roundToCents(loanAmount * 0.01);
+
+  // Fixed values from image
+  const manualFees = {
+    docPrep: 295,
+    processing: 995,
+    underwriting: 1495,
+    appraisal: 650,
+    creditReport: 150,
+    floodCert: 30,
+    taxService: 85,
+    ownerTitlePolicy: 1730,
+    lenderTitlePolicy: 1515,
+    settlement: 1115, // Escrow/closing fee
+    pestInspection: 150,
+    propertyInspection: 450,
+    poolInspection: 100,
+    notary: 350,
+    recording: 275,
+    transferTax: 0,
+    mortgageTax: 0
+  };
+
   // Section A - Lender Fees
+  // Origination fee comes dynamically from the form input (points)
   const originationFee = calculateOriginationFee(loanAmount, originationPoints);
+
+  // Admin fee removed as per request
+  const adminFee = 0;
+  const processingFee = manualFees.processing;
+  const underwritingFee = manualFees.underwriting;
+  const appraisalFee = manualFees.appraisal;
+  const creditReportFee = manualFees.creditReport;
+  const floodCertFee = manualFees.floodCert;
+  const taxServiceFee = manualFees.taxService;
+  const docPrepFee = manualFees.docPrep;
+
   const totalLenderFees =
+    loanFee +
     originationFee +
-    fees.admin +
-    fees.processing +
-    fees.underwriting +
-    fees.appraisal +
-    fees.creditReport +
-    fees.floodCert +
-    fees.taxService +
-    fees.docPrep;
+    adminFee +
+    processingFee +
+    underwritingFee +
+    appraisalFee +
+    creditReportFee +
+    floodCertFee +
+    taxServiceFee +
+    docPrepFee;
 
   // Section B - Third Party Fees
+  const settlementFee = manualFees.settlement;
+  const notaryFee = manualFees.notary;
+  const recordingFee = manualFees.recording;
+  const courierFee = 0; // Image did not have courier fee
+  const ownerTitlePolicy = manualFees.ownerTitlePolicy;
+  const lenderTitlePolicy = manualFees.lenderTitlePolicy;
+  const pestInspectionFee = manualFees.pestInspection;
+  const propertyInspectionFee = manualFees.propertyInspection;
+  const poolInspectionFee = manualFees.poolInspection;
+  const transferTax = manualFees.transferTax;
+  const mortgageTax = manualFees.mortgageTax;
+
   const totalThirdPartyFees =
-    fees.settlement +
-    fees.notary +
-    fees.recording +
-    fees.courier +
-    fees.ownerTitlePolicy +
-    fees.lenderTitlePolicy +
-    fees.pestInspection +
-    fees.propertyInspection +
-    fees.poolInspection;
+    settlementFee +
+    notaryFee +
+    recordingFee +
+    courierFee +
+    ownerTitlePolicy +
+    lenderTitlePolicy +
+    pestInspectionFee +
+    propertyInspectionFee +
+    poolInspectionFee +
+    transferTax +
+    mortgageTax;
 
   // Section C - Prepaids
+  // Formula: (loan amount * interestRate / 365 * 15)
+  // Note: interestRate is passed as percentage (e.g., 6.87), so we divide by 100 inside the calc or before.
+  // calculatePrepaidInterest handles the /100.
   const prepaidInterest = calculatePrepaidInterest(
     loanAmount,
     interestRate,
-    prepaids.interestDays
+    15 // Fixed 15 days as per request
   );
-  const taxReserves = calculateTaxReserves(
-    propertyTaxAnnual,
-    prepaids.taxMonths
-  );
-  const insuranceReserves = calculateInsuranceReserves(
-    homeInsuranceAnnual,
-    prepaids.insuranceMonths
-  );
+
+  // Formula: (Sales Price * 1.25% / 2) which is 6 months of 1.25% annual
+  const taxReserves = roundToCents((salesPrice * 0.0125) / 2);
+
+  // Formula: (sales price * 0.4375%)
+  // User requested label "Prepaid hazard ins (15 months )" but formula (sales price * 0.4375%)
+  // We use the exact formula requested.
+  const insuranceReserves = roundToCents(salesPrice * 0.004375);
+
   const totalPrepaids = prepaidInterest + taxReserves + insuranceReserves;
 
   // Section D - Credits
@@ -157,27 +213,30 @@ export function calculateConventionalClosingCosts(
 
   return {
     // Section A
+    loanFee,
     originationFee,
-    adminFee: fees.admin,
-    processingFee: fees.processing,
-    underwritingFee: fees.underwriting,
-    appraisalFee: fees.appraisal,
-    creditReportFee: fees.creditReport,
-    floodCertFee: fees.floodCert,
-    taxServiceFee: fees.taxService,
-    docPrepFee: fees.docPrep,
+    adminFee,
+    processingFee,
+    underwritingFee,
+    appraisalFee,
+    creditReportFee,
+    floodCertFee,
+    taxServiceFee,
+    docPrepFee,
     totalLenderFees: roundToCents(totalLenderFees),
 
     // Section B
-    ownerTitlePolicy: fees.ownerTitlePolicy,
-    lenderTitlePolicy: fees.lenderTitlePolicy,
-    escrowFee: fees.settlement,
-    notaryFee: fees.notary,
-    recordingFee: fees.recording,
-    courierFee: fees.courier,
-    pestInspectionFee: fees.pestInspection,
-    propertyInspectionFee: fees.propertyInspection,
-    poolInspectionFee: fees.poolInspection,
+    ownerTitlePolicy,
+    lenderTitlePolicy,
+    escrowFee: settlementFee,
+    notaryFee,
+    recordingFee,
+    courierFee,
+    pestInspectionFee,
+    propertyInspectionFee,
+    poolInspectionFee,
+    transferTax,
+    mortgageTax,
     totalThirdPartyFees: roundToCents(totalThirdPartyFees),
 
     // Section C
@@ -260,8 +319,11 @@ export function calculateConventionalPurchase(
   );
 
   // Calculate monthly escrows
-  const monthlyTax = calculateMonthlyPropertyTax(propertyTaxAnnual);
-  const monthlyInsurance = calculateMonthlyInsurance(homeInsuranceAnnual);
+  // Formula: (Sales Price * 1.25% / 12)
+  const monthlyTax = roundToCents((salesPrice * 0.0125) / 12);
+
+  // Formula: (Sales Price * 0.35% / 12)
+  const monthlyInsurance = roundToCents((salesPrice * 0.0035) / 12);
 
   // Build monthly payment breakdown
   const monthlyPayment: MonthlyPaymentBreakdown = {

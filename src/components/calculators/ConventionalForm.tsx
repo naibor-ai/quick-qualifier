@@ -61,7 +61,7 @@ export function ConventionalForm() {
       pmiType: conventionalInputs.pmiType,
       sellerCreditAmount: conventionalInputs.sellerCreditAmount,
       lenderCreditAmount: conventionalInputs.lenderCreditAmount,
-      originationPoints: conventionalInputs.originationPoints,
+      originationPoints: 0, // Ensure default is 0 as requested, overriding store if needed
       depositAmount: conventionalInputs.depositAmount,
     },
   });
@@ -86,6 +86,19 @@ export function ConventionalForm() {
       setValue('downPaymentPercent', Math.round(percent * 100) / 100);
     }
   }, [watchedValues.downPaymentAmount, salesPrice, downPaymentMode, setValue]);
+
+  // Formulas: 
+  // Property Tax Annual = Sales Price * 1.25%
+  // Home Insurance Annual = Sales Price * 0.35%
+  useEffect(() => {
+    if (salesPrice > 0) {
+      const annualTax = Math.round(salesPrice * 0.0125);
+      const annualInsurance = Math.round(salesPrice * 0.0035);
+
+      setValue('propertyTaxAnnual', annualTax);
+      setValue('homeInsuranceAnnual', annualInsurance);
+    }
+  }, [salesPrice, setValue, watchedValues.propertyTaxAnnual, watchedValues.homeInsuranceAnnual]);
 
   const onCalculate = useCallback((data: FormValues) => {
     if (!config) {
