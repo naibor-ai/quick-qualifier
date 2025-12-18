@@ -32,7 +32,6 @@ import {
   calculateTotalMonthlyPayment,
   calculateCashToClose,
   roundToCents,
-  calculateOriginationFee,
 } from './common';
 
 /**
@@ -113,20 +112,15 @@ export function calculateVaClosingCosts(
     fees.appraisal +
     fees.creditReport +
     fees.floodCert +
-    fees.taxService +
-    fees.docPrep;
+    fees.taxService;
 
   // Section B - Third Party Fees
-  // Section B - Third Party Fees
   const totalThirdPartyFees =
+    fees.docPrep +
     fees.settlement +
     fees.notary +
     fees.recording +
-    fees.ownerTitlePolicy +
-    fees.lenderTitlePolicy +
-    fees.pestInspection +
-    fees.propertyInspection;
-  // Removed: courier, poolInspection (not in VA Purchase image)
+    fees.courier;
 
   // Section C - Prepaids
   const totalLoanAmount = baseLoanAmount + fundingFeeAmount;
@@ -159,18 +153,13 @@ export function calculateVaClosingCosts(
     creditReportFee: fees.creditReport,
     floodCertFee: fees.floodCert,
     taxServiceFee: fees.taxService,
-    docPrepFee: fees.docPrep,
     totalLenderFees: roundToCents(totalLenderFees),
 
-    ownerTitlePolicy: fees.ownerTitlePolicy,
-    lenderTitlePolicy: fees.lenderTitlePolicy,
+    titleInsurance: fees.docPrep,
     escrowFee: fees.settlement,
     notaryFee: fees.notary,
     recordingFee: fees.recording,
     courierFee: fees.courier,
-    pestInspectionFee: fees.pestInspection,
-    propertyInspectionFee: fees.propertyInspection,
-    poolInspectionFee: fees.poolInspection,
     totalThirdPartyFees: roundToCents(totalThirdPartyFees),
 
     prepaidInterest,
@@ -300,7 +289,6 @@ export function calculateVaRefinance(
 ): LoanCalculationResult {
   const {
     propertyValue,
-    existingLoanBalance,
     newLoanAmount,
     interestRate,
     termYears,
@@ -311,16 +299,12 @@ export function calculateVaRefinance(
     vaUsage,
     isDisabledVeteran,
     cashOutAmount,
-    originationPoints,
   } = input;
-
-  const { feesRefi, prepaids } = config;
-  const fees = feesRefi || config.fees;
 
   const ltv = calculateLTV(newLoanAmount, propertyValue);
   const isCashOut = (cashOutAmount || 0) > 0;
 
-  // VA FF
+  // Calculate VA Funding Fee
   const fundingFeeRate = getVaFundingFeeRate(
     vaUsage,
     0, // No down payment on refi
@@ -333,126 +317,43 @@ export function calculateVaRefinance(
     fundingFeeRate,
     isDisabledVeteran
   );
+
   const totalLoanAmount = newLoanAmount + fundingFeeAmount;
 
-  // Fees Calculation
-  // Manual Fees from Image for VA Refinance
-  const manualFees = {
-    appraisal: 650,
-    creditReport: 150,
-    lenderTitlePolicy: 1115,
-    escrow: 400, // Escrow/closing fee
-    recording: 275,
-    notary: 350,
-    mortgageTax: 0,
-    docPrep: 595,
-    processing: 895,
-    underwriting: 995,
-    taxService: 59,
-    floodCert: 30
-  };
-
-  // Loan Fee
-  // Formula: Loan Amount * (Loan Fee % / 100)
-  // Image shows 0. "Usually 0 for VA loans".
-  // Validating if we should use input. Image says "Loan fee/Disc ($or%) 0" in input.
-  const loanFee = 0;
-  const originationFee = 0;
-
-  const totalLenderFees =
-    loanFee +
-    originationFee +
-    manualFees.processing +
-    manualFees.underwriting +
-    manualFees.appraisal +
-    manualFees.creditReport +
-    manualFees.floodCert +
-    manualFees.taxService +
-    manualFees.docPrep;
-
-  // Section B - Third Party Fees
-  const totalThirdPartyFees =
-    manualFees.escrow +
-    manualFees.notary +
-    manualFees.recording +
-    manualFees.lenderTitlePolicy;
-
-  // Prepaids
-  // Request: "Prepaids Interest 15 days" ONLY.
-  const prepaidInterest = calculatePrepaidInterest(
-    totalLoanAmount,
-    interestRate,
-    15
-  );
-  const taxReserves = 0;
-  const insuranceReserves = 0;
-
-  const totalPrepaids = prepaidInterest + taxReserves + insuranceReserves;
-
-  const totalClosingCosts = totalLenderFees + totalThirdPartyFees + totalPrepaids;
-  const netClosingCosts = totalClosingCosts;
-
-  // Monthly Payment
-  // Request: Breakdown show ONLY P&I. Image shows "Total Payment" = P&I.
-  // So we zero out others for the total calculation.
   const principalAndInterest = calculateMonthlyPI(
     totalLoanAmount,
     interestRate,
     termYears
   );
 
+  const monthlyTax = calculateMonthlyPropertyTax(propertyTaxAnnual);
+  const monthlyInsurance = calculateMonthlyInsurance(homeInsuranceAnnual);
+
   const monthlyPayment: MonthlyPaymentBreakdown = {
     principalAndInterest,
     mortgageInsurance: 0,
-    propertyTax: 0, // Zeroed for Image Match
-    homeInsurance: 0, // Zeroed for Image Match
-    hoaDues: 0, // Zeroed for Image Match
+    propertyTax: monthlyTax,
+    homeInsurance: monthlyInsurance,
+    hoaDues: hoaDuesMonthly,
     floodInsurance: 0,
-    totalMonthly: principalAndInterest, // Total matches P&I
+    totalMonthly: calculateTotalMonthlyPayment({
+      principalAndInterest,
+      mortgageInsurance: 0,
+      propertyTax: monthlyTax,
+      homeInsurance: monthlyInsurance,
+      hoaDues: hoaDuesMonthly,
+    }),
   };
 
-  const closingCosts: ClosingCostsBreakdown = {
-    loanFee,
-    originationFee,
-    adminFee: 0,
-    processingFee: manualFees.processing,
-    underwritingFee: manualFees.underwriting,
-    appraisalFee: manualFees.appraisal,
-    creditReportFee: manualFees.creditReport,
-    floodCertFee: manualFees.floodCert,
-    taxServiceFee: manualFees.taxService,
-    docPrepFee: manualFees.docPrep,
-    totalLenderFees: roundToCents(totalLenderFees),
-
-    ownerTitlePolicy: 0,
-    lenderTitlePolicy: manualFees.lenderTitlePolicy,
-    escrowFee: manualFees.escrow,
-    notaryFee: manualFees.notary,
-    recordingFee: manualFees.recording,
-    courierFee: 0,
-    pestInspectionFee: 0,
-    propertyInspectionFee: 0,
-    poolInspectionFee: 0,
-    transferTax: 0,
-    mortgageTax: manualFees.mortgageTax,
-    totalThirdPartyFees: roundToCents(totalThirdPartyFees),
-
-    prepaidInterest,
-    taxReserves,
-    insuranceReserves,
-    totalPrepaids: roundToCents(totalPrepaids),
-
-    sellerCredit: 0,
-    lenderCredit: 0,
-    totalCredits: 0,
-
-    totalClosingCosts: roundToCents(totalClosingCosts),
-    netClosingCosts: roundToCents(netClosingCosts),
-  };
-
-  // Cash To Close
-  const amountNeeded = existingLoanBalance + netClosingCosts + fundingFeeAmount;
-  const cashToClose = roundToCents(amountNeeded - totalLoanAmount);
+  const closingCosts = calculateVaClosingCosts(
+    newLoanAmount,
+    propertyValue,
+    interestRate,
+    propertyTaxAnnual,
+    homeInsuranceAnnual,
+    fundingFeeAmount,
+    config
+  );
 
   return {
     loanAmount: newLoanAmount,
@@ -461,7 +362,7 @@ export function calculateVaRefinance(
     downPayment: 0,
     monthlyPayment,
     closingCosts,
-    cashToClose,
+    cashToClose: closingCosts.netClosingCosts,
     vaFundingFee: fundingFeeAmount,
   };
 }

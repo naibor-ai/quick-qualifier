@@ -20,7 +20,6 @@ const formSchema = z.object({
   homeInsuranceAnnual: z.number().min(0),
   hoaDuesMonthly: z.number().min(0),
   isStreamline: z.boolean(),
-  originationPoints: z.number().min(0).max(5),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -49,7 +48,6 @@ export function FhaRefiForm() {
       homeInsuranceAnnual: fhaRefiInputs.homeInsuranceAnnual,
       hoaDuesMonthly: fhaRefiInputs.hoaDuesMonthly,
       isStreamline: fhaRefiInputs.isStreamline,
-      originationPoints: (fhaRefiInputs as any).originationPoints ?? 0,
     },
   });
 
@@ -72,7 +70,6 @@ export function FhaRefiForm() {
         hoaDuesMonthly: data.hoaDuesMonthly,
         isStreamline: data.isStreamline,
         payoffDays: 30,
-        originationPoints: data.originationPoints,
       },
       config
     );
@@ -319,12 +316,7 @@ export function FhaRefiForm() {
       {/* Results */}
       <div>
         {fhaRefiResult ? (
-          <ResultSummary
-            result={fhaRefiResult}
-            config={config!}
-            loanType={t('fhaRefi.title')}
-            formId="fha-refi"
-          />
+          <ResultSummary result={fhaRefiResult} />
         ) : (
           <Card className="h-full flex items-center justify-center">
             <CardContent>

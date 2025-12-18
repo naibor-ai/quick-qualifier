@@ -28,8 +28,8 @@ export function LanguageSwitcher() {
             onClick={() => handleChange(loc)}
             className={`rounded-lg px-3 py-1.5 text-sm font-medium transition-colors ${
               locale === loc
-                ? 'bg-linear-to-b from-[#2A8BB3] to-[#31B2E8] text-white'
-                : 'bg-slate-100 text-slate-600 hover:bg-[#E6F4F9] hover:bg-linear-to-b hover:from-[#2A8BB3] hover:to-[#31B2E8] hover:bg-clip-text hover:text-transparent'
+                ? 'bg-blue-600 text-white'
+                : 'bg-slate-100 text-slate-600 hover:bg-blue-50 hover:text-blue-600'
             }`}
           >
             {loc.toUpperCase()}

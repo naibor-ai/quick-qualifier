@@ -16,7 +16,7 @@ function ResultItem({ label, value, highlight = false, subtext }: ResultItemProp
     <div className={`flex justify-between items-baseline py-2 ${highlight ? 'border-t border-b border-slate-200' : ''}`}>
       <span className="text-sm text-slate-600">{label}</span>
       <div className="text-right">
-        <span className={`font-medium ${highlight ? 'text-lg bg-linear-to-b from-[#2A8BB3] to-[#31B2E8] bg-clip-text text-transparent' : 'text-slate-800'}`}>
+        <span className={`font-medium ${highlight ? 'text-lg text-blue-600' : 'text-slate-800'}`}>
           {value}
         </span>
         {subtext && (
@@ -52,7 +52,6 @@ interface ResultSummaryProps {
   config?: GhlConfig | null;
   loanType?: string;
   propertyAddress?: string;
-  formId?: string;
 }
 
 export function ResultSummary({
@@ -62,11 +61,8 @@ export function ResultSummary({
   config,
   loanType,
   propertyAddress,
-  formId,
 }: ResultSummaryProps) {
   const t = useTranslations('calculator');
-
-  const isRefi = formId?.includes('refi');
 
   const formatCurrency = (value: number) => {
     return new Intl.NumberFormat('en-US', {
@@ -103,27 +99,10 @@ export function ResultSummary({
             label={t('results.ltv')}
             value={formatPercent(result.ltv)}
           />
-          {formId === 'fha' && result.totalLoanAmount !== result.loanAmount && (
-            <ResultItem
-              label="Loan with MIP"
-              value={formatCurrency(result.totalLoanAmount)}
-            />
-          )}
-          {/* Hide Monthly Payment highlight for Conventional and FHA as per user request */}
-          {!['conventional', 'fha', 'fha-refi', 'va-refi'].includes(formId || '') && (
-            <ResultItem
-              label={t('results.monthlyPayment')}
-              value={formatCurrency(result.monthlyPayment.totalMonthly)}
-              highlight
-            />
-          )}
           <ResultItem
-            label="Prepaids"
-            value={formatCurrency(result.closingCosts.totalPrepaids)}
-          />
-          <ResultItem
-            label="Closing Costs (Fees Only)"
-            value={formatCurrency(result.closingCosts.totalLenderFees + result.closingCosts.totalThirdPartyFees)}
+            label={t('results.monthlyPayment')}
+            value={formatCurrency(result.monthlyPayment.totalMonthly)}
+            highlight
           />
         </div>
       </div>
@@ -137,34 +116,30 @@ export function ResultSummary({
 
           <div className="space-y-2">
             <ResultItem
-              label={(formId === 'fha' || formId === 'fha-refi' || formId === 'va-refi') ? ((formId === 'fha-refi' || formId === 'va-refi') ? "P & I (new loan)" : "P & I") : t('results.principalInterest')}
+              label={t('results.principalInterest')}
               value={formatCurrency(result.monthlyPayment.principalAndInterest)}
             />
-            {!['fha-refi', 'va-refi'].includes(formId || '') && (
-              <ResultItem
-                label={formId === 'fha' ? "Tax per month" : "Property Tax (per month)"}
-                value={formatCurrency(result.monthlyPayment.propertyTax)}
-              />
-            )}
-            {!['fha-refi', 'va-refi'].includes(formId || '') && (
-              <ResultItem
-                label={formId === 'fha' ? "Insurance per month" : "Home Insurance (per month)"}
-                value={formatCurrency(result.monthlyPayment.homeInsurance)}
-              />
-            )}
+            <ResultItem
+              label={t('results.propertyTax')}
+              value={formatCurrency(result.monthlyPayment.propertyTax)}
+            />
+            <ResultItem
+              label={t('results.homeInsurance')}
+              value={formatCurrency(result.monthlyPayment.homeInsurance)}
+            />
             {result.monthlyPayment.mortgageInsurance > 0 && (
               <ResultItem
-                label={(formId === 'fha' || formId === 'fha-refi') ? (formId === 'fha-refi' ? "MI/mo (new loan)" : "Monthly Mtg Insurance") : t('results.mortgageInsurance')}
+                label={t('results.mortgageInsurance')}
                 value={formatCurrency(result.monthlyPayment.mortgageInsurance)}
               />
             )}
-            {!['fha-refi', 'va-refi'].includes(formId || '') && result.monthlyPayment.hoaDues > 0 && (
+            {result.monthlyPayment.hoaDues > 0 && (
               <ResultItem
                 label={t('results.hoa')}
                 value={formatCurrency(result.monthlyPayment.hoaDues)}
               />
             )}
-            {!['fha-refi', 'va-refi'].includes(formId || '') && result.monthlyPayment.floodInsurance > 0 && (
+            {result.monthlyPayment.floodInsurance > 0 && (
               <ResultItem
                 label={t('results.floodInsurance')}
                 value={formatCurrency(result.monthlyPayment.floodInsurance)}
@@ -190,44 +165,24 @@ export function ResultSummary({
 
           <ResultSection title={t('results.prepaidItems')}>
             <ResultItem
-              label="Prepaid Interest (15 days)"
+              label={t('results.prepaidInterest')}
               value={formatCurrency(result.closingCosts.prepaidInterest)}
             />
-            {!['fha-refi', 'va-refi'].includes(formId || '') && (
-              <ResultItem
-                label="Prepaid property tax (6 months)"
-                value={formatCurrency(result.closingCosts.taxReserves)}
-              />
-            )}
-            {!['fha-refi', 'va-refi'].includes(formId || '') && (
-              <ResultItem
-                label="Prepaid hazard ins (15 months)"
-                value={formatCurrency(result.closingCosts.insuranceReserves)}
-              />
-            )}
+            <ResultItem
+              label={t('results.taxReserves')}
+              value={formatCurrency(result.closingCosts.taxReserves)}
+            />
+            <ResultItem
+              label={t('results.insuranceReserves')}
+              value={formatCurrency(result.closingCosts.insuranceReserves)}
+            />
           </ResultSection>
 
           <div className="mt-4">
             <ResultSection title={t('results.lenderFees')}>
-              {result.closingCosts.loanFee !== undefined && (
-                <ResultItem
-                  label="Loan Fee"
-                  value={formatCurrency(result.closingCosts.loanFee)}
-                />
-              )}
               <ResultItem
                 label={t('results.originationFee')}
                 value={formatCurrency(result.closingCosts.originationFee)}
-              />
-              {result.closingCosts.adminFee > 0 && (
-                <ResultItem
-                  label={t('results.adminFee')}
-                  value={formatCurrency(result.closingCosts.adminFee)}
-                />
-              )}
-              <ResultItem
-                label={t('results.docPrepFee')}
-                value={formatCurrency(result.closingCosts.docPrepFee)}
               />
               <ResultItem
                 label={t('results.processingFee')}
@@ -249,25 +204,15 @@ export function ResultSummary({
                 label={t('results.floodCertFee')}
                 value={formatCurrency(result.closingCosts.floodCertFee)}
               />
-              <ResultItem
-                label={t('results.taxServiceFee')}
-                value={formatCurrency(result.closingCosts.taxServiceFee)}
-              />
             </ResultSection>
           </div>
 
           <div className="mt-4">
             <ResultSection title={t('results.titleFees')}>
               <ResultItem
-                label={t('results.lenderTitlePolicy')}
-                value={formatCurrency(result.closingCosts.lenderTitlePolicy)}
+                label={t('results.titleInsurance')}
+                value={formatCurrency(result.closingCosts.titleInsurance)}
               />
-              {!isRefi && (
-                <ResultItem
-                  label={t('results.ownerTitlePolicy')}
-                  value={formatCurrency(result.closingCosts.ownerTitlePolicy)}
-                />
-              )}
               <ResultItem
                 label={t('results.escrowFee')}
                 value={formatCurrency(result.closingCosts.escrowFee)}
@@ -276,42 +221,6 @@ export function ResultSummary({
                 label={t('results.recordingFee')}
                 value={formatCurrency(result.closingCosts.recordingFee)}
               />
-              <ResultItem
-                label={t('results.notaryFee')}
-                value={formatCurrency(result.closingCosts.notaryFee)}
-              />
-              {/* Courier Fee removed as per user request/images */}
-
-              {!isRefi && (
-                <>
-                  <ResultItem
-                    label={t('results.pestInspectionFee')}
-                    value={formatCurrency(result.closingCosts.pestInspectionFee)}
-                  />
-                  <ResultItem
-                    label={t('results.propertyInspectionFee')}
-                    value={formatCurrency(result.closingCosts.propertyInspectionFee)}
-                  />
-                  {formId !== 'va' && (
-                    <ResultItem
-                      label={t('results.poolInspectionFee')}
-                      value={formatCurrency(result.closingCosts.poolInspectionFee)}
-                    />
-                  )}
-                </>
-              )}
-              {result.closingCosts.transferTax !== undefined && (
-                <ResultItem
-                  label="Transfer Tax"
-                  value={formatCurrency(result.closingCosts.transferTax)}
-                />
-              )}
-              {result.closingCosts.mortgageTax !== undefined && (
-                <ResultItem
-                  label="Mortgage Tax"
-                  value={formatCurrency(result.closingCosts.mortgageTax)}
-                />
-              )}
             </ResultSection>
           </div>
 
@@ -345,14 +254,17 @@ export function ResultSummary({
       )}
 
       {/* Cash to Close */}
-      <div className="bg-linear-to-r from-[#2A8BB3] to-[#31B2E8] rounded-xl p-6 text-white">
+      <div
+        className="rounded-xl p-6 text-white shadow-md"
+        style={{ background: 'linear-gradient(90deg, #2A8BB3 0%, #1c5d7a 100%)' }}
+      >
         <h3 className="text-lg font-semibold mb-2">
           {t('results.cashToClose')}
         </h3>
         <p className="text-3xl font-bold">
           {formatCurrency(result.cashToClose)}
         </p>
-        <p className="text-sm text-white/80 mt-2">
+        <p className="text-sm text-slate-100 mt-2">
           {t('results.cashToCloseBreakdown', {
             downPayment: formatCurrency(result.downPayment),
             closingCosts: formatCurrency(result.closingCosts.netClosingCosts),
@@ -512,7 +424,7 @@ export function SellerNetResult({ result }: SellerNetResultProps) {
       </div>
 
       {/* Net Proceeds */}
-      <div className={`rounded-xl p-6 text-white ${result.netProceeds >= 0 ? 'bg-linear-to-r from-green-500 to-green-600' : 'bg-linear-to-r from-red-500 to-red-600'}`}>
+      <div className={`rounded-xl p-6 text-white ${result.netProceeds >= 0 ? 'bg-gradient-to-r from-green-500 to-green-600' : 'bg-gradient-to-r from-red-500 to-red-600'}`}>
         <h3 className="text-lg font-semibold mb-2">
           {t('sellerNet.results.netProceeds')}
         </h3>

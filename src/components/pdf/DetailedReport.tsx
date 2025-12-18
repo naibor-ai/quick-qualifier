@@ -211,12 +211,12 @@ export function DetailedReport({
         </View>
 
         {/* Section B: Third Party Fees */}
-          <View style={pdfStyles.section}>
+        <View style={pdfStyles.section}>
           <Text style={pdfStyles.sectionTitle}>Section B: Third Party Fees</Text>
           <View style={pdfStyles.tableRow}>
             <Text style={[pdfStyles.tableCell, pdfStyles.tableCellLabel]}>Title Insurance / Doc Prep</Text>
             <Text style={[pdfStyles.tableCell, pdfStyles.tableCellValue]}>
-              {formatCurrency(closingCosts.ownerTitlePolicy)}
+              {formatCurrency(closingCosts.titleInsurance)}
             </Text>
           </View>
           <View style={pdfStyles.tableRow}>
