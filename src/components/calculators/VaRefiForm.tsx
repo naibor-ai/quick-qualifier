@@ -24,7 +24,7 @@ const formSchema = z.object({
   vaUsage: VaUsage,
   isDisabledVeteran: z.boolean(),
   cashOutAmount: z.number().min(0),
-  originationPoints: z.number().min(0).max(5).default(0),
+  originationPoints: z.number().min(0).max(5),
 });
 
 type FormValues = z.infer<typeof formSchema>;
