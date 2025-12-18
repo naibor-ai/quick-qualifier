@@ -3,10 +3,10 @@
 :root {
   --background: #ffffff;
   --foreground: #1e293b;
-  --primary: #2563eb;
-  --primary-hover: #1d4ed8;
-  --primary-light: #dbeafe;
-  --accent: #3b82f6;
+  --primary: #2A8BB3;
+  --primary-hover: #31B2E8;
+  --primary-light: #E6F4F9;
+  --accent: #31B2E8;
   --muted: #f1f5f9;
   --border: #e2e8f0;
 }

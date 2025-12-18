@@ -189,11 +189,21 @@ export async function upsertContact(
  * Get contacts tagged as partner agents.
  */
 export async function getPartnerAgents(): Promise<GhlContact[]> {
-  const response = await ghlFetch<GhlContactsResponse>(
-    `/contacts/?locationId=${GHL_LOCATION_ID}&tags=partner-agent&limit=100`
-  );
+  if (!isGhlConfigured()) {
+    console.warn('GHL not configured, returning empty partner agents list');
+    return [];
+  }
 
-  return response.contacts || [];
+  try {
+    const response = await ghlFetch<GhlContactsResponse>(
+      `/contacts/?locationId=${GHL_LOCATION_ID}&tags=partner-agent&limit=100`
+    );
+    return response.contacts || [];
+  } catch (err) {
+    console.error('Failed to fetch partner agents:', err);
+    // Return empty list instead of throwing to prevent pages from breaking
+    return [];
+  }
 }
 
 /**

@@ -427,6 +427,7 @@ export function VaForm() {
             result={vaResult}
             config={config}
             loanType={t('va.title')}
+            formId="va"
           />
         ) : (
           <Card className="h-full flex items-center justify-center">

@@ -25,13 +25,13 @@ export function Button({
 
   const variantStyles = {
     primary:
-      'bg-blue-600 text-white hover:bg-blue-700 focus:ring-blue-500',
+      'bg-gradient-to-b from-[#2A8BB3] to-[#31B2E8] text-white hover:from-[#31B2E8] hover:to-[#2A8BB3] focus:ring-[#31B2E8]',
     secondary:
-      'bg-blue-50 text-blue-700 hover:bg-blue-100 focus:ring-blue-500',
+      'bg-[#E6F4F9] text-[#2A8BB3] hover:bg-[#D1EDF6] focus:ring-[#31B2E8]',
     outline:
-      'border border-blue-200 bg-white text-blue-600 hover:bg-blue-50 focus:ring-blue-500',
+      'border border-[#31B2E8] bg-white text-[#2A8BB3] hover:bg-[#E6F4F9] focus:ring-[#31B2E8]',
     ghost:
-      'bg-transparent text-slate-600 hover:bg-slate-100 focus:ring-blue-500',
+      'bg-transparent text-slate-600 hover:bg-slate-100 focus:ring-[#31B2E8]',
     danger:
       'bg-red-600 text-white hover:bg-red-700 focus:ring-red-500',
   };
@@ -101,13 +101,13 @@ export function IconButton({
 
   const variantStyles = {
     primary:
-      'bg-blue-600 text-white hover:bg-blue-700 focus:ring-blue-500',
+      'bg-gradient-to-b from-[#2A8BB3] to-[#31B2E8] text-white hover:from-[#31B2E8] hover:to-[#2A8BB3] focus:ring-[#31B2E8]',
     secondary:
-      'bg-blue-50 text-blue-700 hover:bg-blue-100 focus:ring-blue-500',
+      'bg-[#E6F4F9] text-[#2A8BB3] hover:bg-[#D1EDF6] focus:ring-[#31B2E8]',
     outline:
-      'border border-blue-200 bg-white text-blue-600 hover:bg-blue-50 focus:ring-blue-500',
+      'border border-[#31B2E8] bg-white text-[#2A8BB3] hover:bg-[#E6F4F9] focus:ring-[#31B2E8]',
     ghost:
-      'bg-transparent text-slate-600 hover:bg-slate-100 focus:ring-blue-500',
+      'bg-transparent text-slate-600 hover:bg-slate-100 focus:ring-[#31B2E8]',
     danger:
       'bg-red-600 text-white hover:bg-red-700 focus:ring-red-500',
   };
