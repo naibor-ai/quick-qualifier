@@ -82,6 +82,7 @@ function calculateScenario(
           sellerCreditAmount: 0,
           lenderCreditAmount: 0,
           originationPoints: 0,
+          depositAmount: 0,
         },
         config
       );
@@ -137,6 +138,7 @@ function calculateScenario(
           sellerCreditAmount: 0,
           lenderCreditAmount: 0,
           originationPoints: 0,
+          depositAmount: 0,
         },
         config
       );
