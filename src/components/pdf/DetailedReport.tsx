@@ -214,9 +214,9 @@ export function DetailedReport({
         <View style={pdfStyles.section}>
           <Text style={pdfStyles.sectionTitle}>Section B: Third Party Fees</Text>
           <View style={pdfStyles.tableRow}>
-            <Text style={[pdfStyles.tableCell, pdfStyles.tableCellLabel]}>Title Insurance / Doc Prep</Text>
+            <Text style={[pdfStyles.tableCell, pdfStyles.tableCellLabel]}>Title Insurance</Text>
             <Text style={[pdfStyles.tableCell, pdfStyles.tableCellValue]}>
-              {formatCurrency(closingCosts.titleInsurance)}
+              {formatCurrency(closingCosts.ownerTitlePolicy)}
             </Text>
           </View>
           <View style={pdfStyles.tableRow}>
