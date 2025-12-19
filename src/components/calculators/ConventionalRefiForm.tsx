@@ -75,6 +75,7 @@ export function ConventionalRefiForm() {
         refinanceType: data.refinanceType as 'rate_term' | 'cash_out',
         payoffDays: 30,
         cashOutAmount: 0,
+        originationPoints: 0,
       },
       config
     );
@@ -339,7 +340,7 @@ export function ConventionalRefiForm() {
       {/* Results */}
       <div>
         {conventionalRefiResult ? (
-          <ResultSummary result={conventionalRefiResult} />
+          <ResultSummary result={conventionalRefiResult} formId="conventional-refi" />
         ) : (
           <Card className="h-full flex items-center justify-center">
             <CardContent>

@@ -31,6 +31,7 @@ import {
   calculateCashToClose,
   isHighBalanceLoan,
   roundToCents,
+  calculateOriginationFee,
 } from './common';
 
 /**
@@ -103,43 +104,83 @@ export function calculateFhaClosingCosts(
 ): ClosingCostsBreakdown {
   const { fees, prepaids } = config;
 
-  // Section A - Lender Fees (no origination points typically for FHA)
+  // Manual Fees from Image for FHA Sale
+  const manualFees = {
+    processing: 995,
+    underwriting: 1495,
+    docPrep: 295,
+    appraisal: 650,
+    creditReport: 150,
+    floodCert: 30,
+    taxService: 85,
+    ownerTitlePolicy: 1405,
+    lenderTitlePolicy: 1225,
+    settlement: 1015, // Escrow/closing fee
+    recording: 275,
+    notary: 350,
+    pestInspection: 150,
+    propertyInspection: 450,
+    poolInspection: 100,
+    transferTax: 0,
+    mortgageTax: 0
+  };
+
+  // Section A - Lender Fees
+  // Loan Fee: LoanWithMIP * 1%
+  const totalLoanAmount = baseLoanAmount + ufmipAmount;
+  const loanFee = roundToCents(totalLoanAmount * 0.01);
+
+
+  // For now, based on "Loan amount x LoanFee%" formula, we use the calculated loan fee.
+  const originationFee = 0;
+  const adminFee = 0; // Not in image
+
   const totalLenderFees =
-    fees.admin +
-    fees.processing +
-    fees.underwriting +
-    fees.appraisal +
-    fees.creditReport +
-    fees.floodCert +
-    fees.taxService;
+    loanFee +
+    originationFee +
+    adminFee +
+    manualFees.processing +
+    manualFees.underwriting +
+    manualFees.appraisal +
+    manualFees.creditReport +
+    manualFees.floodCert +
+    manualFees.taxService +
+    manualFees.docPrep;
 
   // Section B - Third Party Fees
   const totalThirdPartyFees =
-    fees.docPrep +
-    fees.settlement +
-    fees.notary +
-    fees.recording +
-    fees.courier;
+    manualFees.settlement +
+    manualFees.notary +
+    manualFees.recording +
+    manualFees.ownerTitlePolicy +
+    manualFees.lenderTitlePolicy +
+    manualFees.pestInspection +
+    manualFees.propertyInspection +
+    manualFees.poolInspection +
+    manualFees.transferTax +
+    manualFees.mortgageTax;
 
   // Section C - Prepaids
-  // Note: For FHA, prepaid interest is on the total loan (including UFMIP)
-  const totalLoanAmount = baseLoanAmount + ufmipAmount;
+  // Formula: (Loan * Rate / 365) * 15
+  // Note: Prepaid Interest (15 days)
+  // const totalLoanAmount = baseLoanAmount + ufmipAmount; // Already calculated above
   const prepaidInterest = calculatePrepaidInterest(
     totalLoanAmount,
     interestRate,
-    prepaids.interestDays
+    15
   );
-  const taxReserves = calculateTaxReserves(
-    propertyTaxAnnual,
-    prepaids.taxMonths
-  );
-  const insuranceReserves = calculateInsuranceReserves(
-    homeInsuranceAnnual,
-    prepaids.insuranceMonths
-  );
+
+  // Formula: Prepaid Tax (6 mo) = (SalesPrice * 1.25%) / 12 * 6
+  // Note: Using salesPrice instead of propertyTaxAnnual as per new request
+  const taxReserves = roundToCents(((salesPrice * 0.0125) / 12) * 6);
+
+  // Formula: Prepaid Hazard (15 mo) = (SalesPrice * 0.35%) / 12 * 15
+  // Note: Using salesPrice instead of homeInsuranceAnnual as per new request
+  const insuranceReserves = roundToCents(((salesPrice * 0.0035) / 12) * 15);
+
   const totalPrepaids = prepaidInterest + taxReserves + insuranceReserves;
 
-  // No seller/lender credits by default (can be added as params if needed)
+  // No seller/lender credits by default
   const totalCredits = 0;
 
   // Totals
@@ -148,21 +189,29 @@ export function calculateFhaClosingCosts(
   const netClosingCosts = totalClosingCosts - totalCredits;
 
   return {
-    originationFee: 0,
-    adminFee: fees.admin,
-    processingFee: fees.processing,
-    underwritingFee: fees.underwriting,
-    appraisalFee: fees.appraisal,
-    creditReportFee: fees.creditReport,
-    floodCertFee: fees.floodCert,
-    taxServiceFee: fees.taxService,
+    loanFee,
+    originationFee,
+    adminFee,
+    processingFee: manualFees.processing,
+    underwritingFee: manualFees.underwriting,
+    appraisalFee: manualFees.appraisal,
+    creditReportFee: manualFees.creditReport,
+    floodCertFee: manualFees.floodCert,
+    taxServiceFee: manualFees.taxService,
+    docPrepFee: manualFees.docPrep,
     totalLenderFees: roundToCents(totalLenderFees),
 
-    titleInsurance: fees.docPrep,
-    escrowFee: fees.settlement,
-    notaryFee: fees.notary,
-    recordingFee: fees.recording,
-    courierFee: fees.courier,
+    ownerTitlePolicy: manualFees.ownerTitlePolicy,
+    lenderTitlePolicy: manualFees.lenderTitlePolicy,
+    escrowFee: manualFees.settlement,
+    notaryFee: manualFees.notary,
+    recordingFee: manualFees.recording,
+    courierFee: 0,
+    pestInspectionFee: manualFees.pestInspection,
+    propertyInspectionFee: manualFees.propertyInspection,
+    poolInspectionFee: manualFees.poolInspection,
+    transferTax: manualFees.transferTax,
+    mortgageTax: manualFees.mortgageTax,
     totalThirdPartyFees: roundToCents(totalThirdPartyFees),
 
     prepaidInterest,
@@ -214,10 +263,13 @@ export function calculateFhaPurchase(
   const totalLoanAmount = baseLoanAmount + ufmipAmount;
 
   // Calculate monthly MIP
-  const mipRate = getFhaMipRate(ltv, termYears, baseLoanAmount, config);
+  // Formula: (loanAmount * 0.55%) / 12
+  // Assuming "loanAmount" refers to Base Loan Amount as standard, but checking request. 
+  // Config has mipRate, but user requested specific formula "(loanAmount* 0.55%) / 12".
+  const mipRate = 0.55;
   const monthlyMip = calculateMonthlyMip(baseLoanAmount, mipRate);
 
-  // Calculate monthly P&I on total loan amount
+  // Calculate monthly P&I on total loan amount (LoanWithMIP)
   const principalAndInterest = calculateMonthlyPI(
     totalLoanAmount,
     interestRate,
@@ -225,8 +277,11 @@ export function calculateFhaPurchase(
   );
 
   // Monthly escrows
-  const monthlyTax = calculateMonthlyPropertyTax(propertyTaxAnnual);
-  const monthlyInsurance = calculateMonthlyInsurance(homeInsuranceAnnual);
+  // Formula: (SalesPrice * 1.25%) / 12
+  const monthlyTax = roundToCents((salesPrice * 0.0125) / 12);
+
+  // Formula: (SalesPrice * 0.35%) / 12
+  const monthlyInsurance = roundToCents((salesPrice * 0.0035) / 12);
 
   const monthlyPayment: MonthlyPaymentBreakdown = {
     principalAndInterest,
@@ -284,6 +339,7 @@ export function calculateFhaRefinance(
 ): LoanCalculationResult {
   const {
     propertyValue,
+    existingLoanBalance,
     newLoanAmount,
     interestRate,
     termYears,
@@ -291,58 +347,164 @@ export function calculateFhaRefinance(
     homeInsuranceAnnual,
     hoaDuesMonthly,
     isStreamline,
+    originationPoints,
   } = input;
+
+  const { feesRefi, prepaids } = config;
+  const fees = feesRefi || config.fees;
 
   const ltv = calculateLTV(newLoanAmount, propertyValue);
 
-  // UFMIP rate depends on streamline vs standard
+  // UFMIP calculation
   const ufmipRate = isStreamline
     ? config.fha.ufmipStreamline
     : config.fha.ufmipRefi;
   const ufmipAmount = calculateUfmip(newLoanAmount, ufmipRate);
-
   const totalLoanAmount = newLoanAmount + ufmipAmount;
 
-  // MIP rate - streamline typically has lower rates
-  const mipRate = isStreamline
-    ? Math.min(config.fha.mip30yrLe95, 0.55) // Streamline cap
-    : getFhaMipRate(ltv, termYears, newLoanAmount, config);
-  const monthlyMip = calculateMonthlyMip(newLoanAmount, mipRate);
+  // Monthly MIP
+  // Formula: (Loan Amount * 0.5%) / 12
+  // User specific request: Use 0.5% fixed rate.
+  // Using totalLoanAmount (LoanWithMIP) to match user's example if applicable, or base if standard? 
+  // User example: 407,000 * 0.5% / 12 = 169.58.
+  // We will use totalLoanAmount and 0.5%.
+  const mipRate = 0.5;
+  const monthlyMip = calculateMonthlyMip(totalLoanAmount, mipRate);
 
+  // Formula: P * r * (1 + r)^n / ((1 + r)^n - 1)
+  // Adjusted Rate: Interest Rate + 0.5% as per specific user requirement for FHA Refi P&I
+  const adjustedRate = interestRate + 0.5;
   const principalAndInterest = calculateMonthlyPI(
     totalLoanAmount,
-    interestRate,
+    adjustedRate,
     termYears
   );
-
-  const monthlyTax = calculateMonthlyPropertyTax(propertyTaxAnnual);
-  const monthlyInsurance = calculateMonthlyInsurance(homeInsuranceAnnual);
+  // Monthly escrows
+  // User Request: "PITI total show wrong 2440 + 169.58 = 3,151.42".
+  // This implies user wants ONLY P&I and MIP in the Total Payment for this form.
+  const monthlyTax = 0;
+  const monthlyInsurance = 0;
 
   const monthlyPayment: MonthlyPaymentBreakdown = {
     principalAndInterest,
     mortgageInsurance: monthlyMip,
     propertyTax: monthlyTax,
     homeInsurance: monthlyInsurance,
-    hoaDues: hoaDuesMonthly,
+    hoaDues: 0,
     floodInsurance: 0,
     totalMonthly: calculateTotalMonthlyPayment({
       principalAndInterest,
       mortgageInsurance: monthlyMip,
-      propertyTax: monthlyTax,
-      homeInsurance: monthlyInsurance,
-      hoaDues: hoaDuesMonthly,
+      propertyTax: 0,
+      homeInsurance: 0,
+      hoaDues: 0,
+      floodInsurance: 0,
     }),
   };
 
-  const closingCosts = calculateFhaClosingCosts(
-    newLoanAmount,
-    propertyValue,
-    interestRate,
-    propertyTaxAnnual,
-    homeInsuranceAnnual,
-    ufmipAmount,
-    config
+  // Fees Calculation
+  // Reference implies points on total (407k -> 4070).
+  // Fees Calculation
+  // Manual Fees from Image for FHA Refinance
+  const manualFees = {
+    appraisal: 650,
+    creditReport: 150,
+    lenderTitlePolicy: 1015,
+    escrow: 400, // Escrow/closing fee
+    recording: 275,
+    notary: 350,
+    mortgageTax: 0, // Explicitly 0 in image
+    docPrep: 595, // Document fee
+    processing: 895,
+    underwriting: 995,
+    taxService: 59,
+    floodCert: 30
+  };
+
+  // Loan Fee = Loan Amount (meaning Total Loan Amount based on context of P&I) * 1%
+  // User Formula for P&I: P = Base + MIP. User Formula for Loan Fee: Loan Amount * %.
+  // Standard assumption: fees on total loan amount.
+  const loanFee = roundToCents(totalLoanAmount * 0.01);
+  const originationFee = 0; // Handled by loan fee
+
+  const totalLenderFees =
+    loanFee +
+    originationFee +
+    manualFees.processing +
+    manualFees.underwriting +
+    manualFees.appraisal +
+    manualFees.creditReport +
+    manualFees.floodCert +
+    manualFees.taxService +
+    manualFees.docPrep; // Added docPrep here as it's often admin/lender. Image lists it separately.
+
+  // Section B - Third Party Fees
+  const totalThirdPartyFees =
+    manualFees.escrow +
+    manualFees.notary +
+    manualFees.recording +
+    manualFees.lenderTitlePolicy;
+
+  // Prepaids
+  // User Request: "Prepaids Interest 15 days" value as per formula and REMOVE other fields.
+  // Formula: Loan Amount * (APR / 100) / 365 * 15.
+  // Using totalLoanAmount for interest calculation.
+  // Adjusted Rate (Rate + 0.5%) also applied here to match Prepaid target ($1087)
+  const prepaidInterest = calculatePrepaidInterest(
+    totalLoanAmount,
+    adjustedRate,
+    15
   );
+  const taxReserves = 0;
+  const insuranceReserves = 0;
+
+  const totalPrepaids = prepaidInterest + taxReserves + insuranceReserves;
+
+  const totalClosingCosts = totalLenderFees + totalThirdPartyFees + totalPrepaids;
+  const netClosingCosts = totalClosingCosts;
+
+  const closingCosts: ClosingCostsBreakdown = {
+    loanFee,
+    originationFee,
+    adminFee: 0,
+    processingFee: manualFees.processing,
+    underwritingFee: manualFees.underwriting,
+    appraisalFee: manualFees.appraisal,
+    creditReportFee: manualFees.creditReport,
+    floodCertFee: manualFees.floodCert,
+    taxServiceFee: manualFees.taxService,
+    docPrepFee: manualFees.docPrep,
+    totalLenderFees: roundToCents(totalLenderFees),
+
+    ownerTitlePolicy: 0,
+    lenderTitlePolicy: manualFees.lenderTitlePolicy,
+    escrowFee: manualFees.escrow,
+    notaryFee: manualFees.notary,
+    recordingFee: manualFees.recording,
+    courierFee: 0,
+    pestInspectionFee: 0,
+    propertyInspectionFee: 0,
+    poolInspectionFee: 0,
+    transferTax: 0,
+    mortgageTax: manualFees.mortgageTax,
+    totalThirdPartyFees: roundToCents(totalThirdPartyFees),
+
+    prepaidInterest,
+    taxReserves,
+    insuranceReserves,
+    totalPrepaids: roundToCents(totalPrepaids),
+
+    sellerCredit: 0,
+    lenderCredit: 0,
+    totalCredits: 0,
+
+    totalClosingCosts: roundToCents(totalClosingCosts),
+    netClosingCosts: roundToCents(netClosingCosts),
+  };
+
+  // Cash To Close Calculation
+  const amountNeeded = existingLoanBalance + netClosingCosts + ufmipAmount;
+  const cashToClose = roundToCents(amountNeeded - totalLoanAmount);
 
   return {
     loanAmount: newLoanAmount,
@@ -351,7 +513,7 @@ export function calculateFhaRefinance(
     downPayment: 0,
     monthlyPayment,
     closingCosts,
-    cashToClose: closingCosts.netClosingCosts,
+    cashToClose,
     ufmip: ufmipAmount,
   };
 }

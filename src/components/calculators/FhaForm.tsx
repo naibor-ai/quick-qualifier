@@ -386,6 +386,7 @@ export function FhaForm() {
             result={fhaResult}
             config={config}
             loanType={t('fha.title')}
+            formId="fha"
           />
         ) : (
           <Card className="h-full flex items-center justify-center">

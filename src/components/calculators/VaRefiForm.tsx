@@ -81,6 +81,7 @@ export function VaRefiForm() {
         isDisabledVeteran: data.isDisabledVeteran,
         cashOutAmount: data.cashOutAmount,
         payoffDays: 30,
+        originationPoints: 0,
       },
       config
     );
@@ -403,7 +404,7 @@ export function VaRefiForm() {
       {/* Results */}
       <div>
         {vaRefiResult ? (
-          <ResultSummary result={vaRefiResult} />
+          <ResultSummary result={vaRefiResult} formId="va-refi" />
         ) : (
           <Card className="h-full flex items-center justify-center">
             <CardContent>
