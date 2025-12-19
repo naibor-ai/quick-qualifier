@@ -241,8 +241,8 @@ const defaultVaInputs: VaInputs = {
   downPaymentMode: 'percent',
   interestRate: 6.5,
   termYears: 30,
-  propertyTaxAnnual: 5500,
-  homeInsuranceAnnual: 1600,
+  propertyTaxAnnual: 6250, // Matches ~$520.83/mo
+  homeInsuranceAnnual: 1750, // Matches ~$145.83/mo
   hoaDuesMonthly: 0,
   floodInsuranceMonthly: 0,
   vaUsage: 'first',
@@ -299,8 +299,8 @@ const defaultConventionalRefiInputs: ConventionalRefiInputs = {
   newLoanAmount: 350000,
   interestRate: 6.5,
   termYears: 30,
-  propertyTaxAnnual: 6000,
-  homeInsuranceAnnual: 1800,
+  propertyTaxAnnual: 0,
+  homeInsuranceAnnual: 0,
   hoaDuesMonthly: 0,
   creditScoreTier: '740',
   refinanceType: 'rate_term',
@@ -546,12 +546,17 @@ export function useLoadAgents() {
     try {
       const response = await fetch('/api/agents');
       if (!response.ok) {
-        throw new Error('Failed to fetch agents');
+        // Log warning but don't crash - agents are optional
+        console.warn('Failed to fetch agents, status:', response.status);
+        useCalculatorStore.getState().setAgents([]);
+        return;
       }
       const data = await response.json();
       useCalculatorStore.getState().setAgents(data.agents || []);
     } catch (error) {
-      console.error('Error loading agents:', error);
+      // Log warning but don't throw to avoid UI blocking
+      console.warn('Error loading agents (optional):', error);
+      useCalculatorStore.getState().setAgents([]);
     } finally {
       useCalculatorStore.getState().setAgentsLoading(false);
       loadingRef.current = false;

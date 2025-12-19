@@ -70,6 +70,7 @@ export function FhaRefiForm() {
         hoaDuesMonthly: data.hoaDuesMonthly,
         isStreamline: data.isStreamline,
         payoffDays: 30,
+        originationPoints: 0,
       },
       config
     );
@@ -316,7 +317,7 @@ export function FhaRefiForm() {
       {/* Results */}
       <div>
         {fhaRefiResult ? (
-          <ResultSummary result={fhaRefiResult} />
+          <ResultSummary result={fhaRefiResult} formId="fha-refi" />
         ) : (
           <Card className="h-full flex items-center justify-center">
             <CardContent>

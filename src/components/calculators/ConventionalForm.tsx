@@ -27,6 +27,7 @@ const formSchema = z.object({
   sellerCreditAmount: z.number().min(0),
   lenderCreditAmount: z.number().min(0),
   originationPoints: z.number().min(0).max(5),
+  depositAmount: z.number().min(0),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -60,7 +61,8 @@ export function ConventionalForm() {
       pmiType: conventionalInputs.pmiType,
       sellerCreditAmount: conventionalInputs.sellerCreditAmount,
       lenderCreditAmount: conventionalInputs.lenderCreditAmount,
-      originationPoints: conventionalInputs.originationPoints,
+      originationPoints: 0, // Ensure default is 0 as requested, overriding store if needed
+      depositAmount: 0,
     },
   });
 
@@ -84,6 +86,19 @@ export function ConventionalForm() {
       setValue('downPaymentPercent', Math.round(percent * 100) / 100);
     }
   }, [watchedValues.downPaymentAmount, salesPrice, downPaymentMode, setValue]);
+
+  // Formulas: 
+  // Property Tax Annual = Sales Price * 1.25%
+  // Home Insurance Annual = Sales Price * 0.35%
+  useEffect(() => {
+    if (salesPrice > 0) {
+      const annualTax = Math.round(salesPrice * 0.0125);
+      const annualInsurance = Math.round(salesPrice * 0.0035);
+
+      setValue('propertyTaxAnnual', annualTax);
+      setValue('homeInsuranceAnnual', annualInsurance);
+    }
+  }, [salesPrice, setValue, watchedValues.propertyTaxAnnual, watchedValues.homeInsuranceAnnual]);
 
   const onCalculate = useCallback((data: FormValues) => {
     if (!config) {
@@ -110,6 +125,7 @@ export function ConventionalForm() {
         sellerCreditAmount: data.sellerCreditAmount,
         lenderCreditAmount: data.lenderCreditAmount,
         originationPoints: data.originationPoints,
+        depositAmount: data.depositAmount,
       },
       config
     );
@@ -460,6 +476,22 @@ export function ConventionalForm() {
                   />
                 )}
               />
+
+              <Controller
+                name="depositAmount"
+                control={control}
+                render={({ field }) => (
+                  <InputGroup
+                    label="Deposit (Earnest Money)"
+                    name="depositAmount"
+                    type="number"
+                    value={field.value}
+                    onChange={(val) => field.onChange(Number(val) || 0)}
+                    prefix="$"
+                    disabled={isDisabled}
+                  />
+                )}
+              />
             </div>
 
             {/* Partner Agent */}
@@ -490,6 +522,7 @@ export function ConventionalForm() {
             result={conventionalResult}
             config={config}
             loanType={t('conventional.title')}
+            formId="conventional"
           />
         ) : (
           <Card className="h-full flex items-center justify-center">
