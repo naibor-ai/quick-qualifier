@@ -20,11 +20,18 @@ const formSchema = z.object({
   termYears: z.number().min(1).max(40),
   propertyTaxAnnual: z.number().min(0),
   homeInsuranceAnnual: z.number().min(0),
+  propertyTaxMonthly: z.number().min(0),
+  homeInsuranceMonthly: z.number().min(0),
+  mortgageInsuranceMonthly: z.number().min(0).optional(),
   hoaDuesMonthly: z.number().min(0),
   floodInsuranceMonthly: z.number().min(0),
   vaUsage: z.enum(['first', 'subsequent']),
   isDisabledVeteran: z.boolean(),
   isReservist: z.boolean(),
+  // Prepaid Items
+  prepaidInterestDays: z.number().min(0).max(365),
+  prepaidTaxMonths: z.number().min(0).max(60),
+  prepaidInsuranceMonths: z.number().min(0).max(60),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -52,11 +59,17 @@ export function VaForm() {
       termYears: vaInputs.termYears,
       propertyTaxAnnual: vaInputs.propertyTaxAnnual,
       homeInsuranceAnnual: vaInputs.homeInsuranceAnnual,
+      propertyTaxMonthly: parseFloat((vaInputs.propertyTaxAnnual / 12).toFixed(2)),
+      homeInsuranceMonthly: parseFloat((vaInputs.homeInsuranceAnnual / 12).toFixed(2)),
+      mortgageInsuranceMonthly: vaInputs.mortgageInsuranceMonthly,
       hoaDuesMonthly: vaInputs.hoaDuesMonthly,
       floodInsuranceMonthly: vaInputs.floodInsuranceMonthly,
       vaUsage: vaInputs.vaUsage,
       isDisabledVeteran: vaInputs.isDisabledVeteran,
       isReservist: vaInputs.isReservist,
+      prepaidInterestDays: vaInputs.prepaidInterestDays ?? 15,
+      prepaidTaxMonths: vaInputs.prepaidTaxMonths ?? 6,
+      prepaidInsuranceMonths: vaInputs.prepaidInsuranceMonths ?? 15,
     },
   });
 
@@ -98,13 +111,17 @@ export function VaForm() {
         downPaymentPercent: data.downPaymentMode === 'percent' ? data.downPaymentPercent : undefined,
         interestRate: data.interestRate,
         termYears: data.termYears,
-        propertyTaxAnnual: data.propertyTaxAnnual,
-        homeInsuranceAnnual: data.homeInsuranceAnnual,
+        propertyTaxMonthly: data.propertyTaxAnnual / 12,
+        homeInsuranceMonthly: data.homeInsuranceAnnual / 12,
+        mortgageInsuranceMonthly: data.mortgageInsuranceMonthly ?? 0,
         hoaDuesMonthly: data.hoaDuesMonthly,
         floodInsuranceMonthly: data.floodInsuranceMonthly,
         vaUsage: data.vaUsage as VaUsage,
         isDisabledVeteran: data.isDisabledVeteran,
         isReservist: data.isReservist,
+        prepaidInterestDays: data.prepaidInterestDays,
+        prepaidTaxMonths: data.prepaidTaxMonths,
+        prepaidInsuranceMonths: data.prepaidInsuranceMonths,
       },
       config
     );
@@ -264,10 +281,6 @@ export function VaForm() {
 
             {/* Monthly Costs */}
             <div className="space-y-4">
-              <h3 className="text-sm font-semibold text-slate-700 uppercase tracking-wide">
-                Monthly Costs
-              </h3>
-
               <div className="grid grid-cols-2 gap-4">
                 <Controller
                   name="propertyTaxAnnual"
@@ -278,7 +291,11 @@ export function VaForm() {
                       name="propertyTaxAnnual"
                       type="number"
                       value={field.value}
-                      onChange={(val) => field.onChange(Number(val) || 0)}
+                      onChange={(val) => {
+                        const annual = Number(val) || 0;
+                        field.onChange(annual);
+                        setValue('propertyTaxMonthly', parseFloat((annual / 12).toFixed(2)));
+                      }}
                       prefix="$"
                       helperText="Annual"
                     />
@@ -294,9 +311,59 @@ export function VaForm() {
                       name="homeInsuranceAnnual"
                       type="number"
                       value={field.value}
-                      onChange={(val) => field.onChange(Number(val) || 0)}
+                      onChange={(val) => {
+                        const annual = Number(val) || 0;
+                        field.onChange(annual);
+                        setValue('homeInsuranceMonthly', parseFloat((annual / 12).toFixed(2)));
+                      }}
                       prefix="$"
                       helperText="Annual"
+                    />
+                  )}
+                />
+              </div>
+
+              <h3 className="text-sm font-semibold text-slate-700 uppercase tracking-wide mt-6">
+                Monthly Costs
+              </h3>
+
+              <div className="grid grid-cols-2 gap-4">
+                <Controller
+                  name="propertyTaxMonthly"
+                  control={control}
+                  render={({ field }) => (
+                    <InputGroup
+                      label="Property Tax"
+                      name="propertyTaxMonthly"
+                      type="number"
+                      value={field.value}
+                      onChange={(val) => {
+                        const monthly = Number(val) || 0;
+                        field.onChange(monthly);
+                        setValue('propertyTaxAnnual', Math.round(monthly * 12));
+                      }}
+                      prefix="$"
+                      helperText="per month"
+                    />
+                  )}
+                />
+
+                <Controller
+                  name="homeInsuranceMonthly"
+                  control={control}
+                  render={({ field }) => (
+                    <InputGroup
+                      label="Home Insurance"
+                      name="homeInsuranceMonthly"
+                      type="number"
+                      value={field.value}
+                      onChange={(val) => {
+                        const monthly = Number(val) || 0;
+                        field.onChange(monthly);
+                        setValue('homeInsuranceAnnual', Math.round(monthly * 12));
+                      }}
+                      prefix="$"
+                      helperText="per month"
                     />
                   )}
                 />
@@ -384,6 +451,60 @@ export function VaForm() {
                   />
                 )}
               />
+            </div>
+
+            {/* Prepaid Items Configuration */}
+            <div className="space-y-4">
+              <h3 className="text-sm font-semibold text-slate-700 uppercase tracking-wide">
+                {t('calculator.sections.prepaids')}
+              </h3>
+
+              <div className="grid grid-cols-3 gap-4">
+                <Controller
+                  name="prepaidInterestDays"
+                  control={control}
+                  render={({ field }) => (
+                    <InputGroup
+                      label="Interest Days"
+                      name="prepaidInterestDays"
+                      type="number"
+                      value={field.value}
+                      onChange={(val) => field.onChange(Number(val) || 0)}
+                      suffix="days"
+                    />
+                  )}
+                />
+
+                <Controller
+                  name="prepaidTaxMonths"
+                  control={control}
+                  render={({ field }) => (
+                    <InputGroup
+                      label="Tax Months"
+                      name="prepaidTaxMonths"
+                      type="number"
+                      value={field.value}
+                      onChange={(val) => field.onChange(Number(val) || 0)}
+                      suffix="mo"
+                    />
+                  )}
+                />
+
+                <Controller
+                  name="prepaidInsuranceMonths"
+                  control={control}
+                  render={({ field }) => (
+                    <InputGroup
+                      label="Insurance Months"
+                      name="prepaidInsuranceMonths"
+                      type="number"
+                      value={field.value}
+                      onChange={(val) => field.onChange(Number(val) || 0)}
+                      suffix="mo"
+                    />
+                  )}
+                />
+              </div>
             </div>
 
             {/* VA Fee Info */}

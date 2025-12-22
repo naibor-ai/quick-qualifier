@@ -35,12 +35,16 @@ interface ConventionalInputs {
   propertyTaxAnnual: number;
   homeInsuranceAnnual: number;
   hoaDuesMonthly: number;
+  mortgageInsuranceMonthly?: number;
   floodInsuranceMonthly: number;
   creditScoreTier: CreditScoreTier;
   pmiType: PmiType;
   sellerCreditAmount: number;
   lenderCreditAmount: number;
   originationPoints: number;
+  prepaidInterestDays: number;
+  prepaidTaxMonths: number;
+  prepaidInsuranceMonths: number;
 }
 
 interface FhaInputs {
@@ -53,8 +57,12 @@ interface FhaInputs {
   propertyTaxAnnual: number;
   homeInsuranceAnnual: number;
   hoaDuesMonthly: number;
+  mortgageInsuranceMonthly?: number;
   floodInsuranceMonthly: number;
   is203k: boolean;
+  prepaidInterestDays: number;
+  prepaidTaxMonths: number;
+  prepaidInsuranceMonths: number;
 }
 
 interface VaInputs {
@@ -66,11 +74,15 @@ interface VaInputs {
   termYears: number;
   propertyTaxAnnual: number;
   homeInsuranceAnnual: number;
+  mortgageInsuranceMonthly?: number;
   hoaDuesMonthly: number;
   floodInsuranceMonthly: number;
   vaUsage: VaUsage;
   isDisabledVeteran: boolean;
   isReservist: boolean;
+  prepaidInterestDays: number;
+  prepaidTaxMonths: number;
+  prepaidInsuranceMonths: number;
 }
 
 // Refinance Inputs
@@ -83,8 +95,12 @@ interface ConventionalRefiInputs {
   propertyTaxAnnual: number;
   homeInsuranceAnnual: number;
   hoaDuesMonthly: number;
+  mortgageInsuranceMonthly?: number;
   creditScoreTier: CreditScoreTier;
   refinanceType: 'rate_term' | 'cash_out';
+  prepaidInterestDays: number;
+  prepaidTaxMonths: number;
+  prepaidInsuranceMonths: number;
 }
 
 interface FhaRefiInputs {
@@ -96,7 +112,11 @@ interface FhaRefiInputs {
   propertyTaxAnnual: number;
   homeInsuranceAnnual: number;
   hoaDuesMonthly: number;
+  mortgageInsuranceMonthly?: number;
   isStreamline: boolean;
+  prepaidInterestDays: number;
+  prepaidTaxMonths: number;
+  prepaidInsuranceMonths: number;
 }
 
 interface VaRefiInputs {
@@ -107,11 +127,15 @@ interface VaRefiInputs {
   termYears: number;
   propertyTaxAnnual: number;
   homeInsuranceAnnual: number;
+  mortgageInsuranceMonthly?: number;
   hoaDuesMonthly: number;
   isIrrrl: boolean;
   vaUsage: VaUsage;
   isDisabledVeteran: boolean;
   cashOutAmount: number;
+  prepaidInterestDays: number;
+  prepaidTaxMonths: number;
+  prepaidInsuranceMonths: number;
 }
 
 interface SellerNetInputs {
@@ -212,12 +236,16 @@ const defaultConventionalInputs: ConventionalInputs = {
   propertyTaxAnnual: 6000,
   homeInsuranceAnnual: 1800,
   hoaDuesMonthly: 0,
+  mortgageInsuranceMonthly: 0,
   floodInsuranceMonthly: 0,
   creditScoreTier: '740',
   pmiType: 'monthly',
   sellerCreditAmount: 0,
   lenderCreditAmount: 0,
   originationPoints: 0,
+  prepaidInterestDays: 15,
+  prepaidTaxMonths: 6,
+  prepaidInsuranceMonths: 15,
 };
 
 const defaultFhaInputs: FhaInputs = {
@@ -230,8 +258,12 @@ const defaultFhaInputs: FhaInputs = {
   propertyTaxAnnual: 5000,
   homeInsuranceAnnual: 1500,
   hoaDuesMonthly: 0,
+  mortgageInsuranceMonthly: 0,
   floodInsuranceMonthly: 0,
   is203k: false,
+  prepaidInterestDays: 15,
+  prepaidTaxMonths: 6,
+  prepaidInsuranceMonths: 15,
 };
 
 const defaultVaInputs: VaInputs = {
@@ -241,13 +273,17 @@ const defaultVaInputs: VaInputs = {
   downPaymentMode: 'percent',
   interestRate: 6.5,
   termYears: 30,
-  propertyTaxAnnual: 6250, // Matches ~$520.83/mo
-  homeInsuranceAnnual: 1750, // Matches ~$145.83/mo
+  propertyTaxAnnual: 6250, // 520.83 * 12
+  homeInsuranceAnnual: 1750, // 145.83 * 12
+  mortgageInsuranceMonthly: 0,
   hoaDuesMonthly: 0,
   floodInsuranceMonthly: 0,
   vaUsage: 'first',
   isDisabledVeteran: false,
   isReservist: false,
+  prepaidInterestDays: 15,
+  prepaidTaxMonths: 6,
+  prepaidInsuranceMonths: 15,
 };
 
 const defaultSellerNetInputs: SellerNetInputs = {
@@ -302,8 +338,12 @@ const defaultConventionalRefiInputs: ConventionalRefiInputs = {
   propertyTaxAnnual: 0,
   homeInsuranceAnnual: 0,
   hoaDuesMonthly: 0,
+  mortgageInsuranceMonthly: 0,
   creditScoreTier: '740',
   refinanceType: 'rate_term',
+  prepaidInterestDays: 15,
+  prepaidTaxMonths: 0,
+  prepaidInsuranceMonths: 0,
 };
 
 const defaultFhaRefiInputs: FhaRefiInputs = {
@@ -315,7 +355,11 @@ const defaultFhaRefiInputs: FhaRefiInputs = {
   propertyTaxAnnual: 5000,
   homeInsuranceAnnual: 1500,
   hoaDuesMonthly: 0,
+  mortgageInsuranceMonthly: 0,
   isStreamline: false,
+  prepaidInterestDays: 15,
+  prepaidTaxMonths: 0,
+  prepaidInsuranceMonths: 0,
 };
 
 const defaultVaRefiInputs: VaRefiInputs = {
@@ -326,11 +370,15 @@ const defaultVaRefiInputs: VaRefiInputs = {
   termYears: 30,
   propertyTaxAnnual: 5500,
   homeInsuranceAnnual: 1600,
+  mortgageInsuranceMonthly: 0,
   hoaDuesMonthly: 0,
   isIrrrl: false,
   vaUsage: 'first',
   isDisabledVeteran: false,
   cashOutAmount: 0,
+  prepaidInterestDays: 15,
+  prepaidTaxMonths: 0,
+  prepaidInsuranceMonths: 0,
 };
 
 // ============================================================================

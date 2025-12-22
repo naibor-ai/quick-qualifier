@@ -129,71 +129,53 @@ export function FlierLayout({
             </View>
           </View>
 
-          {/* Cash to Close */}
+          {/* Program-specific details */}
+          
           <View style={pdfStyles.column}>
-            <View style={pdfStyles.section}>
-              <Text style={pdfStyles.sectionTitle}>Estimated Cash to Close</Text>
-
-              {result.downPayment > 0 && (
-                <View style={pdfStyles.tableRow}>
-                  <Text style={[pdfStyles.tableCell, pdfStyles.tableCellLabel]}>Down Payment</Text>
-                  <Text style={[pdfStyles.tableCell, pdfStyles.tableCellValue]}>
-                    {formatCurrency(result.downPayment)}
-                  </Text>
-                </View>
-              )}
-              <View style={pdfStyles.tableRow}>
-                <Text style={[pdfStyles.tableCell, pdfStyles.tableCellLabel]}>Closing Costs</Text>
-                <Text style={[pdfStyles.tableCell, pdfStyles.tableCellValue]}>
-                  {formatCurrency(closingCosts.totalClosingCosts)}
-                </Text>
+            
+            {(result.ufmip || result.vaFundingFee) && (
+              <View style={pdfStyles.section}>
+                <Text style={pdfStyles.sectionTitle}>Program Fees</Text>
+                {result.ufmip && (
+                  <View style={pdfStyles.tableRow}>
+                    <Text style={[pdfStyles.tableCell, pdfStyles.tableCellLabel]}>
+                      Upfront MIP (Financed)
+                    </Text>
+                    <Text style={[pdfStyles.tableCell, pdfStyles.tableCellValue]}>
+                      {formatCurrency(result.ufmip)}
+                    </Text>
+                  </View>
+                )}
+                {result.vaFundingFee && (
+                  <View style={pdfStyles.tableRow}>
+                    <Text style={[pdfStyles.tableCell, pdfStyles.tableCellLabel]}>
+                      VA Funding Fee (Financed)
+                    </Text>
+                    <Text style={[pdfStyles.tableCell, pdfStyles.tableCellValue]}>
+                      {formatCurrency(result.vaFundingFee)}
+                    </Text>
+                  </View>
+                )}
               </View>
-              {closingCosts.totalCredits > 0 && (
-                <View style={pdfStyles.tableRow}>
-                  <Text style={[pdfStyles.tableCell, pdfStyles.tableCellLabel]}>Credits</Text>
-                  <Text style={[pdfStyles.tableCell, pdfStyles.tableCellValue, { color: '#059669' }]}>
-                    -{formatCurrency(closingCosts.totalCredits)}
-                  </Text>
-                </View>
-              )}
-              <View style={[pdfStyles.tableRow, pdfStyles.tableRowTotal]}>
-                <Text style={[pdfStyles.tableCell, pdfStyles.tableCellLabel, pdfStyles.tableCellBold]}>
-                  Total Cash to Close
-                </Text>
-                <Text style={[pdfStyles.tableCell, pdfStyles.tableCellValue, pdfStyles.tableCellBold]}>
-                  {formatCurrency(cashToClose)}
-                </Text>
-              </View>
-            </View>
+            )}
           </View>
         </View>
 
-        {/* Program-specific details */}
-        {(result.ufmip || result.vaFundingFee) && (
-          <View style={pdfStyles.section}>
-            <Text style={pdfStyles.sectionTitle}>Program Fees</Text>
-            {result.ufmip && (
-              <View style={pdfStyles.tableRow}>
-                <Text style={[pdfStyles.tableCell, pdfStyles.tableCellLabel]}>
-                  Upfront MIP (Financed)
-                </Text>
-                <Text style={[pdfStyles.tableCell, pdfStyles.tableCellValue]}>
-                  {formatCurrency(result.ufmip)}
-                </Text>
-              </View>
-            )}
-            {result.vaFundingFee && (
-              <View style={pdfStyles.tableRow}>
-                <Text style={[pdfStyles.tableCell, pdfStyles.tableCellLabel]}>
-                  VA Funding Fee (Financed)
-                </Text>
-                <Text style={[pdfStyles.tableCell, pdfStyles.tableCellValue]}>
-                  {formatCurrency(result.vaFundingFee)}
-                </Text>
-              </View>
-            )}
+        {/* Cash to Close Section - matching reference image */}
+        <View style={pdfStyles.cashToCloseBox}>
+          <View style={pdfStyles.cashToCloseRow}>
+            <Text style={pdfStyles.cashToCloseLabel}>Total Closing Costs</Text>
+            <Text style={pdfStyles.cashToCloseValue}>
+              {formatCurrency(closingCosts.totalClosingCosts)}
+            </Text>
           </View>
-        )}
+          <View style={pdfStyles.cashToCloseRowLast}>
+            <Text style={pdfStyles.cashToCloseHighlightLabel}>Cash to Close</Text>
+            <Text style={pdfStyles.cashToCloseHighlightValue}>
+              {formatCurrency(cashToClose)}
+            </Text>
+          </View>
+        </View>
 
         {/* Footer */}
         <PdfFooter config={config} />

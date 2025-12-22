@@ -55,10 +55,14 @@ export const BasePurchaseInputSchema = z.object({
   downPaymentPercent: z.number().min(0).max(100).optional(),
   interestRate: z.number().min(0).max(20, 'Interest rate seems too high'),
   termYears: z.number().int().min(1).max(40).default(30),
-  propertyTaxAnnual: z.number().min(0).default(0),
-  homeInsuranceAnnual: z.number().min(0).default(0),
+  propertyTaxMonthly: z.number().min(0).default(0),
+  homeInsuranceMonthly: z.number().min(0).default(0),
   hoaDuesMonthly: z.number().min(0).default(0),
+  mortgageInsuranceMonthly: z.number().min(0).optional(),
   floodInsuranceMonthly: z.number().min(0).default(0),
+  prepaidInterestDays: z.number().int().min(0).max(365).default(15),
+  prepaidTaxMonths: z.number().int().min(0).max(60).default(6),
+  prepaidInsuranceMonths: z.number().int().min(0).max(60).default(15),
 });
 export type BasePurchaseInput = z.infer<typeof BasePurchaseInputSchema>;
 
@@ -100,10 +104,14 @@ export const BaseRefinanceInputSchema = z.object({
   termYears: z.number().int().min(1).max(40).default(30),
   currentInterestRate: z.number().min(0).max(20).optional(),
   currentMonthlyPayment: z.number().min(0).optional(),
-  propertyTaxAnnual: z.number().min(0).default(0),
-  homeInsuranceAnnual: z.number().min(0).default(0),
+  propertyTaxMonthly: z.number().min(0).default(0),
+  homeInsuranceMonthly: z.number().min(0).default(0),
   hoaDuesMonthly: z.number().min(0).default(0),
+  mortgageInsuranceMonthly: z.number().min(0).optional().default(0),
   payoffDays: z.number().int().min(0).max(60).default(30),
+  prepaidInterestDays: z.number().int().min(0).max(365).default(15),
+  prepaidTaxMonths: z.number().int().min(0).max(60).default(0),
+  prepaidInsuranceMonths: z.number().int().min(0).max(60).default(0),
 });
 export type BaseRefinanceInput = z.infer<typeof BaseRefinanceInputSchema>;
 
@@ -169,8 +177,8 @@ export type ComparisonScenario = z.infer<typeof ComparisonScenarioSchema>;
 
 export const ComparisonInputSchema = z.object({
   scenarios: z.array(ComparisonScenarioSchema).min(2).max(3),
-  propertyTaxAnnual: z.number().min(0).default(0),
-  homeInsuranceAnnual: z.number().min(0).default(0),
+  propertyTaxMonthly: z.number().min(0).default(0),
+  homeInsuranceMonthly: z.number().min(0).default(0),
   hoaDuesMonthly: z.number().min(0).default(0),
 });
 export type ComparisonInput = z.infer<typeof ComparisonInputSchema>;
@@ -234,6 +242,11 @@ export const ClosingCostsBreakdownSchema = z.object({
   loanFee: z.number().optional(),
   transferTax: z.number().optional(),
   mortgageTax: z.number().optional(),
+
+  // Inputs used for calculation (passed back for UI)
+  prepaidInterestDays: z.number().optional(),
+  prepaidTaxMonths: z.number().optional(),
+  prepaidInsuranceMonths: z.number().optional(),
 });
 export type ClosingCostsBreakdown = z.infer<typeof ClosingCostsBreakdownSchema>;
 

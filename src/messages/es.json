@@ -84,7 +84,8 @@
       "pmiCredit": "PMI y Crédito",
       "creditsPoints": "Créditos y Puntos",
       "credit": "Crédito",
-      "vaEligibility": "Elegibilidad VA"
+      "vaEligibility": "Elegibilidad VA",
+      "prepaids": "Artículos Prepagados"
     },
     "results": {
       "title": "Resumen del Préstamo",

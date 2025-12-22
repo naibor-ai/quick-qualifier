@@ -19,9 +19,16 @@ const formSchema = z.object({
   termYears: z.number().min(1).max(40),
   propertyTaxAnnual: z.number().min(0),
   homeInsuranceAnnual: z.number().min(0),
+  propertyTaxMonthly: z.number().min(0),
+  homeInsuranceMonthly: z.number().min(0),
+  mortgageInsuranceMonthly: z.number().min(0).optional(),
   hoaDuesMonthly: z.number().min(0),
   floodInsuranceMonthly: z.number().min(0),
   is203k: z.boolean(),
+  // Prepaid Items
+  prepaidInterestDays: z.number().min(0).max(365),
+  prepaidTaxMonths: z.number().min(0).max(60),
+  prepaidInsuranceMonths: z.number().min(0).max(60),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -49,9 +56,15 @@ export function FhaForm() {
       termYears: fhaInputs.termYears,
       propertyTaxAnnual: fhaInputs.propertyTaxAnnual,
       homeInsuranceAnnual: fhaInputs.homeInsuranceAnnual,
+      propertyTaxMonthly: fhaInputs.propertyTaxAnnual / 12,
+      homeInsuranceMonthly: fhaInputs.homeInsuranceAnnual / 12,
+      mortgageInsuranceMonthly: fhaInputs.mortgageInsuranceMonthly,
       hoaDuesMonthly: fhaInputs.hoaDuesMonthly,
       floodInsuranceMonthly: fhaInputs.floodInsuranceMonthly,
       is203k: fhaInputs.is203k,
+      prepaidInterestDays: fhaInputs.prepaidInterestDays ?? 15,
+      prepaidTaxMonths: fhaInputs.prepaidTaxMonths ?? 6,
+      prepaidInsuranceMonths: fhaInputs.prepaidInsuranceMonths ?? 15,
     },
   });
 
@@ -67,6 +80,24 @@ export function FhaForm() {
       setValue('downPaymentAmount', Math.round(amount * 100) / 100);
     }
   }, [watchedValues.downPaymentPercent, salesPrice, downPaymentMode, setValue]);
+
+  useEffect(() => {
+    if (salesPrice > 0) {
+      const annualTax = Math.round(salesPrice * 0.0125);
+      const monthlyInsurance = Number(((salesPrice * 0.0035) / 12).toFixed(2));
+      const annualInsurance = Math.round(monthlyInsurance * 12);
+
+      setValue('propertyTaxAnnual', annualTax);
+      setValue('homeInsuranceAnnual', annualInsurance);
+      setValue('propertyTaxMonthly', parseFloat((annualTax / 12).toFixed(2)));
+      setValue('homeInsuranceMonthly', monthlyInsurance);
+
+      // Calculate FHA MIP dynamically (0.55% for > 95% LTV)
+      const baseLoan = salesPrice * 0.965; // Assuming 3.5% down for default calc
+      const monthlyMip = Number((baseLoan * 0.0055 / 12).toFixed(2));
+      setValue('mortgageInsuranceMonthly', monthlyMip);
+    }
+  }, [salesPrice, setValue, downPaymentMode, watchedValues.downPaymentPercent, watchedValues.downPaymentAmount]);
 
   useEffect(() => {
     if (downPaymentMode === 'amount') {
@@ -92,11 +123,15 @@ export function FhaForm() {
         downPaymentPercent: data.downPaymentMode === 'percent' ? data.downPaymentPercent : undefined,
         interestRate: data.interestRate,
         termYears: data.termYears,
-        propertyTaxAnnual: data.propertyTaxAnnual,
-        homeInsuranceAnnual: data.homeInsuranceAnnual,
+        propertyTaxMonthly: data.propertyTaxAnnual / 12,
+        homeInsuranceMonthly: data.homeInsuranceAnnual / 12,
+        mortgageInsuranceMonthly: data.mortgageInsuranceMonthly || undefined,
         hoaDuesMonthly: data.hoaDuesMonthly,
         floodInsuranceMonthly: data.floodInsuranceMonthly,
         is203k: data.is203k,
+        prepaidInterestDays: data.prepaidInterestDays,
+        prepaidTaxMonths: data.prepaidTaxMonths,
+        prepaidInsuranceMonths: data.prepaidInsuranceMonths,
       },
       config
     );
@@ -253,10 +288,6 @@ export function FhaForm() {
 
             {/* Monthly Costs */}
             <div className="space-y-4">
-              <h3 className="text-sm font-semibold text-slate-700 uppercase tracking-wide">
-                Monthly Costs
-              </h3>
-
               <div className="grid grid-cols-2 gap-4">
                 <Controller
                   name="propertyTaxAnnual"
@@ -267,9 +298,14 @@ export function FhaForm() {
                       name="propertyTaxAnnual"
                       type="number"
                       value={field.value}
-                      onChange={(val) => field.onChange(Number(val) || 0)}
+                      onChange={(val) => {
+                        const annual = Number(val) || 0;
+                        field.onChange(annual);
+                        setValue('propertyTaxMonthly', parseFloat((annual / 12).toFixed(2)));
+                      }}
                       prefix="$"
                       helperText="Annual"
+                      disabled={isDisabled}
                     />
                   )}
                 />
@@ -283,44 +319,113 @@ export function FhaForm() {
                       name="homeInsuranceAnnual"
                       type="number"
                       value={field.value}
-                      onChange={(val) => field.onChange(Number(val) || 0)}
+                      onChange={(val) => {
+                        const annual = Number(val) || 0;
+                        field.onChange(annual);
+                        setValue('homeInsuranceMonthly', parseFloat((annual / 12).toFixed(2)));
+                      }}
                       prefix="$"
                       helperText="Annual"
+                      disabled={isDisabled}
                     />
                   )}
                 />
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-4">
+                <h3 className="text-sm font-semibold text-slate-700 uppercase tracking-wide mt-6">
+                  Monthly Costs
+                </h3>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <Controller
+                    name="propertyTaxMonthly"
+                    control={control}
+                    render={({ field }) => (
+                      <InputGroup
+                        label="Property Tax"
+                        name="propertyTaxMonthly"
+                        type="number"
+                        value={field.value}
+                        onChange={(val) => {
+                          const monthly = parseFloat(val) || 0;
+                          field.onChange(monthly);
+                          setValue('propertyTaxAnnual', Math.round(monthly * 12));
+                        }}
+                        prefix="$"
+                        helperText="per month"
+                      />
+                    )}
+                  />
+
+                  <Controller
+                    name="homeInsuranceMonthly"
+                    control={control}
+                    render={({ field }) => (
+                      <InputGroup
+                        label="Home Insurance"
+                        name="homeInsuranceMonthly"
+                        type="number"
+                        value={field.value}
+                        onChange={(val) => {
+                          const monthly = parseFloat(val) || 0;
+                          field.onChange(monthly);
+                          setValue('homeInsuranceAnnual', Math.round(monthly * 12));
+                        }}
+                        prefix="$"
+                        helperText="per month"
+                      />
+                    )}
+                  />
+                </div>
+
                 <Controller
-                  name="hoaDuesMonthly"
+                  name="mortgageInsuranceMonthly"
                   control={control}
                   render={({ field }) => (
                     <InputGroup
-                      label={t('calculator.hoaDues')}
-                      name="hoaDuesMonthly"
+                      label="Monthly Mtg Insurance"
+                      name="mortgageInsuranceMonthly"
                       type="number"
-                      value={field.value}
+                      value={field.value ?? 0}
                       onChange={(val) => field.onChange(Number(val) || 0)}
                       prefix="$"
+                      helperText="Override calculated MIP"
                     />
                   )}
                 />
 
-                <Controller
-                  name="floodInsuranceMonthly"
-                  control={control}
-                  render={({ field }) => (
-                    <InputGroup
-                      label={t('calculator.floodInsurance')}
-                      name="floodInsuranceMonthly"
-                      type="number"
-                      value={field.value}
-                      onChange={(val) => field.onChange(Number(val) || 0)}
-                      prefix="$"
-                    />
-                  )}
-                />
+                <div className="grid grid-cols-2 gap-4">
+                  <Controller
+                    name="hoaDuesMonthly"
+                    control={control}
+                    render={({ field }) => (
+                      <InputGroup
+                        label={t('calculator.hoaDues')}
+                        name="hoaDuesMonthly"
+                        type="number"
+                        value={field.value}
+                        onChange={(val) => field.onChange(Number(val) || 0)}
+                        prefix="$"
+                      />
+                    )}
+                  />
+
+                  <Controller
+                    name="floodInsuranceMonthly"
+                    control={control}
+                    render={({ field }) => (
+                      <InputGroup
+                        label={t('calculator.floodInsurance')}
+                        name="floodInsuranceMonthly"
+                        type="number"
+                        value={field.value}
+                        onChange={(val) => field.onChange(Number(val) || 0)}
+                        prefix="$"
+                      />
+                    )}
+                  />
+                </div>
               </div>
             </div>
 
@@ -344,6 +449,60 @@ export function FhaForm() {
                   />
                 )}
               />
+            </div>
+
+            {/* Prepaid Items Configuration */}
+            <div className="space-y-4">
+              <h3 className="text-sm font-semibold text-slate-700 uppercase tracking-wide">
+                {t('calculator.sections.prepaids')}
+              </h3>
+
+              <div className="grid grid-cols-3 gap-4">
+                <Controller
+                  name="prepaidInterestDays"
+                  control={control}
+                  render={({ field }) => (
+                    <InputGroup
+                      label="Interest Days"
+                      name="prepaidInterestDays"
+                      type="number"
+                      value={field.value}
+                      onChange={(val) => field.onChange(Number(val) || 0)}
+                      suffix="days"
+                    />
+                  )}
+                />
+
+                <Controller
+                  name="prepaidTaxMonths"
+                  control={control}
+                  render={({ field }) => (
+                    <InputGroup
+                      label="Tax Months"
+                      name="prepaidTaxMonths"
+                      type="number"
+                      value={field.value}
+                      onChange={(val) => field.onChange(Number(val) || 0)}
+                      suffix="mo"
+                    />
+                  )}
+                />
+
+                <Controller
+                  name="prepaidInsuranceMonths"
+                  control={control}
+                  render={({ field }) => (
+                    <InputGroup
+                      label="Insurance Months"
+                      name="prepaidInsuranceMonths"
+                      type="number"
+                      value={field.value}
+                      onChange={(val) => field.onChange(Number(val) || 0)}
+                      suffix="mo"
+                    />
+                  )}
+                />
+              </div>
             </div>
 
             {/* FHA Fee Info */}

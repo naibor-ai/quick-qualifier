@@ -70,8 +70,6 @@ export function DetailedReport({
                   {formatPercentSimple(ltv, 'en', { maximumFractionDigits: 2 })}
                 </Text>
               </View>
-            </View>
-            <View style={pdfStyles.column}>
               {result.downPayment > 0 && (
                 <View style={pdfStyles.tableRow}>
                   <Text style={[pdfStyles.tableCell, pdfStyles.tableCellLabel]}>Down Payment</Text>
@@ -80,14 +78,9 @@ export function DetailedReport({
                   </Text>
                 </View>
               )}
-              <View style={[pdfStyles.tableRow, pdfStyles.tableRowTotal]}>
-                <Text style={[pdfStyles.tableCell, pdfStyles.tableCellLabel, pdfStyles.tableCellBold]}>
-                  Cash to Close
-                </Text>
-                <Text style={[pdfStyles.tableCell, pdfStyles.tableCellValue, pdfStyles.tableCellBold]}>
-                  {formatCurrency(cashToClose)}
-                </Text>
-              </View>
+            </View>
+            <View style={pdfStyles.column}>
+              {/* Empty column for layout balance */}
             </View>
           </View>
         </View>
@@ -315,23 +308,19 @@ export function DetailedReport({
           </View>
         )}
 
-        {/* Closing Costs Summary */}
-        <View style={[pdfStyles.summaryBox, { marginTop: 10 }]}>
-          <View style={pdfStyles.summaryRow}>
-            <Text style={pdfStyles.summaryLabel}>Total Closing Costs</Text>
-            <Text style={pdfStyles.summaryValue}>{formatCurrency(closingCosts.totalClosingCosts)}</Text>
+        {/* Cash to Close Section - matching reference image */}
+        <View style={pdfStyles.cashToCloseBox}>
+          <View style={pdfStyles.cashToCloseRow}>
+            <Text style={pdfStyles.cashToCloseLabel}>Total Closing Costs</Text>
+            <Text style={pdfStyles.cashToCloseValue}>
+              {formatCurrency(closingCosts.totalClosingCosts)}
+            </Text>
           </View>
-          {closingCosts.totalCredits > 0 && (
-            <View style={pdfStyles.summaryRow}>
-              <Text style={pdfStyles.summaryLabel}>Less Credits</Text>
-              <Text style={[pdfStyles.summaryValue, { color: '#059669' }]}>
-                -{formatCurrency(closingCosts.totalCredits)}
-              </Text>
-            </View>
-          )}
-          <View style={[pdfStyles.summaryRow, { marginTop: 8, paddingTop: 8, borderTopWidth: 1, borderTopColor: '#BFDBFE' }]}>
-            <Text style={[pdfStyles.summaryLabel, { fontWeight: 'bold' }]}>Net Closing Costs</Text>
-            <Text style={pdfStyles.summaryValueLarge}>{formatCurrency(closingCosts.netClosingCosts)}</Text>
+          <View style={pdfStyles.cashToCloseRowLast}>
+            <Text style={pdfStyles.cashToCloseHighlightLabel}>Cash to Close</Text>
+            <Text style={pdfStyles.cashToCloseHighlightValue}>
+              {formatCurrency(cashToClose)}
+            </Text>
           </View>
         </View>
 

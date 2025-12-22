@@ -18,8 +18,13 @@ const formSchema = z.object({
   termYears: z.number().min(1).max(40),
   propertyTaxAnnual: z.number().min(0),
   homeInsuranceAnnual: z.number().min(0),
+  mortgageInsuranceMonthly: z.number().min(0).optional(),
   hoaDuesMonthly: z.number().min(0),
   isStreamline: z.boolean(),
+  // Prepaid Items
+  prepaidInterestDays: z.number().min(0).max(365),
+  prepaidTaxMonths: z.number().min(0).max(60),
+  prepaidInsuranceMonths: z.number().min(0).max(60),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -46,8 +51,12 @@ export function FhaRefiForm() {
       termYears: fhaRefiInputs.termYears,
       propertyTaxAnnual: fhaRefiInputs.propertyTaxAnnual,
       homeInsuranceAnnual: fhaRefiInputs.homeInsuranceAnnual,
+      mortgageInsuranceMonthly: fhaRefiInputs.mortgageInsuranceMonthly,
       hoaDuesMonthly: fhaRefiInputs.hoaDuesMonthly,
       isStreamline: fhaRefiInputs.isStreamline,
+      prepaidInterestDays: fhaRefiInputs.prepaidInterestDays ?? 15,
+      prepaidTaxMonths: fhaRefiInputs.prepaidTaxMonths ?? 0,
+      prepaidInsuranceMonths: fhaRefiInputs.prepaidInsuranceMonths ?? 0,
     },
   });
 
@@ -65,12 +74,16 @@ export function FhaRefiForm() {
         newLoanAmount: data.newLoanAmount,
         interestRate: data.interestRate,
         termYears: data.termYears,
-        propertyTaxAnnual: data.propertyTaxAnnual,
-        homeInsuranceAnnual: data.homeInsuranceAnnual,
+        propertyTaxMonthly: data.propertyTaxAnnual / 12,
+        homeInsuranceMonthly: data.homeInsuranceAnnual / 12,
+        mortgageInsuranceMonthly: data.mortgageInsuranceMonthly ?? 0,
         hoaDuesMonthly: data.hoaDuesMonthly,
         isStreamline: data.isStreamline,
         payoffDays: 30,
         originationPoints: 0,
+        prepaidInterestDays: data.prepaidInterestDays,
+        prepaidTaxMonths: data.prepaidTaxMonths,
+        prepaidInsuranceMonths: data.prepaidInsuranceMonths,
       },
       config
     );
@@ -242,47 +255,63 @@ export function FhaRefiForm() {
               </div>
             </div>
 
-            {/* Monthly Costs */}
+            <div className="grid grid-cols-2 gap-4">
+              <Controller
+                name="propertyTaxAnnual"
+                control={control}
+                render={({ field }) => (
+                  <InputGroup
+                    label={t('calculator.propertyTax')}
+                    name="propertyTaxAnnual"
+                    type="number"
+                    value={field.value}
+                    onChange={(val) => field.onChange(Number(val) || 0)}
+                    prefix="$"
+                    helperText="Annual"
+                    disabled={isDisabled}
+                  />
+                )}
+              />
+
+              <Controller
+                name="homeInsuranceAnnual"
+                control={control}
+                render={({ field }) => (
+                  <InputGroup
+                    label={t('calculator.homeInsurance')}
+                    name="homeInsuranceAnnual"
+                    type="number"
+                    value={field.value}
+                    onChange={(val) => field.onChange(Number(val) || 0)}
+                    prefix="$"
+                    helperText="Annual"
+                    disabled={isDisabled}
+                  />
+                )}
+              />
+            </div>
+
             <div className="space-y-4">
-              <h3 className="text-sm font-semibold text-slate-700 uppercase tracking-wide">
+              <h3 className="text-sm font-semibold text-slate-700 uppercase tracking-wide mt-6">
                 {t('calculator.sections.monthlyCosts')}
               </h3>
 
-              <div className="grid grid-cols-2 gap-4">
-                <Controller
-                  name="propertyTaxAnnual"
-                  control={control}
-                  render={({ field }) => (
-                    <InputGroup
-                      label={t('calculator.propertyTax')}
-                      name="propertyTaxAnnual"
-                      type="number"
-                      value={field.value}
-                      onChange={(val) => field.onChange(Number(val) || 0)}
-                      prefix="$"
-                      helperText={t('common.annual')}
-                      disabled={isDisabled}
-                    />
-                  )}
-                />
-
-                <Controller
-                  name="homeInsuranceAnnual"
-                  control={control}
-                  render={({ field }) => (
-                    <InputGroup
-                      label={t('calculator.homeInsurance')}
-                      name="homeInsuranceAnnual"
-                      type="number"
-                      value={field.value}
-                      onChange={(val) => field.onChange(Number(val) || 0)}
-                      prefix="$"
-                      helperText={t('common.annual')}
-                      disabled={isDisabled}
-                    />
-                  )}
-                />
-              </div>
+              <Controller
+                name="mortgageInsuranceMonthly"
+                control={control}
+                render={({ field }) => (
+                  <InputGroup
+                    label="Monthly Mtg Insurance"
+                    name="mortgageInsuranceMonthly"
+                    type="number"
+                    value={field.value ?? 0}
+                    onChange={(val) => field.onChange(Number(val) || 0)}
+                    prefix="$"
+                    helperText="Override calculated MIP"
+                    disabled={isDisabled}
+                  />
+                )}
+              />
 
               <Controller
                 name="hoaDuesMonthly"
@@ -299,6 +328,60 @@ export function FhaRefiForm() {
                   />
                 )}
               />
+            </div>
+
+            {/* Prepaid Items Configuration */}
+            <div className="space-y-4">
+              <h3 className="text-sm font-semibold text-slate-700 uppercase tracking-wide">
+                {t('calculator.sections.prepaids')}
+              </h3>
+
+              <div className="grid grid-cols-3 gap-4">
+                <Controller
+                  name="prepaidInterestDays"
+                  control={control}
+                  render={({ field }) => (
+                    <InputGroup
+                      label="Interest Days"
+                      name="prepaidInterestDays"
+                      type="number"
+                      value={field.value}
+                      onChange={(val) => field.onChange(Number(val) || 0)}
+                      suffix="days"
+                    />
+                  )}
+                />
+
+                <Controller
+                  name="prepaidTaxMonths"
+                  control={control}
+                  render={({ field }) => (
+                    <InputGroup
+                      label="Tax Months"
+                      name="prepaidTaxMonths"
+                      type="number"
+                      value={field.value}
+                      onChange={(val) => field.onChange(Number(val) || 0)}
+                      suffix="mo"
+                    />
+                  )}
+                />
+
+                <Controller
+                  name="prepaidInsuranceMonths"
+                  control={control}
+                  render={({ field }) => (
+                    <InputGroup
+                      label="Insurance Months"
+                      name="prepaidInsuranceMonths"
+                      type="number"
+                      value={field.value}
+                      onChange={(val) => field.onChange(Number(val) || 0)}
+                      suffix="mo"
+                    />
+                  )}
+                />
+              </div>
             </div>
 
             {/* Actions */}
