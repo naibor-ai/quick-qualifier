@@ -325,9 +325,9 @@ export function calculateConventionalPurchase(
     termYears
   );
 
-  // Calculate monthly escrows
-  const monthlyTax = roundToCents(((salesPrice || 0) * 0.0125) / 12);
-  const monthlyInsurance = roundToCents(((salesPrice || 0) * 0.0035) / 12);
+  // Calculate monthly escrows - use user input values instead of automatic calculations
+  const monthlyTax = propertyTaxMonthly || roundToCents(((salesPrice || 0) * 0.0125) / 12);
+  const monthlyInsurance = homeInsuranceMonthly || roundToCents(((salesPrice || 0) * 0.0035) / 12);
 
   // Build monthly payment breakdown
   const monthlyPayment: MonthlyPaymentBreakdown = {

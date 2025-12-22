@@ -289,9 +289,9 @@ export function calculateVaPurchase(
 
   // VA has NO monthly mortgage insurance!
 
-  // FIXED Monthly Values as per Request
-  const monthlyTax = 520.83;
-  const monthlyInsurance = 145.83;
+  // Use user-provided monthly values, fallback to fixed defaults
+  const monthlyTax = propertyTaxMonthly || 520.83;
+  const monthlyInsurance = homeInsuranceMonthly || 145.83;
 
   const monthlyPayment: MonthlyPaymentBreakdown = {
     principalAndInterest,
