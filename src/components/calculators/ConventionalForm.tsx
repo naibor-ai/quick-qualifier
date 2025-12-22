@@ -20,6 +20,9 @@ const formSchema = z.object({
   termYears: z.number().min(1).max(40),
   propertyTaxAnnual: z.number().min(0),
   homeInsuranceAnnual: z.number().min(0),
+  propertyTaxMonthly: z.number().min(0),
+  homeInsuranceMonthly: z.number().min(0),
+  mortgageInsuranceMonthly: z.number().min(0).optional(),
   hoaDuesMonthly: z.number().min(0),
   floodInsuranceMonthly: z.number().min(0),
   creditScoreTier: CreditScoreTier,
@@ -28,6 +31,10 @@ const formSchema = z.object({
   lenderCreditAmount: z.number().min(0),
   originationPoints: z.number().min(0).max(5),
   depositAmount: z.number().min(0),
+  // Prepaid Items
+  prepaidInterestDays: z.number().min(0).max(365),
+  prepaidTaxMonths: z.number().min(0).max(60),
+  prepaidInsuranceMonths: z.number().min(0).max(60),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -55,6 +62,9 @@ export function ConventionalForm() {
       termYears: conventionalInputs.termYears,
       propertyTaxAnnual: conventionalInputs.propertyTaxAnnual,
       homeInsuranceAnnual: conventionalInputs.homeInsuranceAnnual,
+      propertyTaxMonthly: conventionalInputs.propertyTaxAnnual / 12,
+      homeInsuranceMonthly: conventionalInputs.homeInsuranceAnnual / 12,
+      mortgageInsuranceMonthly: conventionalInputs.mortgageInsuranceMonthly,
       hoaDuesMonthly: conventionalInputs.hoaDuesMonthly,
       floodInsuranceMonthly: conventionalInputs.floodInsuranceMonthly,
       creditScoreTier: conventionalInputs.creditScoreTier,
@@ -63,6 +73,9 @@ export function ConventionalForm() {
       lenderCreditAmount: conventionalInputs.lenderCreditAmount,
       originationPoints: 0, // Ensure default is 0 as requested, overriding store if needed
       depositAmount: 0,
+      prepaidInterestDays: conventionalInputs.prepaidInterestDays ?? 15,
+      prepaidTaxMonths: conventionalInputs.prepaidTaxMonths ?? 6,
+      prepaidInsuranceMonths: conventionalInputs.prepaidInsuranceMonths ?? 15,
     },
   });
 
@@ -94,11 +107,12 @@ export function ConventionalForm() {
     if (salesPrice > 0) {
       const annualTax = Math.round(salesPrice * 0.0125);
       const annualInsurance = Math.round(salesPrice * 0.0035);
-
       setValue('propertyTaxAnnual', annualTax);
       setValue('homeInsuranceAnnual', annualInsurance);
+      setValue('propertyTaxMonthly', Math.round(annualTax / 12));
+      setValue('homeInsuranceMonthly', Math.round(annualInsurance / 12));
     }
-  }, [salesPrice, setValue, watchedValues.propertyTaxAnnual, watchedValues.homeInsuranceAnnual]);
+  }, [salesPrice, setValue]);
 
   const onCalculate = useCallback((data: FormValues) => {
     if (!config) {
@@ -116,8 +130,9 @@ export function ConventionalForm() {
         downPaymentPercent: data.downPaymentMode === 'percent' ? data.downPaymentPercent : undefined,
         interestRate: data.interestRate,
         termYears: data.termYears,
-        propertyTaxAnnual: data.propertyTaxAnnual,
-        homeInsuranceAnnual: data.homeInsuranceAnnual,
+        propertyTaxMonthly: data.propertyTaxAnnual / 12,
+        homeInsuranceMonthly: data.homeInsuranceAnnual / 12,
+        mortgageInsuranceMonthly: data.mortgageInsuranceMonthly ?? 0,
         hoaDuesMonthly: data.hoaDuesMonthly,
         floodInsuranceMonthly: data.floodInsuranceMonthly,
         creditScoreTier: data.creditScoreTier,
@@ -126,6 +141,9 @@ export function ConventionalForm() {
         lenderCreditAmount: data.lenderCreditAmount,
         originationPoints: data.originationPoints,
         depositAmount: data.depositAmount,
+        prepaidInterestDays: data.prepaidInterestDays,
+        prepaidTaxMonths: data.prepaidTaxMonths,
+        prepaidInsuranceMonths: data.prepaidInsuranceMonths,
       },
       config
     );
@@ -304,41 +322,93 @@ export function ConventionalForm() {
             </div>
 
             {/* Monthly Costs */}
+            <div className="grid grid-cols-2 gap-4">
+              <Controller
+                name="propertyTaxAnnual"
+                control={control}
+                render={({ field }) => (
+                  <InputGroup
+                    label={t('calculator.propertyTax')}
+                    name="propertyTaxAnnual"
+                    type="number"
+                    value={field.value}
+                    onChange={(val) => {
+                      const annual = Number(val) || 0;
+                      field.onChange(annual);
+                      setValue('propertyTaxMonthly', parseFloat((annual / 12).toFixed(2)));
+                    }}
+                    prefix="$"
+                    helperText="Annual"
+                    disabled={isDisabled}
+                  />
+                )}
+              />
+
+              <Controller
+                name="homeInsuranceAnnual"
+                control={control}
+                render={({ field }) => (
+                  <InputGroup
+                    label={t('calculator.homeInsurance')}
+                    name="homeInsuranceAnnual"
+                    type="number"
+                    value={field.value}
+                    onChange={(val) => {
+                      const annual = Number(val) || 0;
+                      field.onChange(annual);
+                      setValue('homeInsuranceMonthly', parseFloat((annual / 12).toFixed(2)));
+                    }}
+                    prefix="$"
+                    helperText="Annual"
+                    disabled={isDisabled}
+                  />
+                )}
+              />
+            </div>
+
             <div className="space-y-4">
-              <h3 className="text-sm font-semibold text-slate-700 uppercase tracking-wide">
-                Monthly Costs
+              <h3 className="text-sm font-semibold text-slate-700 uppercase tracking-wide mt-6">
+                {t('calculator.sections.monthlyCosts')}
               </h3>
 
               <div className="grid grid-cols-2 gap-4">
                 <Controller
-                  name="propertyTaxAnnual"
+                  name="propertyTaxMonthly"
                   control={control}
                   render={({ field }) => (
                     <InputGroup
-                      label={t('calculator.propertyTax')}
-                      name="propertyTaxAnnual"
+                      label="Property Tax"
+                      name="propertyTaxMonthly"
                       type="number"
                       value={field.value}
-                      onChange={(val) => field.onChange(Number(val) || 0)}
+                      onChange={(val) => {
+                        const monthly = Number(val) || 0;
+                        field.onChange(monthly);
+                        setValue('propertyTaxAnnual', Math.round(monthly * 12));
+                      }}
                       prefix="$"
-                      helperText="Annual"
+                      helperText="per month"
                       disabled={isDisabled}
                     />
                   )}
                 />
 
                 <Controller
-                  name="homeInsuranceAnnual"
+                  name="homeInsuranceMonthly"
                   control={control}
                   render={({ field }) => (
                     <InputGroup
-                      label={t('calculator.homeInsurance')}
-                      name="homeInsuranceAnnual"
+                      label="Home Insurance"
+                      name="homeInsuranceMonthly"
                       type="number"
                       value={field.value}
-                      onChange={(val) => field.onChange(Number(val) || 0)}
+                      onChange={(val) => {
+                        const monthly = Number(val) || 0;
+                        field.onChange(monthly);
+                        setValue('homeInsuranceAnnual', Math.round(monthly * 12));
+                      }}
                       prefix="$"
-                      helperText="Annual"
+                      helperText="per month"
                       disabled={isDisabled}
                     />
                   )}
@@ -346,6 +416,23 @@ export function ConventionalForm() {
               </div>
 
               <div className="grid grid-cols-2 gap-4">
+                <Controller
+                  name="mortgageInsuranceMonthly"
+                  control={control}
+                  render={({ field }) => (
+                    <InputGroup
+                      label="Monthly Mtg Insurance"
+                      name="mortgageInsuranceMonthly"
+                      type="number"
+                      value={field.value ?? 0}
+                      onChange={(val) => field.onChange(Number(val) || 0)}
+                      prefix="$"
+                      helperText="If applicable"
+                      disabled={isDisabled}
+                    />
+                  )}
+                />
+
                 <Controller
                   name="hoaDuesMonthly"
                   control={control}
@@ -494,6 +581,60 @@ export function ConventionalForm() {
               />
             </div>
 
+            {/* Prepaid Items Configuration */}
+            <div className="space-y-4">
+              <h3 className="text-sm font-semibold text-slate-700 uppercase tracking-wide">
+                {t('calculator.sections.prepaids')}
+              </h3>
+
+              <div className="grid grid-cols-3 gap-4">
+                <Controller
+                  name="prepaidInterestDays"
+                  control={control}
+                  render={({ field }) => (
+                    <InputGroup
+                      label="Interest Days"
+                      name="prepaidInterestDays"
+                      type="number"
+                      value={field.value}
+                      onChange={(val) => field.onChange(Number(val) || 0)}
+                      suffix="days"
+                    />
+                  )}
+                />
+
+                <Controller
+                  name="prepaidTaxMonths"
+                  control={control}
+                  render={({ field }) => (
+                    <InputGroup
+                      label="Tax Months"
+                      name="prepaidTaxMonths"
+                      type="number"
+                      value={field.value}
+                      onChange={(val) => field.onChange(Number(val) || 0)}
+                      suffix="mo"
+                    />
+                  )}
+                />
+
+                <Controller
+                  name="prepaidInsuranceMonths"
+                  control={control}
+                  render={({ field }) => (
+                    <InputGroup
+                      label="Insurance Months"
+                      name="prepaidInsuranceMonths"
+                      type="number"
+                      value={field.value}
+                      onChange={(val) => field.onChange(Number(val) || 0)}
+                      suffix="mo"
+                    />
+                  )}
+                />
+              </div>
+            </div>
+
             {/* Partner Agent */}
             <div className="space-y-4">
               <h3 className="text-sm font-semibold text-slate-700 uppercase tracking-wide">
@@ -540,6 +681,6 @@ export function ConventionalForm() {
           </Card>
         )}
       </div>
-    </div>
+    </div >
   );
 }

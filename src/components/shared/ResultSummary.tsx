@@ -140,15 +140,15 @@ export function ResultSummary({
               label={(formId === 'fha' || formId === 'fha-refi' || formId === 'va-refi') ? ((formId === 'fha-refi' || formId === 'va-refi') ? "P & I (new loan)" : "P & I") : t('results.principalInterest')}
               value={formatCurrency(result.monthlyPayment.principalAndInterest)}
             />
-            {!['fha-refi', 'va-refi', 'conventional-refi'].includes(formId || '') && (
+            {!['fha-refi', 'va-refi', 'conventional-refi'].includes(formId || '') && result.monthlyPayment.propertyTax > 0 && (
               <ResultItem
-                label={formId === 'fha' ? "Tax per month" : "Property Tax (per month)"}
+                label={formId === 'fha' || formId === 'fha-refi' ? "Tax per month" : "Property Tax (per month)"}
                 value={formatCurrency(result.monthlyPayment.propertyTax)}
               />
             )}
-            {!['fha-refi', 'va-refi', 'conventional-refi'].includes(formId || '') && (
+            {!['fha-refi', 'va-refi', 'conventional-refi'].includes(formId || '') && result.monthlyPayment.homeInsurance > 0 && (
               <ResultItem
-                label={formId === 'fha' ? "Insurance per month" : "Home Insurance (per month)"}
+                label={formId === 'fha' || formId === 'fha-refi' ? "Insurance per month" : "Home Insurance (per month)"}
                 value={formatCurrency(result.monthlyPayment.homeInsurance)}
               />
             )}
@@ -158,13 +158,13 @@ export function ResultSummary({
                 value={formatCurrency(result.monthlyPayment.mortgageInsurance)}
               />
             )}
-            {!['fha-refi', 'va-refi'].includes(formId || '') && result.monthlyPayment.hoaDues > 0 && (
+            {formId !== 'va-refi' && result.monthlyPayment.hoaDues > 0 && (
               <ResultItem
                 label={t('results.hoa')}
                 value={formatCurrency(result.monthlyPayment.hoaDues)}
               />
             )}
-            {!['fha-refi', 'va-refi'].includes(formId || '') && result.monthlyPayment.floodInsurance > 0 && (
+            {formId !== 'va-refi' && result.monthlyPayment.floodInsurance > 0 && (
               <ResultItem
                 label={t('results.floodInsurance')}
                 value={formatCurrency(result.monthlyPayment.floodInsurance)}
@@ -190,21 +190,17 @@ export function ResultSummary({
 
           <ResultSection title={t('results.prepaidItems')}>
             <ResultItem
-              label="Prepaid Interest (15 days)"
+              label={`Prepaid Interest (${result.closingCosts.prepaidInterestDays ?? 15} days)`}
               value={formatCurrency(result.closingCosts.prepaidInterest)}
             />
-            {!['fha-refi', 'va-refi'].includes(formId || '') && (
-              <ResultItem
-                label="Prepaid property tax (6 months)"
-                value={formatCurrency(result.closingCosts.taxReserves)}
-              />
-            )}
-            {!['fha-refi', 'va-refi'].includes(formId || '') && (
-              <ResultItem
-                label="Prepaid hazard ins (15 months)"
-                value={formatCurrency(result.closingCosts.insuranceReserves)}
-              />
-            )}
+            <ResultItem
+              label={`Prepaid property tax (${result.closingCosts.prepaidTaxMonths ?? 0} months)`}
+              value={formatCurrency(result.closingCosts.taxReserves)}
+            />
+            <ResultItem
+              label={`Prepaid hazard ins (${result.closingCosts.prepaidInsuranceMonths ?? 0} months)`}
+              value={formatCurrency(result.closingCosts.insuranceReserves)}
+            />
           </ResultSection>
 
           <div className="mt-4">

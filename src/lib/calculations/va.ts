@@ -100,19 +100,28 @@ export function calculateVaClosingCosts(
   baseLoanAmount: number,
   propertyValue: number,
   interestRate: number,
-  propertyTaxAnnual: number,
-  homeInsuranceAnnual: number,
+  propertyTaxMonthly: number,
+  homeInsuranceMonthly: number,
   fundingFeeAmount: number,
-  config: GhlConfig
+  config: GhlConfig,
+  prepaidOptions?: {
+    interestDays?: number;
+    taxMonths?: number;
+    insuranceMonths?: number;
+  }
 ): ClosingCostsBreakdown {
   const { fees, prepaids } = config;
+
+  const interestDays = prepaidOptions?.interestDays ?? 15;
+  const taxMonths = prepaidOptions?.taxMonths ?? 6;
+  const insuranceMonths = prepaidOptions?.insuranceMonths ?? 15;
 
   // Manual Fees from Image/User Request
   const manualFees = {
     loanFee: 0, // Usually 0 for VA sale
     appraisal: 650,
     creditReport: 150,
-    ownerTitlePolicy: 1565,
+    ownerTitlePolicy: 1730,
     lenderTitlePolicy: 1515,
     escrow: 1115, // Settlement
     recording: 275,
@@ -155,17 +164,17 @@ export function calculateVaClosingCosts(
   const totalLoanAmount = baseLoanAmount + fundingFeeAmount;
 
   // 1. Prepaid Interest (15 days dynamic)
-  // Formula: Loan Amount * (APR / 100) / 365 * 15
+  // Formula: Loan Amount * (APR / 100) / 365 * days
   const prepaidInterest = calculatePrepaidInterest(
     totalLoanAmount,
     interestRate,
-    15
+    interestDays
   );
 
-  // 2. Prepaid Property Tax (6 months) = FIXED $3,125
+  // 2. Prepaid Property Tax (6 months fixed to 3,125)
   const taxReserves = 3125;
 
-  // 3. Prepaid Insurance (15 months) = FIXED $2,187
+  // 3. Prepaid Insurance (15 months fixed to 2,187)
   const insuranceReserves = 2187;
 
   const totalPrepaids = prepaidInterest + taxReserves + insuranceReserves;
@@ -212,6 +221,10 @@ export function calculateVaClosingCosts(
 
     totalClosingCosts: roundToCents(totalClosingCosts),
     netClosingCosts: roundToCents(netClosingCosts),
+
+    prepaidInterestDays: interestDays,
+    prepaidTaxMonths: taxMonths,
+    prepaidInsuranceMonths: insuranceMonths,
   };
 }
 
@@ -228,12 +241,15 @@ export function calculateVaPurchase(
     downPaymentPercent,
     interestRate,
     termYears,
-    propertyTaxAnnual,
-    homeInsuranceAnnual,
+    propertyTaxMonthly,
+    homeInsuranceMonthly,
     hoaDuesMonthly,
     floodInsuranceMonthly,
     vaUsage,
     isDisabledVeteran,
+    prepaidInterestDays = 15,
+    prepaidTaxMonths = 6,
+    prepaidInsuranceMonths = 15,
   } = input;
 
   // Calculate down payment (VA allows 0% down)
@@ -274,8 +290,8 @@ export function calculateVaPurchase(
   // VA has NO monthly mortgage insurance!
 
   // FIXED Monthly Values as per Request
-  const monthlyTax = 468.75;
-  const monthlyInsurance = 131.25;
+  const monthlyTax = 520.83;
+  const monthlyInsurance = 145.83;
 
   const monthlyPayment: MonthlyPaymentBreakdown = {
     principalAndInterest,
@@ -298,10 +314,15 @@ export function calculateVaPurchase(
     baseLoanAmount,
     salesPrice || 0,
     interestRate || 0,
-    propertyTaxAnnual || 0,
-    homeInsuranceAnnual || 0,
+    propertyTaxMonthly,
+    homeInsuranceMonthly,
     fundingFeeAmount,
-    config
+    config,
+    {
+      interestDays: prepaidInterestDays,
+      taxMonths: prepaidTaxMonths,
+      insuranceMonths: prepaidInsuranceMonths,
+    }
   );
 
   // Cash to close (funding fee is financed)
@@ -336,14 +357,17 @@ export function calculateVaRefinance(
     newLoanAmount,
     interestRate,
     termYears,
-    propertyTaxAnnual,
-    homeInsuranceAnnual,
+    propertyTaxMonthly,
+    homeInsuranceMonthly,
     hoaDuesMonthly,
     isIrrrl,
     vaUsage,
     isDisabledVeteran,
     cashOutAmount,
     originationPoints,
+    prepaidInterestDays = 15,
+    prepaidTaxMonths = 0,
+    prepaidInsuranceMonths = 0,
   } = input;
 
   const { feesRefi, prepaids } = config;
@@ -410,14 +434,16 @@ export function calculateVaRefinance(
     manualFees.lenderTitlePolicy;
 
   // Prepaids
-  // Request: "Prepaids Interest 15 days" ONLY.
   const prepaidInterest = calculatePrepaidInterest(
     totalLoanAmount,
     interestRate,
-    15
+    prepaidInterestDays
   );
-  const taxReserves = 0;
-  const insuranceReserves = 0;
+
+  // Use actual property tax and insurance inputs if provided
+  // Use actual property tax and insurance inputs if provided
+  const taxReserves = roundToCents(propertyTaxMonthly * prepaidTaxMonths);
+  const insuranceReserves = roundToCents(homeInsuranceMonthly * prepaidInsuranceMonths);
 
   const totalPrepaids = prepaidInterest + taxReserves + insuranceReserves;
 
@@ -480,6 +506,10 @@ export function calculateVaRefinance(
 
     totalClosingCosts: roundToCents(totalClosingCosts),
     netClosingCosts: roundToCents(netClosingCosts),
+
+    prepaidInterestDays,
+    prepaidTaxMonths,
+    prepaidInsuranceMonths,
   };
 
   // Cash To Close

@@ -93,15 +93,24 @@ export function calculateConventionalClosingCosts(
   loanAmount: number,
   salesPrice: number,
   interestRate: number,
-  propertyTaxAnnual: number,
-  homeInsuranceAnnual: number,
+  propertyTaxMonthly: number,
+  homeInsuranceMonthly: number,
   originationPoints: number,
   sellerCreditAmount: number,
   sellerCreditPercent: number | undefined,
   lenderCreditAmount: number,
-  config: GhlConfig
+  config: GhlConfig,
+  prepaidOptions?: {
+    interestDays?: number;
+    taxMonths?: number;
+    insuranceMonths?: number;
+  }
 ): ClosingCostsBreakdown {
   const { fees, prepaids } = config;
+
+  const interestDays = prepaidOptions?.interestDays ?? 15;
+  const taxMonths = prepaidOptions?.taxMonths ?? 6;
+  const insuranceMonths = prepaidOptions?.insuranceMonths ?? 15;
 
   // Fee overrides based on user request (Conventional Sale specific)
   // Loan fee is dynamic 1% of LOAN AMOUNT
@@ -181,18 +190,16 @@ export function calculateConventionalClosingCosts(
     mortgageTax;
 
   // Section C - Prepaids
-  // Formula: (loan amount * interestRate / 365 * 15)
+  // Formula: (loan amount * interestRate / 365 * days)
   const prepaidInterest = calculatePrepaidInterest(
     loanAmount || 0,
     interestRate || 0,
-    15 // Fixed 15 days as per request
+    interestDays
   );
 
-  // Formula: (Sales Price * 1.25% / 2) which is 6 months of 1.25% annual
-  const taxReserves = roundToCents(((salesPrice || 0) * 0.0125) / 2);
+  const taxReserves = roundToCents(((salesPrice || 0) * 0.0125 / 12) * taxMonths);
 
-  // Formula: (sales price * 0.4375%)
-  const insuranceReserves = roundToCents((salesPrice || 0) * 0.004375);
+  const insuranceReserves = roundToCents(((salesPrice || 0) * 0.0035 / 12) * insuranceMonths);
 
   const totalPrepaids = prepaidInterest + taxReserves + insuranceReserves;
 
@@ -249,6 +256,10 @@ export function calculateConventionalClosingCosts(
     // Totals
     totalClosingCosts: roundToCents(totalClosingCosts),
     netClosingCosts: roundToCents(netClosingCosts),
+
+    prepaidInterestDays: interestDays,
+    prepaidTaxMonths: taxMonths,
+    prepaidInsuranceMonths: insuranceMonths,
   };
 }
 
@@ -265,8 +276,8 @@ export function calculateConventionalPurchase(
     downPaymentPercent,
     interestRate,
     termYears,
-    propertyTaxAnnual,
-    homeInsuranceAnnual,
+    propertyTaxMonthly,
+    homeInsuranceMonthly,
     hoaDuesMonthly,
     floodInsuranceMonthly,
     creditScoreTier,
@@ -341,13 +352,18 @@ export function calculateConventionalPurchase(
     loanAmount,
     salesPrice || 0,
     interestRate || 0,
-    propertyTaxAnnual || 0,
-    homeInsuranceAnnual || 0,
+    propertyTaxMonthly,
+    homeInsuranceMonthly,
     originationPoints || 0,
     sellerCreditAmount || 0,
     sellerCreditPercent,
     lenderCreditAmount || 0,
-    config
+    config,
+    {
+      interestDays: input.prepaidInterestDays,
+      taxMonths: input.prepaidTaxMonths,
+      insuranceMonths: input.prepaidInsuranceMonths,
+    }
   );
 
   // Add single premium PMI to closing costs if paid in cash
@@ -397,12 +413,16 @@ export function calculateConventionalRefinance(
     newLoanAmount,
     interestRate,
     termYears,
-    propertyTaxAnnual,
-    homeInsuranceAnnual,
+    propertyTaxMonthly,
+    homeInsuranceMonthly,
     hoaDuesMonthly,
+    mortgageInsuranceMonthly,
     creditScoreTier,
     refinanceType,
     originationPoints,
+    prepaidInterestDays = 15,
+    prepaidTaxMonths = 0,
+    prepaidInsuranceMonths = 0,
   } = input;
 
   // Use manual fees as per request (matching Second Image)
@@ -417,7 +437,7 @@ export function calculateConventionalRefinance(
     floodCert: 30,
     appraisal: 650,
     creditReport: 150,
-    lenderTitlePolicy: 1050,
+    lenderTitlePolicy: 1015,
     settlement: 400, // Escrow Fee
     notary: 350,
     recording: 275,
@@ -453,8 +473,8 @@ export function calculateConventionalRefinance(
       (Math.pow(1 + monthlyRate, n) - 1);
 
   // Monthly escrows
-  const monthlyTax = calculateMonthlyPropertyTax(propertyTaxAnnual || 0);
-  const monthlyInsurance = calculateMonthlyInsurance(homeInsuranceAnnual || 0);
+  const monthlyTax = propertyTaxMonthly;
+  const monthlyInsurance = homeInsuranceMonthly;
 
   const monthlyPayment: MonthlyPaymentBreakdown = {
     principalAndInterest,
@@ -526,14 +546,19 @@ export function calculateConventionalRefinance(
     mortgageTax;
 
   // Section C - Prepaids
-  // Prepaid Interest (30 days)
+  // Prepaid Interest
   // Formula: Loan Amount * (APR / 100 / 365) * Days
   const dailyRate = (interestRate || 0) / 100 / 365;
-  const prepaidInterest = roundToCents((newLoanAmount || 0) * dailyRate * 30);
+  const prepaidInterest = roundToCents((newLoanAmount || 0) * dailyRate * prepaidInterestDays);
 
-  // Remove Prepaid Tax & Insurance for Conv Refi as requested
-  const taxReserves = 0;
-  const insuranceReserves = 0;
+  // Use actual property tax and insurance inputs if provided (default input is 0 for Refi but form might send overrides)
+  // Or stick to 0 if user wants them 0. The default inputs in store for Conv Refi are taxMonths=0, insMonths=0.
+  // So if we use the inputs, it produces 0.
+  const monthlyTaxAmt = propertyTaxMonthly;
+  const monthlyInsAmt = homeInsuranceMonthly;
+
+  const taxReserves = roundToCents(monthlyTaxAmt * prepaidTaxMonths);
+  const insuranceReserves = roundToCents(monthlyInsAmt * prepaidInsuranceMonths);
 
   const totalPrepaids = prepaidInterest + taxReserves + insuranceReserves;
 
@@ -578,6 +603,10 @@ export function calculateConventionalRefinance(
 
     totalClosingCosts: roundToCents(totalClosingCosts),
     netClosingCosts: roundToCents(netClosingCosts),
+
+    prepaidInterestDays,
+    prepaidTaxMonths,
+    prepaidInsuranceMonths,
   };
 
   // Calculate cash to close

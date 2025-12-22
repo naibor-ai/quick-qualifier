@@ -21,9 +21,14 @@ const formSchema = z.object({
   termYears: z.number().min(1).max(40),
   propertyTaxAnnual: z.number().min(0),
   homeInsuranceAnnual: z.number().min(0),
+  mortgageInsuranceMonthly: z.number().min(0).optional(),
   hoaDuesMonthly: z.number().min(0),
   creditScoreTier: CreditScoreTier,
   refinanceType: ConventionalRefinanceType,
+  // Prepaid Items
+  prepaidInterestDays: z.number().min(0).max(365),
+  prepaidTaxMonths: z.number().min(0).max(60),
+  prepaidInsuranceMonths: z.number().min(0).max(60),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -50,9 +55,13 @@ export function ConventionalRefiForm() {
       termYears: conventionalRefiInputs.termYears,
       propertyTaxAnnual: conventionalRefiInputs.propertyTaxAnnual,
       homeInsuranceAnnual: conventionalRefiInputs.homeInsuranceAnnual,
+      mortgageInsuranceMonthly: conventionalRefiInputs.mortgageInsuranceMonthly,
       hoaDuesMonthly: conventionalRefiInputs.hoaDuesMonthly,
       creditScoreTier: conventionalRefiInputs.creditScoreTier,
       refinanceType: conventionalRefiInputs.refinanceType,
+      prepaidInterestDays: conventionalRefiInputs.prepaidInterestDays ?? 15,
+      prepaidTaxMonths: conventionalRefiInputs.prepaidTaxMonths ?? 0,
+      prepaidInsuranceMonths: conventionalRefiInputs.prepaidInsuranceMonths ?? 0,
     },
   });
 
@@ -68,14 +77,18 @@ export function ConventionalRefiForm() {
         newLoanAmount: data.newLoanAmount,
         interestRate: data.interestRate,
         termYears: data.termYears,
-        propertyTaxAnnual: data.propertyTaxAnnual,
-        homeInsuranceAnnual: data.homeInsuranceAnnual,
+        propertyTaxMonthly: data.propertyTaxAnnual / 12,
+        homeInsuranceMonthly: data.homeInsuranceAnnual / 12,
+        mortgageInsuranceMonthly: data.mortgageInsuranceMonthly ?? 0,
         hoaDuesMonthly: data.hoaDuesMonthly,
         creditScoreTier: data.creditScoreTier,
         refinanceType: data.refinanceType as 'rate_term' | 'cash_out',
         payoffDays: 30,
         cashOutAmount: 0,
         originationPoints: 0,
+        prepaidInterestDays: data.prepaidInterestDays,
+        prepaidTaxMonths: data.prepaidTaxMonths,
+        prepaidInsuranceMonths: data.prepaidInsuranceMonths,
       },
       config
     );
@@ -243,47 +256,46 @@ export function ConventionalRefiForm() {
               </div>
             </div>
 
-            {/* Monthly Costs */}
+            <div className="grid grid-cols-2 gap-4">
+              <Controller
+                name="propertyTaxAnnual"
+                control={control}
+                render={({ field }) => (
+                  <InputGroup
+                    label={t('calculator.propertyTax')}
+                    name="propertyTaxAnnual"
+                    type="number"
+                    value={field.value}
+                    onChange={(val) => field.onChange(Number(val) || 0)}
+                    prefix="$"
+                    helperText="Annual"
+                    disabled={isDisabled}
+                  />
+                )}
+              />
+
+              <Controller
+                name="homeInsuranceAnnual"
+                control={control}
+                render={({ field }) => (
+                  <InputGroup
+                    label={t('calculator.homeInsurance')}
+                    name="homeInsuranceAnnual"
+                    type="number"
+                    value={field.value}
+                    onChange={(val) => field.onChange(Number(val) || 0)}
+                    prefix="$"
+                    helperText="Annual"
+                    disabled={isDisabled}
+                  />
+                )}
+              />
+            </div>
+
             <div className="space-y-4">
-              <h3 className="text-sm font-semibold text-slate-700 uppercase tracking-wide">
+              <h3 className="text-sm font-semibold text-slate-700 uppercase tracking-wide mt-6">
                 {t('calculator.sections.monthlyCosts')}
               </h3>
-
-              <div className="grid grid-cols-2 gap-4">
-                <Controller
-                  name="propertyTaxAnnual"
-                  control={control}
-                  render={({ field }) => (
-                    <InputGroup
-                      label={t('calculator.propertyTax')}
-                      name="propertyTaxAnnual"
-                      type="number"
-                      value={field.value}
-                      onChange={(val) => field.onChange(Number(val) || 0)}
-                      prefix="$"
-                      helperText={t('common.annual')}
-                      disabled={isDisabled}
-                    />
-                  )}
-                />
-
-                <Controller
-                  name="homeInsuranceAnnual"
-                  control={control}
-                  render={({ field }) => (
-                    <InputGroup
-                      label={t('calculator.homeInsurance')}
-                      name="homeInsuranceAnnual"
-                      type="number"
-                      value={field.value}
-                      onChange={(val) => field.onChange(Number(val) || 0)}
-                      prefix="$"
-                      helperText={t('common.annual')}
-                      disabled={isDisabled}
-                    />
-                  )}
-                />
-              </div>
 
               <Controller
                 name="hoaDuesMonthly"
@@ -324,6 +336,60 @@ export function ConventionalRefiForm() {
               />
             </div>
 
+            {/* Prepaid Items Configuration */}
+            <div className="space-y-4">
+              <h3 className="text-sm font-semibold text-slate-700 uppercase tracking-wide">
+                {t('calculator.sections.prepaids')}
+              </h3>
+
+              <div className="grid grid-cols-3 gap-4">
+                <Controller
+                  name="prepaidInterestDays"
+                  control={control}
+                  render={({ field }) => (
+                    <InputGroup
+                      label="Interest Days"
+                      name="prepaidInterestDays"
+                      type="number"
+                      value={field.value}
+                      onChange={(val) => field.onChange(Number(val) || 0)}
+                      suffix="days"
+                    />
+                  )}
+                />
+
+                <Controller
+                  name="prepaidTaxMonths"
+                  control={control}
+                  render={({ field }) => (
+                    <InputGroup
+                      label="Tax Months"
+                      name="prepaidTaxMonths"
+                      type="number"
+                      value={field.value}
+                      onChange={(val) => field.onChange(Number(val) || 0)}
+                      suffix="mo"
+                    />
+                  )}
+                />
+
+                <Controller
+                  name="prepaidInsuranceMonths"
+                  control={control}
+                  render={({ field }) => (
+                    <InputGroup
+                      label="Insurance Months"
+                      name="prepaidInsuranceMonths"
+                      type="number"
+                      value={field.value}
+                      onChange={(val) => field.onChange(Number(val) || 0)}
+                      suffix="mo"
+                    />
+                  )}
+                />
+              </div>
+            </div>
+
             {/* Actions */}
             <div className="flex gap-3 pt-4">
               <Button type="submit" fullWidth disabled={isDisabled} loading={configLoading}>
@@ -357,6 +423,6 @@ export function ConventionalRefiForm() {
           </Card>
         )}
       </div>
-    </div>
+    </div >
   );
 }

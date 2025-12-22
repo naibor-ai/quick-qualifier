@@ -19,11 +19,16 @@ const formSchema = z.object({
   termYears: z.number().min(1).max(40),
   propertyTaxAnnual: z.number().min(0),
   homeInsuranceAnnual: z.number().min(0),
+  mortgageInsuranceMonthly: z.number().min(0).optional(),
   hoaDuesMonthly: z.number().min(0),
   isIrrrl: z.boolean(),
   vaUsage: VaUsage,
   isDisabledVeteran: z.boolean(),
   cashOutAmount: z.number().min(0),
+  // Prepaid Items
+  prepaidInterestDays: z.number().min(0).max(365),
+  prepaidTaxMonths: z.number().min(0).max(60),
+  prepaidInsuranceMonths: z.number().min(0).max(60),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -50,11 +55,15 @@ export function VaRefiForm() {
       termYears: vaRefiInputs.termYears,
       propertyTaxAnnual: vaRefiInputs.propertyTaxAnnual,
       homeInsuranceAnnual: vaRefiInputs.homeInsuranceAnnual,
+      mortgageInsuranceMonthly: vaRefiInputs.mortgageInsuranceMonthly,
       hoaDuesMonthly: vaRefiInputs.hoaDuesMonthly,
       isIrrrl: vaRefiInputs.isIrrrl,
       vaUsage: vaRefiInputs.vaUsage,
       isDisabledVeteran: vaRefiInputs.isDisabledVeteran,
       cashOutAmount: vaRefiInputs.cashOutAmount,
+      prepaidInterestDays: vaRefiInputs.prepaidInterestDays ?? 15,
+      prepaidTaxMonths: vaRefiInputs.prepaidTaxMonths ?? 0,
+      prepaidInsuranceMonths: vaRefiInputs.prepaidInsuranceMonths ?? 0,
     },
   });
 
@@ -73,8 +82,9 @@ export function VaRefiForm() {
         newLoanAmount: data.newLoanAmount,
         interestRate: data.interestRate,
         termYears: data.termYears,
-        propertyTaxAnnual: data.propertyTaxAnnual,
-        homeInsuranceAnnual: data.homeInsuranceAnnual,
+        propertyTaxMonthly: data.propertyTaxAnnual / 12,
+        homeInsuranceMonthly: data.homeInsuranceAnnual / 12,
+        mortgageInsuranceMonthly: data.mortgageInsuranceMonthly ?? 0,
         hoaDuesMonthly: data.hoaDuesMonthly,
         isIrrrl: data.isIrrrl,
         vaUsage: data.vaUsage,
@@ -82,6 +92,9 @@ export function VaRefiForm() {
         cashOutAmount: data.cashOutAmount,
         payoffDays: 30,
         originationPoints: 0,
+        prepaidInterestDays: data.prepaidInterestDays,
+        prepaidTaxMonths: data.prepaidTaxMonths,
+        prepaidInsuranceMonths: data.prepaidInsuranceMonths,
       },
       config
     );
@@ -329,47 +342,46 @@ export function VaRefiForm() {
               )}
             </div>
 
-            {/* Monthly Costs */}
+            <div className="grid grid-cols-2 gap-4">
+              <Controller
+                name="propertyTaxAnnual"
+                control={control}
+                render={({ field }) => (
+                  <InputGroup
+                    label={t('calculator.propertyTax')}
+                    name="propertyTaxAnnual"
+                    type="number"
+                    value={field.value}
+                    onChange={(val) => field.onChange(Number(val) || 0)}
+                    prefix="$"
+                    helperText="Annual"
+                    disabled={isDisabled}
+                  />
+                )}
+              />
+
+              <Controller
+                name="homeInsuranceAnnual"
+                control={control}
+                render={({ field }) => (
+                  <InputGroup
+                    label={t('calculator.homeInsurance')}
+                    name="homeInsuranceAnnual"
+                    type="number"
+                    value={field.value}
+                    onChange={(val) => field.onChange(Number(val) || 0)}
+                    prefix="$"
+                    helperText="Annual"
+                    disabled={isDisabled}
+                  />
+                )}
+              />
+            </div>
+
             <div className="space-y-4">
-              <h3 className="text-sm font-semibold text-slate-700 uppercase tracking-wide">
+              <h3 className="text-sm font-semibold text-slate-700 uppercase tracking-wide mt-6">
                 {t('calculator.sections.monthlyCosts')}
               </h3>
-
-              <div className="grid grid-cols-2 gap-4">
-                <Controller
-                  name="propertyTaxAnnual"
-                  control={control}
-                  render={({ field }) => (
-                    <InputGroup
-                      label={t('calculator.propertyTax')}
-                      name="propertyTaxAnnual"
-                      type="number"
-                      value={field.value}
-                      onChange={(val) => field.onChange(Number(val) || 0)}
-                      prefix="$"
-                      helperText={t('common.annual')}
-                      disabled={isDisabled}
-                    />
-                  )}
-                />
-
-                <Controller
-                  name="homeInsuranceAnnual"
-                  control={control}
-                  render={({ field }) => (
-                    <InputGroup
-                      label={t('calculator.homeInsurance')}
-                      name="homeInsuranceAnnual"
-                      type="number"
-                      value={field.value}
-                      onChange={(val) => field.onChange(Number(val) || 0)}
-                      prefix="$"
-                      helperText={t('common.annual')}
-                      disabled={isDisabled}
-                    />
-                  )}
-                />
-              </div>
 
               <Controller
                 name="hoaDuesMonthly"
@@ -386,6 +398,60 @@ export function VaRefiForm() {
                   />
                 )}
               />
+            </div>
+
+            {/* Prepaid Items Configuration */}
+            <div className="space-y-4">
+              <h3 className="text-sm font-semibold text-slate-700 uppercase tracking-wide">
+                {t('calculator.sections.prepaids')}
+              </h3>
+
+              <div className="grid grid-cols-3 gap-4">
+                <Controller
+                  name="prepaidInterestDays"
+                  control={control}
+                  render={({ field }) => (
+                    <InputGroup
+                      label="Interest Days"
+                      name="prepaidInterestDays"
+                      type="number"
+                      value={field.value}
+                      onChange={(val) => field.onChange(Number(val) || 0)}
+                      suffix="days"
+                    />
+                  )}
+                />
+
+                <Controller
+                  name="prepaidTaxMonths"
+                  control={control}
+                  render={({ field }) => (
+                    <InputGroup
+                      label="Tax Months"
+                      name="prepaidTaxMonths"
+                      type="number"
+                      value={field.value}
+                      onChange={(val) => field.onChange(Number(val) || 0)}
+                      suffix="mo"
+                    />
+                  )}
+                />
+
+                <Controller
+                  name="prepaidInsuranceMonths"
+                  control={control}
+                  render={({ field }) => (
+                    <InputGroup
+                      label="Insurance Months"
+                      name="prepaidInsuranceMonths"
+                      type="number"
+                      value={field.value}
+                      onChange={(val) => field.onChange(Number(val) || 0)}
+                      suffix="mo"
+                    />
+                  )}
+                />
+              </div>
             </div>
 
             {/* Actions */}
