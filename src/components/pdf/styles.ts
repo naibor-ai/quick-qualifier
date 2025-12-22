@@ -142,6 +142,54 @@ export const pdfStyles = StyleSheet.create({
     color: '#1E40AF',
   },
 
+  // Cash to Close highlight styles - matching reference image
+  cashToCloseBox: {
+    backgroundColor: '#F1F5F9',
+    padding: 15,
+    borderRadius: 6,
+    marginBottom: 20,
+    marginTop: 10,
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
+    borderStyle: 'solid',
+  },
+  cashToCloseRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingVertical: 8,
+    borderBottomWidth: 1,
+    borderBottomColor: '#E2E8F0',
+    borderBottomStyle: 'solid',
+  },
+  cashToCloseRowLast: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingVertical: 8,
+    borderBottomWidth: 0,
+  },
+  cashToCloseLabel: {
+    fontSize: 12,
+    color: '#64748B',
+    fontWeight: 'normal',
+  },
+  cashToCloseValue: {
+    fontSize: 12,
+    color: '#1E293B',
+    fontWeight: 'normal',
+  },
+  cashToCloseHighlightLabel: {
+    fontSize: 12,
+    color: '#64748B',
+    fontWeight: 'normal',
+  },
+  cashToCloseHighlightValue: {
+    fontSize: 12,
+    color: '#2563EB',
+    fontWeight: 'bold',
+  },
+
   // Two-column layout
   twoColumn: {
     flexDirection: 'row',
