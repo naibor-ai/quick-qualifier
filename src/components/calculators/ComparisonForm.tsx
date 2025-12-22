@@ -77,8 +77,8 @@ export function ComparisonForm() {
           interestRate: s.interestRate,
           termYears: s.termYears,
         })),
-        propertyTaxAnnual,
-        homeInsuranceAnnual,
+        propertyTaxMonthly: propertyTaxAnnual / 12,
+        homeInsuranceMonthly: homeInsuranceAnnual / 12,
         hoaDuesMonthly: 0,
       },
       config

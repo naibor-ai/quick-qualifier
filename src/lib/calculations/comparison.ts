@@ -51,8 +51,8 @@ export interface ScenarioDifference {
 function calculateScenario(
   scenario: ComparisonScenario,
   sharedInputs: {
-    propertyTaxAnnual: number;
-    homeInsuranceAnnual: number;
+    propertyTaxMonthly: number;
+    homeInsuranceMonthly: number;
     hoaDuesMonthly: number;
   },
   config: GhlConfig
@@ -73,8 +73,8 @@ function calculateScenario(
           downPaymentAmount: downPayment,
           interestRate,
           termYears,
-          propertyTaxAnnual: sharedInputs.propertyTaxAnnual,
-          homeInsuranceAnnual: sharedInputs.homeInsuranceAnnual,
+          propertyTaxMonthly: sharedInputs.propertyTaxMonthly,
+          homeInsuranceMonthly: sharedInputs.homeInsuranceMonthly,
           hoaDuesMonthly: sharedInputs.hoaDuesMonthly,
           floodInsuranceMonthly: 0,
           creditScoreTier: '740', // Default for comparison
@@ -83,6 +83,9 @@ function calculateScenario(
           lenderCreditAmount: 0,
           originationPoints: 0,
           depositAmount: 0,
+          prepaidInterestDays: 15,
+          prepaidTaxMonths: 6,
+          prepaidInsuranceMonths: 15,
         },
         config
       );
@@ -94,11 +97,14 @@ function calculateScenario(
           downPaymentAmount: downPayment,
           interestRate,
           termYears,
-          propertyTaxAnnual: sharedInputs.propertyTaxAnnual,
-          homeInsuranceAnnual: sharedInputs.homeInsuranceAnnual,
+          propertyTaxMonthly: sharedInputs.propertyTaxMonthly,
+          homeInsuranceMonthly: sharedInputs.homeInsuranceMonthly,
           hoaDuesMonthly: sharedInputs.hoaDuesMonthly,
           floodInsuranceMonthly: 0,
           is203k: false,
+          prepaidInterestDays: 15,
+          prepaidTaxMonths: 6,
+          prepaidInsuranceMonths: 15,
         },
         config
       );
@@ -110,13 +116,16 @@ function calculateScenario(
           downPaymentAmount: downPayment,
           interestRate,
           termYears,
-          propertyTaxAnnual: sharedInputs.propertyTaxAnnual,
-          homeInsuranceAnnual: sharedInputs.homeInsuranceAnnual,
+          propertyTaxMonthly: sharedInputs.propertyTaxMonthly,
+          homeInsuranceMonthly: sharedInputs.homeInsuranceMonthly,
           hoaDuesMonthly: sharedInputs.hoaDuesMonthly,
           floodInsuranceMonthly: 0,
           vaUsage: 'first',
           isDisabledVeteran: false,
           isReservist: false,
+          prepaidInterestDays: 15,
+          prepaidTaxMonths: 6,
+          prepaidInsuranceMonths: 15,
         },
         config
       );
@@ -129,8 +138,8 @@ function calculateScenario(
           downPaymentAmount: downPayment,
           interestRate,
           termYears,
-          propertyTaxAnnual: sharedInputs.propertyTaxAnnual,
-          homeInsuranceAnnual: sharedInputs.homeInsuranceAnnual,
+          propertyTaxMonthly: sharedInputs.propertyTaxMonthly,
+          homeInsuranceMonthly: sharedInputs.homeInsuranceMonthly,
           hoaDuesMonthly: sharedInputs.hoaDuesMonthly,
           floodInsuranceMonthly: 0,
           creditScoreTier: '740',
@@ -139,6 +148,9 @@ function calculateScenario(
           lenderCreditAmount: 0,
           originationPoints: 0,
           depositAmount: 0,
+          prepaidInterestDays: 15,
+          prepaidTaxMonths: 6,
+          prepaidInsuranceMonths: 15,
         },
         config
       );
@@ -155,12 +167,12 @@ export function compareScenarios(
   input: ComparisonInput,
   config: GhlConfig
 ): ComparisonResult {
-  const { scenarios, propertyTaxAnnual, homeInsuranceAnnual, hoaDuesMonthly } =
+  const { scenarios, propertyTaxMonthly, homeInsuranceMonthly, hoaDuesMonthly } =
     input;
 
   const sharedInputs = {
-    propertyTaxAnnual,
-    homeInsuranceAnnual,
+    propertyTaxMonthly,
+    homeInsuranceMonthly,
     hoaDuesMonthly,
   };
 
