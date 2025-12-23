@@ -104,10 +104,16 @@ export function calculateVaClosingCosts(
   homeInsuranceMonthly: number,
   fundingFeeAmount: number,
   config: GhlConfig,
+  loanFee: number,
+  sellerCreditAmount: number,
+  lenderCreditAmount: number,
   prepaidOptions?: {
     interestDays?: number;
     taxMonths?: number;
     insuranceMonths?: number;
+    interestAmount?: number;
+    taxAmount?: number;
+    insuranceAmount?: number;
   }
 ): ClosingCostsBreakdown {
   const { fees, prepaids } = config;
@@ -118,7 +124,6 @@ export function calculateVaClosingCosts(
 
   // Manual Fees from Image/User Request
   const manualFees = {
-    loanFee: 0, // Usually 0 for VA sale
     appraisal: 650,
     creditReport: 150,
     ownerTitlePolicy: 1730,
@@ -139,7 +144,7 @@ export function calculateVaClosingCosts(
 
   // Section A - Lender Fees
   const totalLenderFees =
-    manualFees.loanFee +
+    loanFee +
     manualFees.docPrep +
     manualFees.processing +
     manualFees.underwriting +
@@ -165,28 +170,32 @@ export function calculateVaClosingCosts(
 
   // 1. Prepaid Interest (15 days dynamic)
   // Formula: Loan Amount * (APR / 100) / 365 * days
-  const prepaidInterest = calculatePrepaidInterest(
+  // Prepaids - Check for manual overrides from UI/input
+  // Image/Request values are defaults if no override
+  const prepaidInterest = prepaidOptions?.interestAmount || calculatePrepaidInterest(
     totalLoanAmount,
     interestRate,
     interestDays
   );
 
-  // 2. Prepaid Property Tax (6 months fixed to 3,125)
-  const taxReserves = 3125;
+  // 2. Prepaid Property Tax (6 months) - Formula: (Property Value * 0.0125 / 12) * 6
+  const calculatedTaxReserves = roundToCents(((propertyValue || 0) * 0.0125 / 12) * taxMonths);
+  const taxReserves = prepaidOptions?.taxAmount || calculatedTaxReserves;
 
-  // 3. Prepaid Insurance (15 months fixed to 2,187)
-  const insuranceReserves = 2187;
+  // 3. Prepaid Insurance (15 months) - Formula: (Property Value * 0.0035 / 12) * 15
+  const calculatedInsuranceReserves = roundToCents(((propertyValue || 0) * 0.0035 / 12) * insuranceMonths);
+  const insuranceReserves = prepaidOptions?.insuranceAmount || calculatedInsuranceReserves;
 
   const totalPrepaids = prepaidInterest + taxReserves + insuranceReserves;
 
-  const totalCredits = 0;
+  const totalCredits = sellerCreditAmount + lenderCreditAmount;
   const totalClosingCosts =
     totalLenderFees + totalThirdPartyFees + totalPrepaids;
   const netClosingCosts = totalClosingCosts - totalCredits;
 
   return {
     originationFee: 0,
-    loanFee: manualFees.loanFee,
+    loanFee,
     adminFee: 0,
     processingFee: manualFees.processing,
     underwritingFee: manualFees.underwriting,
@@ -215,9 +224,9 @@ export function calculateVaClosingCosts(
     insuranceReserves,
     totalPrepaids: roundToCents(totalPrepaids),
 
-    sellerCredit: 0,
-    lenderCredit: 0,
-    totalCredits: 0,
+    sellerCredit: sellerCreditAmount,
+    lenderCredit: lenderCreditAmount,
+    totalCredits: roundToCents(totalCredits),
 
     totalClosingCosts: roundToCents(totalClosingCosts),
     netClosingCosts: roundToCents(netClosingCosts),
@@ -289,9 +298,9 @@ export function calculateVaPurchase(
 
   // VA has NO monthly mortgage insurance!
 
-  // Use user-provided monthly values, fallback to fixed defaults
-  const monthlyTax = propertyTaxMonthly || 520.83;
-  const monthlyInsurance = homeInsuranceMonthly || 145.83;
+  // Use user-provided monthly values, fallback to dynamic calculation based on sales price
+  const monthlyTax = propertyTaxMonthly || roundToCents(((salesPrice || 0) * 0.0125) / 12);
+  const monthlyInsurance = homeInsuranceMonthly || roundToCents(((salesPrice || 0) * 0.0035) / 12);
 
   const monthlyPayment: MonthlyPaymentBreakdown = {
     principalAndInterest,
@@ -318,10 +327,16 @@ export function calculateVaPurchase(
     homeInsuranceMonthly,
     fundingFeeAmount,
     config,
+    input.loanFee || 0,
+    input.sellerCreditAmount || 0,
+    input.lenderCreditAmount || 0,
     {
       interestDays: prepaidInterestDays,
       taxMonths: prepaidTaxMonths,
       insuranceMonths: prepaidInsuranceMonths,
+      interestAmount: input.prepaidInterestAmount,
+      taxAmount: input.prepaidTaxAmount,
+      insuranceAmount: input.prepaidInsuranceAmount,
     }
   );
 
@@ -329,7 +344,8 @@ export function calculateVaPurchase(
   const cashToClose = calculateCashToClose(
     downPayment,
     closingCosts.totalClosingCosts,
-    closingCosts.totalCredits
+    closingCosts.totalCredits,
+    input.depositAmount || 0
   );
 
   return {
@@ -364,7 +380,6 @@ export function calculateVaRefinance(
     vaUsage,
     isDisabledVeteran,
     cashOutAmount,
-    originationPoints,
     prepaidInterestDays = 15,
     prepaidTaxMonths = 0,
     prepaidInsuranceMonths = 0,
@@ -409,10 +424,7 @@ export function calculateVaRefinance(
   };
 
   // Loan Fee
-  // Formula: Loan Amount * (Loan Fee % / 100)
-  // Image shows 0. "Usually 0 for VA loans".
-  // Validating if we should use input. Image says "Loan fee/Disc ($or%) 0" in input.
-  const loanFee = 0;
+  const loanFee = input.loanFee || 0;
   const originationFee = 0;
 
   const totalLenderFees =
@@ -434,16 +446,19 @@ export function calculateVaRefinance(
     manualFees.lenderTitlePolicy;
 
   // Prepaids
-  const prepaidInterest = calculatePrepaidInterest(
+  const calculatedPrepaidInterest = calculatePrepaidInterest(
     totalLoanAmount,
     interestRate,
     prepaidInterestDays
   );
+  const prepaidInterest = input.prepaidInterestAmount || calculatedPrepaidInterest;
 
   // Use actual property tax and insurance inputs if provided
-  // Use actual property tax and insurance inputs if provided
-  const taxReserves = roundToCents(propertyTaxMonthly * prepaidTaxMonths);
-  const insuranceReserves = roundToCents(homeInsuranceMonthly * prepaidInsuranceMonths);
+  const calculatedTaxReserves = roundToCents(propertyTaxMonthly * prepaidTaxMonths);
+  const taxReserves = input.prepaidTaxAmount || calculatedTaxReserves;
+
+  const calculatedInsuranceReserves = roundToCents(homeInsuranceMonthly * prepaidInsuranceMonths);
+  const insuranceReserves = input.prepaidInsuranceAmount || calculatedInsuranceReserves;
 
   const totalPrepaids = prepaidInterest + taxReserves + insuranceReserves;
 

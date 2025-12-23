@@ -101,10 +101,16 @@ export function calculateFhaClosingCosts(
   homeInsuranceMonthly: number,
   ufmipAmount: number,
   config: GhlConfig,
+  loanFee: number,
+  sellerCreditAmount: number,
+  lenderCreditAmount: number,
   prepaidOptions?: {
     interestDays?: number;
     taxMonths?: number;
     insuranceMonths?: number;
+    interestAmount?: number;
+    taxAmount?: number;
+    insuranceAmount?: number;
   }
 ): ClosingCostsBreakdown {
   const { fees, prepaids } = config;
@@ -135,9 +141,7 @@ export function calculateFhaClosingCosts(
   };
 
   // Section A - Lender Fees
-  // Loan Fee: LoanWithMIP * 1%
   const totalLoanAmount = baseLoanAmount + ufmipAmount;
-  const loanFee = roundToCents(totalLoanAmount * 0.01);
 
 
   // For now, based on "Loan amount x LoanFee%" formula, we use the calculated loan fee.
@@ -172,23 +176,24 @@ export function calculateFhaClosingCosts(
   // Section C - Prepaids
   // Formula: (Loan * Rate / 365) * 15
   // Note: Prepaid Interest (15 days)
-  // const totalLoanAmount = baseLoanAmount + ufmipAmount; // Already calculated above
-  const prepaidInterest = calculatePrepaidInterest(
+  const prepaidInterest = prepaidOptions?.interestAmount || calculatePrepaidInterest(
     totalLoanAmount,
     interestRate,
     interestDays
   );
 
-  // Formula: Prepaid Tax (6 mo) = Monthly * 6
-  const taxReserves = roundToCents(propertyTaxMonthly * taxMonths);
+  // Formula: Prepaid Tax (6 mo) = (Sales Price * 0.0125 / 12) * 6
+  const calculatedTaxReserves = roundToCents(((salesPrice || 0) * 0.0125 / 12) * taxMonths);
+  const taxReserves = prepaidOptions?.taxAmount || calculatedTaxReserves;
 
-  // Formula: Prepaid Hazard (15 mo) = Monthly * 15
-  const insuranceReserves = roundToCents(homeInsuranceMonthly * insuranceMonths);
+  // Formula: Prepaid Hazard (15 mo) = (Sales Price * 0.0035 / 12) * 15
+  const calculatedInsuranceReserves = roundToCents(((salesPrice || 0) * 0.0035 / 12) * insuranceMonths);
+  const insuranceReserves = prepaidOptions?.insuranceAmount || calculatedInsuranceReserves;
 
   const totalPrepaids = prepaidInterest + taxReserves + insuranceReserves;
 
   // No seller/lender credits by default
-  const totalCredits = 0;
+  const totalCredits = sellerCreditAmount + lenderCreditAmount;
 
   // Totals
   const totalClosingCosts =
@@ -226,9 +231,9 @@ export function calculateFhaClosingCosts(
     insuranceReserves,
     totalPrepaids: roundToCents(totalPrepaids),
 
-    sellerCredit: 0,
-    lenderCredit: 0,
-    totalCredits: 0,
+    sellerCredit: sellerCreditAmount,
+    lenderCredit: lenderCreditAmount,
+    totalCredits: roundToCents(totalCredits),
 
     totalClosingCosts: roundToCents(totalClosingCosts),
     netClosingCosts: roundToCents(netClosingCosts),
@@ -293,9 +298,9 @@ export function calculateFhaPurchase(
     termYears
   );
 
-  // Monthly escrows
-  const monthlyTax = propertyTaxMonthly;
-  const monthlyInsurance = homeInsuranceMonthly;
+  // Monthly escrows - use dynamic calculation based on sales price
+  const monthlyTax = propertyTaxMonthly || roundToCents(((salesPrice || 0) * 0.0125) / 12);
+  const monthlyInsurance = homeInsuranceMonthly || roundToCents(((salesPrice || 0) * 0.0035) / 12);
 
   const monthlyPayment: MonthlyPaymentBreakdown = {
     principalAndInterest,
@@ -323,10 +328,16 @@ export function calculateFhaPurchase(
     homeInsuranceMonthly,
     ufmipAmount,
     config,
+    input.loanFee || 0,
+    input.sellerCreditAmount || 0,
+    input.lenderCreditAmount || 0,
     {
       interestDays: input.prepaidInterestDays,
       taxMonths: input.prepaidTaxMonths,
       insuranceMonths: input.prepaidInsuranceMonths,
+      interestAmount: input.prepaidInterestAmount,
+      taxAmount: input.prepaidTaxAmount,
+      insuranceAmount: input.prepaidInsuranceAmount,
     }
   );
 
@@ -334,7 +345,8 @@ export function calculateFhaPurchase(
   const cashToClose = calculateCashToClose(
     downPayment,
     closingCosts.totalClosingCosts,
-    closingCosts.totalCredits
+    closingCosts.totalCredits,
+    input.depositAmount || 0
   );
 
   return {
@@ -367,10 +379,12 @@ export function calculateFhaRefinance(
     hoaDuesMonthly,
     isStreamline,
     mortgageInsuranceMonthly,
-    originationPoints,
     prepaidInterestDays = 15,
     prepaidTaxMonths = 0,
     prepaidInsuranceMonths = 0,
+    prepaidInterestAmount,
+    prepaidTaxAmount,
+    prepaidInsuranceAmount,
   } = input;
 
   const { feesRefi, prepaids } = config;
@@ -442,10 +456,8 @@ export function calculateFhaRefinance(
     floodCert: 30
   };
 
-  // Loan Fee = Loan Amount (meaning Total Loan Amount based on context of P&I) * 1%
-  // User Formula for P&I: P = Base + MIP. User Formula for Loan Fee: Loan Amount * %.
-  // Standard assumption: fees on total loan amount.
-  const loanFee = roundToCents(totalLoanAmount * 0.01);
+  // Loan Fee passed from input
+  const loanFee = input.loanFee || 0;
   const originationFee = 0; // Handled by loan fee
 
   const totalLenderFees =
@@ -470,15 +482,18 @@ export function calculateFhaRefinance(
   // Formula: Loan Amount * (Rate / 100) / 365 * days.
   // Using totalLoanAmount for interest calculation.
   // This matches 870 for $325,600 at 6.5% for 15 days.
-  const prepaidInterest = calculatePrepaidInterest(
+  const prepaidInterest = prepaidInterestAmount || calculatePrepaidInterest(
     totalLoanAmount,
     interestRate,
     prepaidInterestDays
   );
 
   // For Refi, using actual property tax and insurance annual inputs if provided
-  const taxReserves = roundToCents(propertyTaxMonthly * prepaidTaxMonths);
-  const insuranceReserves = roundToCents(homeInsuranceMonthly * prepaidInsuranceMonths);
+  const calculatedTaxReserves = roundToCents(propertyTaxMonthly * prepaidTaxMonths);
+  const taxReserves = prepaidTaxAmount || calculatedTaxReserves;
+
+  const calculatedInsuranceReserves = roundToCents(homeInsuranceMonthly * prepaidInsuranceMonths);
+  const insuranceReserves = prepaidInsuranceAmount || calculatedInsuranceReserves;
 
   const totalPrepaids = prepaidInterest + taxReserves + insuranceReserves;
 

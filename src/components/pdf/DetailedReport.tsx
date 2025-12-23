@@ -143,14 +143,12 @@ export function DetailedReport({
         {/* Closing Costs - Section A: Lender Fees */}
         <View style={pdfStyles.section}>
           <Text style={pdfStyles.sectionTitle}>Section A: Lender Fees</Text>
-          {closingCosts.originationFee > 0 && (
-            <View style={pdfStyles.tableRow}>
-              <Text style={[pdfStyles.tableCell, pdfStyles.tableCellLabel]}>Origination Fee</Text>
-              <Text style={[pdfStyles.tableCell, pdfStyles.tableCellValue]}>
-                {formatCurrency(closingCosts.originationFee)}
-              </Text>
-            </View>
-          )}
+          <View style={pdfStyles.tableRow}>
+            <Text style={[pdfStyles.tableCell, pdfStyles.tableCellLabel]}>Loan Fee / Origination Fee</Text>
+            <Text style={[pdfStyles.tableCell, pdfStyles.tableCellValue]}>
+              {formatCurrency(closingCosts.loanFee || 0)}
+            </Text>
+          </View>
           <View style={pdfStyles.tableRow}>
             <Text style={[pdfStyles.tableCell, pdfStyles.tableCellLabel]}>Admin Fee</Text>
             <Text style={[pdfStyles.tableCell, pdfStyles.tableCellValue]}>

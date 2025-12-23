@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback } from 'react';
+import { useCallback, useEffect } from 'react';
 import { useTranslations } from 'next-intl';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -19,16 +19,20 @@ const formSchema = z.object({
   termYears: z.number().min(1).max(40),
   propertyTaxAnnual: z.number().min(0),
   homeInsuranceAnnual: z.number().min(0),
-  mortgageInsuranceMonthly: z.number().min(0).optional(),
+  mortgageInsuranceMonthly: z.number().min(0).default(0),
   hoaDuesMonthly: z.number().min(0),
   isIrrrl: z.boolean(),
-  vaUsage: VaUsage,
+  vaUsage: z.enum(['first', 'subsequent']),
   isDisabledVeteran: z.boolean(),
+  loanFee: z.number().min(0),
   cashOutAmount: z.number().min(0),
   // Prepaid Items
-  prepaidInterestDays: z.number().min(0).max(365),
-  prepaidTaxMonths: z.number().min(0).max(60),
-  prepaidInsuranceMonths: z.number().min(0).max(60),
+  prepaidInterestDays: z.number().min(0).max(365).default(15),
+  prepaidTaxMonths: z.number().min(0).max(60).default(0),
+  prepaidInsuranceMonths: z.number().min(0).max(60).default(0),
+  prepaidInterestAmount: z.number().min(0).optional(),
+  prepaidTaxAmount: z.number().min(0).optional(),
+  prepaidInsuranceAmount: z.number().min(0).optional(),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -45,7 +49,7 @@ export function VaRefiForm() {
     configLoading,
   } = useCalculatorStore();
 
-  const { control, handleSubmit, watch, formState: { errors } } = useForm<FormValues>({
+  const { control, handleSubmit, watch, setValue, formState: { errors } } = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       propertyValue: vaRefiInputs.propertyValue,
@@ -64,11 +68,23 @@ export function VaRefiForm() {
       prepaidInterestDays: vaRefiInputs.prepaidInterestDays ?? 15,
       prepaidTaxMonths: vaRefiInputs.prepaidTaxMonths ?? 0,
       prepaidInsuranceMonths: vaRefiInputs.prepaidInsuranceMonths ?? 0,
+      prepaidInterestAmount: vaRefiInputs.prepaidInterestAmount || 0,
+      prepaidTaxAmount: vaRefiInputs.prepaidTaxAmount || 0,
+      prepaidInsuranceAmount: vaRefiInputs.prepaidInsuranceAmount || 0,
+      loanFee: vaRefiInputs.loanFee || 0,
     },
   });
 
   const isIrrrl = watch('isIrrrl');
   const isDisabledVeteran = watch('isDisabledVeteran');
+  const watchedNewLoanAmount = watch('newLoanAmount');
+
+  // Sync Loan Fee / Origination Fee (1% of loan amount)
+  useEffect(() => {
+    if (watchedNewLoanAmount > 0) {
+      setValue('loanFee', Math.round(watchedNewLoanAmount * 0.01));
+    }
+  }, [watchedNewLoanAmount, setValue]);
 
   const onCalculate = useCallback((data: FormValues) => {
     if (!config) return;
@@ -91,16 +107,24 @@ export function VaRefiForm() {
         isDisabledVeteran: data.isDisabledVeteran,
         cashOutAmount: data.cashOutAmount,
         payoffDays: 30,
-        originationPoints: 0,
         prepaidInterestDays: data.prepaidInterestDays,
         prepaidTaxMonths: data.prepaidTaxMonths,
         prepaidInsuranceMonths: data.prepaidInsuranceMonths,
+        prepaidInterestAmount: data.prepaidInterestAmount || 0,
+        prepaidTaxAmount: data.prepaidTaxAmount || 0,
+        prepaidInsuranceAmount: data.prepaidInsuranceAmount || 0,
+        loanFee: data.loanFee,
       },
       config
     );
 
     setVaRefiResult(result);
-  }, [config, updateVaRefiInputs, setVaRefiResult]);
+
+    // Sync calculated values back to input fields if they are 0
+    if (!data.prepaidInterestAmount) setValue('prepaidInterestAmount', result.closingCosts.prepaidInterest);
+    if (!data.prepaidTaxAmount) setValue('prepaidTaxAmount', result.closingCosts.taxReserves);
+    if (!data.prepaidInsuranceAmount) setValue('prepaidInsuranceAmount', result.closingCosts.insuranceReserves);
+  }, [config, updateVaRefiInputs, setVaRefiResult, setValue]);
 
   const handleReset = () => {
     resetCalculator('vaRefi');
@@ -398,6 +422,22 @@ export function VaRefiForm() {
                   />
                 )}
               />
+
+              <Controller
+                name="loanFee"
+                control={control}
+                render={({ field }) => (
+                  <InputGroup
+                    label="Loan Fee / Origination Fee"
+                    name="loanFee"
+                    type="number"
+                    value={field.value}
+                    onChange={(val) => field.onChange(Number(val) || 0)}
+                    prefix="$"
+                    disabled={isDisabled}
+                  />
+                )}
+              />
             </div>
 
             {/* Prepaid Items Configuration */}
@@ -448,6 +488,56 @@ export function VaRefiForm() {
                       value={field.value}
                       onChange={(val) => field.onChange(Number(val) || 0)}
                       suffix="mo"
+                    />
+                  )}
+                />
+              </div>
+
+              <div className="grid grid-cols-3 gap-4">
+                <Controller
+                  name="prepaidInterestAmount"
+                  control={control}
+                  render={({ field }) => (
+                    <InputGroup
+                      label="Pre. Interest Amount"
+                      name="prepaidInterestAmount"
+                      type="number"
+                      value={field.value}
+                      onChange={(val) => field.onChange(Number(val) || 0)}
+                      prefix="$"
+                      disabled={isDisabled}
+                    />
+                  )}
+                />
+
+                <Controller
+                  name="prepaidTaxAmount"
+                  control={control}
+                  render={({ field }) => (
+                    <InputGroup
+                      label="Prepaid Tax Amount"
+                      name="prepaidTaxAmount"
+                      type="number"
+                      value={field.value}
+                      onChange={(val) => field.onChange(Number(val) || 0)}
+                      prefix="$"
+                      disabled={isDisabled}
+                    />
+                  )}
+                />
+
+                <Controller
+                  name="prepaidInsuranceAmount"
+                  control={control}
+                  render={({ field }) => (
+                    <InputGroup
+                      label="Prepaid Ins Amount"
+                      name="prepaidInsuranceAmount"
+                      type="number"
+                      value={field.value}
+                      onChange={(val) => field.onChange(Number(val) || 0)}
+                      prefix="$"
+                      disabled={isDisabled}
                     />
                   )}
                 />

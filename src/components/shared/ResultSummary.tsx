@@ -207,14 +207,10 @@ export function ResultSummary({
             <ResultSection title={t('results.lenderFees')}>
               {result.closingCosts.loanFee !== undefined && (
                 <ResultItem
-                  label="Loan Fee"
+                  label="Loan Fee / Origination Fee"
                   value={formatCurrency(result.closingCosts.loanFee)}
                 />
               )}
-              <ResultItem
-                label={t('results.originationFee')}
-                value={formatCurrency(result.closingCosts.originationFee)}
-              />
               {result.closingCosts.adminFee > 0 && (
                 <ResultItem
                   label={t('results.adminFee')}

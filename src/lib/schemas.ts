@@ -63,6 +63,13 @@ export const BasePurchaseInputSchema = z.object({
   prepaidInterestDays: z.number().int().min(0).max(365).default(15),
   prepaidTaxMonths: z.number().int().min(0).max(60).default(6),
   prepaidInsuranceMonths: z.number().int().min(0).max(60).default(15),
+  prepaidInterestAmount: z.number().min(0).optional(),
+  prepaidTaxAmount: z.number().min(0).optional(),
+  prepaidInsuranceAmount: z.number().min(0).optional(),
+  loanFee: z.number().min(0).default(0),
+  sellerCreditAmount: z.number().min(0).default(0),
+  lenderCreditAmount: z.number().min(0).default(0),
+  depositAmount: z.number().min(0).default(0),
 });
 export type BasePurchaseInput = z.infer<typeof BasePurchaseInputSchema>;
 
@@ -70,10 +77,7 @@ export type BasePurchaseInput = z.infer<typeof BasePurchaseInputSchema>;
 export const ConventionalPurchaseInputSchema = BasePurchaseInputSchema.extend({
   creditScoreTier: CreditScoreTier,
   pmiType: PmiType.default('monthly'),
-  sellerCreditAmount: z.number().min(0).default(0),
   sellerCreditPercent: z.number().min(0).max(100).optional(),
-  lenderCreditAmount: z.number().min(0).default(0),
-  originationPoints: z.number().min(0).max(5).default(0),
   depositAmount: z.number().min(0).default(0),
 });
 export type ConventionalPurchaseInput = z.infer<typeof ConventionalPurchaseInputSchema>;
@@ -112,6 +116,10 @@ export const BaseRefinanceInputSchema = z.object({
   prepaidInterestDays: z.number().int().min(0).max(365).default(15),
   prepaidTaxMonths: z.number().int().min(0).max(60).default(0),
   prepaidInsuranceMonths: z.number().int().min(0).max(60).default(0),
+  prepaidInterestAmount: z.number().min(0).optional(),
+  prepaidTaxAmount: z.number().min(0).optional(),
+  prepaidInsuranceAmount: z.number().min(0).optional(),
+  loanFee: z.number().min(0).default(0),
 });
 export type BaseRefinanceInput = z.infer<typeof BaseRefinanceInputSchema>;
 
@@ -119,14 +127,12 @@ export const ConventionalRefinanceInputSchema = BaseRefinanceInputSchema.extend(
   refinanceType: RefinanceType,
   creditScoreTier: CreditScoreTier,
   cashOutAmount: z.number().min(0).default(0),
-  originationPoints: z.number().min(0).max(5).default(0),
 });
 export type ConventionalRefinanceInput = z.infer<typeof ConventionalRefinanceInputSchema>;
 
 export const FhaRefinanceInputSchema = BaseRefinanceInputSchema.extend({
   isStreamline: z.boolean().default(false),
   existingFhaLoanDate: z.string().optional(), // For MIP refund calculation
-  originationPoints: z.number().min(0).max(5).default(0),
 });
 export type FhaRefinanceInput = z.infer<typeof FhaRefinanceInputSchema>;
 
@@ -135,7 +141,6 @@ export const VaRefinanceInputSchema = BaseRefinanceInputSchema.extend({
   vaUsage: VaUsage.default('first'),
   isDisabledVeteran: z.boolean().default(false),
   cashOutAmount: z.number().min(0).default(0),
-  originationPoints: z.number().min(0).max(5).default(0),
 });
 export type VaRefinanceInput = z.infer<typeof VaRefinanceInputSchema>;
 

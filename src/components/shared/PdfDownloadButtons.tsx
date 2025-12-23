@@ -1,10 +1,11 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import dynamic from 'next/dynamic';
 import { useTranslations } from 'next-intl';
 import { useCalculatorStore } from '@/lib/store';
 import type { LoanCalculationResult, GhlConfig, PartnerAgent } from '@/lib/schemas';
+import { FlierLayout, DetailedReport } from '@/components/pdf';
 
 // Dynamic import for PDF components to avoid SSR issues
 const PDFDownloadLink = dynamic(
@@ -102,12 +103,6 @@ function PdfButton({
   onLoadingChange,
 }: PdfButtonProps) {
   const t = useTranslations();
-  const [isReady, setIsReady] = useState(false);
-
-  // Lazy load PDF documents
-  const PdfDocument = type === 'flyer'
-    ? require('@/components/pdf').FlierLayout
-    : require('@/components/pdf').DetailedReport;
 
   const label = type === 'flyer'
     ? t('calculator.downloadFlyer')
@@ -123,17 +118,24 @@ function PdfButton({
     </svg>
   );
 
+  // Memoize the document element to avoid unnecessary re-renders of the PDF generator
+  const documentElement = useMemo(() => {
+    const Layout = type === 'flyer' ? FlierLayout : DetailedReport;
+    return (
+      <Layout
+        result={result}
+        config={config}
+        agent={agent}
+        loanType={loanType}
+        propertyAddress={propertyAddress}
+      />
+    );
+  }, [type, result, config, agent, loanType, propertyAddress]);
+
   return (
     <PDFDownloadLink
-      document={
-        <PdfDocument
-          result={result}
-          config={config}
-          agent={agent}
-          loanType={loanType}
-          propertyAddress={propertyAddress}
-        />
-      }
+      key={`${type}-${agent?.id || 'no-agent'}-${JSON.stringify(result)}`}
+      document={documentElement}
       fileName={fileName}
       className={`
         flex-1 inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg
@@ -157,3 +159,4 @@ function PdfButton({
     </PDFDownloadLink>
   );
 }
+
