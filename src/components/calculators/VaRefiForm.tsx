@@ -19,7 +19,7 @@ const formSchema = z.object({
   termYears: z.number().min(1).max(40),
   propertyTaxAnnual: z.number().min(0),
   homeInsuranceAnnual: z.number().min(0),
-  mortgageInsuranceMonthly: z.number().min(0).default(0),
+  mortgageInsuranceMonthly: z.number().min(0),
   hoaDuesMonthly: z.number().min(0),
   isIrrrl: z.boolean(),
   vaUsage: z.enum(['first', 'subsequent']),
@@ -27,12 +27,12 @@ const formSchema = z.object({
   loanFee: z.number().min(0),
   cashOutAmount: z.number().min(0),
   // Prepaid Items
-  prepaidInterestDays: z.number().min(0).max(365).default(15),
-  prepaidTaxMonths: z.number().min(0).max(60).default(0),
-  prepaidInsuranceMonths: z.number().min(0).max(60).default(0),
-  prepaidInterestAmount: z.number().min(0).optional(),
-  prepaidTaxAmount: z.number().min(0).optional(),
-  prepaidInsuranceAmount: z.number().min(0).optional(),
+  prepaidInterestDays: z.number().min(0).max(365),
+  prepaidTaxMonths: z.number().min(0).max(60),
+  prepaidInsuranceMonths: z.number().min(0).max(60),
+  prepaidInterestAmount: z.number().min(0),
+  prepaidTaxAmount: z.number().min(0),
+  prepaidInsuranceAmount: z.number().min(0),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -59,7 +59,7 @@ export function VaRefiForm() {
       termYears: vaRefiInputs.termYears,
       propertyTaxAnnual: vaRefiInputs.propertyTaxAnnual,
       homeInsuranceAnnual: vaRefiInputs.homeInsuranceAnnual,
-      mortgageInsuranceMonthly: vaRefiInputs.mortgageInsuranceMonthly,
+      mortgageInsuranceMonthly: vaRefiInputs.mortgageInsuranceMonthly || 0,
       hoaDuesMonthly: vaRefiInputs.hoaDuesMonthly,
       isIrrrl: vaRefiInputs.isIrrrl,
       vaUsage: vaRefiInputs.vaUsage,

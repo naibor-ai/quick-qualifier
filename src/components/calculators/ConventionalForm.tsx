@@ -22,7 +22,7 @@ const formSchema = z.object({
   homeInsuranceAnnual: z.number().min(0),
   propertyTaxMonthly: z.number().min(0),
   homeInsuranceMonthly: z.number().min(0),
-  mortgageInsuranceMonthly: z.number().min(0).default(0),
+  mortgageInsuranceMonthly: z.number().min(0),
   hoaDuesMonthly: z.number().min(0),
   floodInsuranceMonthly: z.number().min(0),
   creditScoreTier: CreditScoreTier,
@@ -32,12 +32,12 @@ const formSchema = z.object({
   depositAmount: z.number().min(0),
   loanFee: z.number().min(0),
   // Prepaid Items
-  prepaidInterestDays: z.number().min(0).max(365).default(15),
-  prepaidTaxMonths: z.number().min(0).max(60).default(6),
-  prepaidInsuranceMonths: z.number().min(0).max(60).default(15),
-  prepaidInterestAmount: z.number().min(0).default(0),
-  prepaidTaxAmount: z.number().min(0).default(0),
-  prepaidInsuranceAmount: z.number().min(0).default(0),
+  prepaidInterestDays: z.number().min(0).max(365),
+  prepaidTaxMonths: z.number().min(0).max(60),
+  prepaidInsuranceMonths: z.number().min(0).max(60),
+  prepaidInterestAmount: z.number().min(0),
+  prepaidTaxAmount: z.number().min(0),
+  prepaidInsuranceAmount: z.number().min(0),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -67,7 +67,7 @@ export function ConventionalForm() {
       homeInsuranceAnnual: conventionalInputs.homeInsuranceAnnual,
       propertyTaxMonthly: conventionalInputs.propertyTaxAnnual / 12,
       homeInsuranceMonthly: conventionalInputs.homeInsuranceAnnual / 12,
-      mortgageInsuranceMonthly: conventionalInputs.mortgageInsuranceMonthly,
+      mortgageInsuranceMonthly: conventionalInputs.mortgageInsuranceMonthly || 0,
       hoaDuesMonthly: conventionalInputs.hoaDuesMonthly,
       floodInsuranceMonthly: conventionalInputs.floodInsuranceMonthly,
       creditScoreTier: conventionalInputs.creditScoreTier,
@@ -75,9 +75,9 @@ export function ConventionalForm() {
       sellerCreditAmount: conventionalInputs.sellerCreditAmount,
       lenderCreditAmount: conventionalInputs.lenderCreditAmount,
       depositAmount: 0,
-      prepaidInterestDays: conventionalInputs.prepaidInterestDays ?? 15,
-      prepaidTaxMonths: conventionalInputs.prepaidTaxMonths ?? 6,
-      prepaidInsuranceMonths: conventionalInputs.prepaidInsuranceMonths ?? 15,
+      prepaidInterestDays: conventionalInputs.prepaidInterestDays || 15,
+      prepaidTaxMonths: conventionalInputs.prepaidTaxMonths || 6,
+      prepaidInsuranceMonths: conventionalInputs.prepaidInsuranceMonths || 15,
       prepaidInterestAmount: conventionalInputs.prepaidInterestAmount || 0,
       prepaidTaxAmount: conventionalInputs.prepaidTaxAmount || 0,
       prepaidInsuranceAmount: conventionalInputs.prepaidInsuranceAmount || 0,
@@ -134,8 +134,14 @@ export function ConventionalForm() {
       return; // Config required for calculation
     }
 
+    // Convert form data to store format
+    const storeData = {
+      ...data,
+      mortgageInsuranceMonthly: data.mortgageInsuranceMonthly || 0,
+    };
+
     // Update store with current inputs
-    updateConventionalInputs(data);
+    updateConventionalInputs(storeData);
 
     // Run calculation using the GHL config
     const result = calculateConventionalPurchase(
