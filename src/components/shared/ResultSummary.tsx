@@ -336,19 +336,17 @@ export function ResultSummary({
         </div>
       )}
 
+
       {/* Cash to Close */}
       <div className="bg-linear-to-r from-[#2A8BB3] to-[#31B2E8] rounded-xl p-6 text-white">
         <h3 className="text-lg font-semibold mb-2">
-          {t('results.cashToClose')}
+          Estimated Cash to Close
         </h3>
         <p className="text-3xl font-bold">
           {formatCurrency(result.cashToClose)}
         </p>
         <p className="text-sm text-slate-100 mt-2">
-          {t('results.cashToCloseBreakdown', {
-            downPayment: formatCurrency(result.downPayment),
-            closingCosts: formatCurrency(result.closingCosts.netClosingCosts),
-          })}
+          Down Payment: {formatCurrency(result.downPayment)} + Closing Costs: {formatCurrency(result.closingCosts.totalClosingCosts)}
         </p>
       </div>
 
