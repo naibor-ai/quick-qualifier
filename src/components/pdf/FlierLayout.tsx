@@ -130,9 +130,9 @@ export function FlierLayout({
           </View>
 
           {/* Program-specific details */}
-          
+
           <View style={pdfStyles.column}>
-            
+
             {(result.ufmip || result.vaFundingFee) && (
               <View style={pdfStyles.section}>
                 <Text style={pdfStyles.sectionTitle}>Program Fees</Text>
@@ -169,12 +169,15 @@ export function FlierLayout({
               {formatCurrency(closingCosts.totalClosingCosts)}
             </Text>
           </View>
-          <View style={pdfStyles.cashToCloseRowLast}>
-            <Text style={pdfStyles.cashToCloseHighlightLabel}>Cash to Close</Text>
+          <View style={[pdfStyles.cashToCloseRow, { marginTop: 8 }]}>
+            <Text style={pdfStyles.cashToCloseHighlightLabel}>Estimated Cash to Close</Text>
             <Text style={pdfStyles.cashToCloseHighlightValue}>
               {formatCurrency(cashToClose)}
             </Text>
           </View>
+          <Text style={{ fontSize: 9, color: '#1E293B', marginTop: 4 }}>
+            Down Payment: {formatCurrency(result.downPayment)} + Closing Costs: {formatCurrency(closingCosts.totalClosingCosts)}
+          </Text>
         </View>
 
         {/* Footer */}

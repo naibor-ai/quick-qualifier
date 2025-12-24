@@ -143,14 +143,12 @@ export function DetailedReport({
         {/* Closing Costs - Section A: Lender Fees */}
         <View style={pdfStyles.section}>
           <Text style={pdfStyles.sectionTitle}>Section A: Lender Fees</Text>
-          {closingCosts.originationFee > 0 && (
-            <View style={pdfStyles.tableRow}>
-              <Text style={[pdfStyles.tableCell, pdfStyles.tableCellLabel]}>Origination Fee</Text>
-              <Text style={[pdfStyles.tableCell, pdfStyles.tableCellValue]}>
-                {formatCurrency(closingCosts.originationFee)}
-              </Text>
-            </View>
-          )}
+          <View style={pdfStyles.tableRow}>
+            <Text style={[pdfStyles.tableCell, pdfStyles.tableCellLabel]}>Loan Fee / Origination Fee</Text>
+            <Text style={[pdfStyles.tableCell, pdfStyles.tableCellValue]}>
+              {formatCurrency(closingCosts.loanFee || 0)}
+            </Text>
+          </View>
           <View style={pdfStyles.tableRow}>
             <Text style={[pdfStyles.tableCell, pdfStyles.tableCellLabel]}>Admin Fee</Text>
             <Text style={[pdfStyles.tableCell, pdfStyles.tableCellValue]}>
@@ -316,12 +314,15 @@ export function DetailedReport({
               {formatCurrency(closingCosts.totalClosingCosts)}
             </Text>
           </View>
-          <View style={pdfStyles.cashToCloseRowLast}>
-            <Text style={pdfStyles.cashToCloseHighlightLabel}>Cash to Close</Text>
+          <View style={[pdfStyles.cashToCloseRow, { marginTop: 8 }]}>
+            <Text style={pdfStyles.cashToCloseHighlightLabel}>Estimated Cash to Close</Text>
             <Text style={pdfStyles.cashToCloseHighlightValue}>
               {formatCurrency(cashToClose)}
             </Text>
           </View>
+          <Text style={{ fontSize: 9, color: '#1E293B', marginTop: 4 }}>
+            Down Payment: {formatCurrency(result.downPayment)} + Closing Costs: {formatCurrency(closingCosts.totalClosingCosts)}
+          </Text>
         </View>
 
         {/* Footer */}

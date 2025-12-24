@@ -41,27 +41,34 @@ export function lookupPmiRate(
   creditTier: CreditScoreTier,
   loanAmount: number,
   pmiType: PmiType,
-  config: GhlConfig
+  config: GhlConfig,
+  downPaymentPercent: number
 ): number {
-  const ltvTier = getLtvTier(ltv);
+  // Use user-defined threshold (LTV > 80% requires PMI)
+  // Fix: 19% down is 81% LTV, which must show PMI
+  if (downPaymentPercent >= 20 || ltv <= 80) return 0;
 
-  // No PMI needed if LTV <= 80%
-  if (!ltvTier) return 0;
+  const conformingLimit = config.limits.conforming || 766550;
+  const isJumbo = loanAmount > conformingLimit;
 
-  const isHighBalance = isHighBalanceLoan(loanAmount, config.limits.conforming);
-  const factorTable = isHighBalance
-    ? config.miFactors.highBalance
-    : config.miFactors.standard;
+  if (isJumbo) {
+    // JUMBO RATES
+    if (ltv >= 95) return 0.75;
+    if (ltv >= 90) return 0.55;
+    if (ltv > 80) return 0.39;
+  } else {
+    // CONFORMING RATES
+    if (ltv >= 95) {
+      // New secondary threshold for high-LTV conforming loans
+      return loanAmount > 500000 ? 0.41 : 0.55;
+    } else if (ltv >= 90) {
+      return 0.52;
+    } else if (ltv > 80) {
+      return 0.19;
+    }
+  }
 
-  const rateTable =
-    pmiType === 'monthly' ? factorTable.monthly : factorTable.single;
-
-  // Get rate from lookup table
-  const ltvRates = rateTable[ltvTier];
-  if (!ltvRates) return 0;
-
-  const rate = ltvRates[creditTier];
-  return rate || 0;
+  return 0;
 }
 
 /**
@@ -72,7 +79,13 @@ export function calculateMonthlyPmi(
   pmiRateAnnual: number
 ): number {
   if (pmiRateAnnual <= 0) return 0;
-  return roundToCents((loanAmount * (pmiRateAnnual / 100)) / 12);
+  // Proper formula derived from user examples:
+  // 1. Monthly rate is annual rate / 1200
+  // 2. Truncate monthly rate to 8 decimal places
+  // 3. Final monthly payment is floored to 2 decimal places
+  const monthlyRateRaw = pmiRateAnnual / 1200;
+  const monthlyRateTruncated = Math.floor(monthlyRateRaw * 100000000) / 100000000;
+  return Math.floor(loanAmount * monthlyRateTruncated * 100) / 100;
 }
 
 /**
@@ -95,15 +108,18 @@ export function calculateConventionalClosingCosts(
   interestRate: number,
   propertyTaxMonthly: number,
   homeInsuranceMonthly: number,
-  originationPoints: number,
   sellerCreditAmount: number,
   sellerCreditPercent: number | undefined,
   lenderCreditAmount: number,
+  loanFee: number,
   config: GhlConfig,
   prepaidOptions?: {
     interestDays?: number;
     taxMonths?: number;
     insuranceMonths?: number;
+    interestAmount?: number;
+    taxAmount?: number;
+    insuranceAmount?: number;
   }
 ): ClosingCostsBreakdown {
   const { fees, prepaids } = config;
@@ -112,9 +128,7 @@ export function calculateConventionalClosingCosts(
   const taxMonths = prepaidOptions?.taxMonths ?? 6;
   const insuranceMonths = prepaidOptions?.insuranceMonths ?? 15;
 
-  // Fee overrides based on user request (Conventional Sale specific)
-  // Loan fee is dynamic 1% of LOAN AMOUNT
-  const loanFee = roundToCents((loanAmount || 0) * 0.01);
+  // Section A - Lender Fees
 
   // Fixed values from image
   const manualFees = {
@@ -138,8 +152,8 @@ export function calculateConventionalClosingCosts(
   };
 
   // Section A - Lender Fees
-  // Origination fee comes dynamically from the form input (points)
-  const originationFee = calculateOriginationFee(loanAmount || 0, originationPoints || 0);
+  // Origination fee removed as per user request (Origination Fee and Loan Fee are considered same)
+  const originationFee = 0;
 
   // Admin fee removed as per request
   const adminFee = 0;
@@ -191,15 +205,17 @@ export function calculateConventionalClosingCosts(
 
   // Section C - Prepaids
   // Formula: (loan amount * interestRate / 365 * days)
-  const prepaidInterest = calculatePrepaidInterest(
+  const prepaidInterest = prepaidOptions?.interestAmount || calculatePrepaidInterest(
     loanAmount || 0,
     interestRate || 0,
     interestDays
   );
 
-  const taxReserves = roundToCents(((salesPrice || 0) * 0.0125 / 12) * taxMonths);
+  const calculatedTaxReserves = roundToCents(((salesPrice || 0) * 0.0125 / 12) * taxMonths);
+  const taxReserves = prepaidOptions?.taxAmount || calculatedTaxReserves;
 
-  const insuranceReserves = roundToCents(((salesPrice || 0) * 0.0035 / 12) * insuranceMonths);
+  const calculatedInsuranceReserves = roundToCents(((salesPrice || 0) * 0.0035 / 12) * insuranceMonths);
+  const insuranceReserves = prepaidOptions?.insuranceAmount || calculatedInsuranceReserves;
 
   const totalPrepaids = prepaidInterest + taxReserves + insuranceReserves;
 
@@ -285,7 +301,6 @@ export function calculateConventionalPurchase(
     sellerCreditAmount,
     sellerCreditPercent,
     lenderCreditAmount,
-    originationPoints,
     depositAmount,
   } = input;
 
@@ -303,7 +318,8 @@ export function calculateConventionalPurchase(
     creditScoreTier,
     loanAmount,
     pmiType,
-    config
+    config,
+    downPaymentPercent ?? 0
   );
 
   let monthlyPmi = 0;
@@ -354,15 +370,18 @@ export function calculateConventionalPurchase(
     interestRate || 0,
     propertyTaxMonthly,
     homeInsuranceMonthly,
-    originationPoints || 0,
     sellerCreditAmount || 0,
     sellerCreditPercent,
     lenderCreditAmount || 0,
+    input.loanFee || 0,
     config,
     {
       interestDays: input.prepaidInterestDays,
       taxMonths: input.prepaidTaxMonths,
       insuranceMonths: input.prepaidInsuranceMonths,
+      interestAmount: input.prepaidInterestAmount,
+      taxAmount: input.prepaidTaxAmount,
+      insuranceAmount: input.prepaidInsuranceAmount,
     }
   );
 
@@ -419,15 +438,14 @@ export function calculateConventionalRefinance(
     mortgageInsuranceMonthly,
     creditScoreTier,
     refinanceType,
-    originationPoints,
     prepaidInterestDays = 15,
     prepaidTaxMonths = 0,
     prepaidInsuranceMonths = 0,
   } = input;
 
   // Use manual fees as per request (matching Second Image)
-  // Loan fee = 1% of newLoanAmount
-  const loanFee = roundToCents((newLoanAmount || 0) * 0.01);
+  // Loan fee passed from input
+  const loanFee = input.loanFee || 0;
 
   const manualFees = {
     docPrep: 595,
@@ -458,7 +476,8 @@ export function calculateConventionalRefinance(
     creditScoreTier,
     newLoanAmount || 0,
     'monthly',
-    config
+    config,
+    100 - ltv
   );
   const monthlyPmi = calculateMonthlyPmi(newLoanAmount || 0, pmiRate);
 
@@ -495,7 +514,8 @@ export function calculateConventionalRefinance(
 
   // Refinance Closing Costs
   // Section A - Lender Fees
-  const originationFee = calculateOriginationFee(newLoanAmount || 0, originationPoints || 0);
+  // Origination fee removed as per user request (Origination Fee and Loan Fee are considered same)
+  const originationFee = 0;
   const adminFee = 0;
   const processingFee = manualFees.processing;
   const underwritingFee = manualFees.underwriting;
@@ -549,16 +569,18 @@ export function calculateConventionalRefinance(
   // Prepaid Interest
   // Formula: Loan Amount * (APR / 100 / 365) * Days
   const dailyRate = (interestRate || 0) / 100 / 365;
-  const prepaidInterest = roundToCents((newLoanAmount || 0) * dailyRate * prepaidInterestDays);
+  const calculatedPrepaidInterest = roundToCents((newLoanAmount || 0) * dailyRate * prepaidInterestDays);
+  const prepaidInterest = input.prepaidInterestAmount || calculatedPrepaidInterest;
 
   // Use actual property tax and insurance inputs if provided (default input is 0 for Refi but form might send overrides)
-  // Or stick to 0 if user wants them 0. The default inputs in store for Conv Refi are taxMonths=0, insMonths=0.
-  // So if we use the inputs, it produces 0.
   const monthlyTaxAmt = propertyTaxMonthly;
   const monthlyInsAmt = homeInsuranceMonthly;
 
-  const taxReserves = roundToCents(monthlyTaxAmt * prepaidTaxMonths);
-  const insuranceReserves = roundToCents(monthlyInsAmt * prepaidInsuranceMonths);
+  const calculatedTaxReserves = roundToCents(monthlyTaxAmt * prepaidTaxMonths);
+  const taxReserves = input.prepaidTaxAmount || calculatedTaxReserves;
+
+  const calculatedInsuranceReserves = roundToCents(monthlyInsAmt * prepaidInsuranceMonths);
+  const insuranceReserves = input.prepaidInsuranceAmount || calculatedInsuranceReserves;
 
   const totalPrepaids = prepaidInterest + taxReserves + insuranceReserves;
 

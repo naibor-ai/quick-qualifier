@@ -41,10 +41,13 @@ interface ConventionalInputs {
   pmiType: PmiType;
   sellerCreditAmount: number;
   lenderCreditAmount: number;
-  originationPoints: number;
   prepaidInterestDays: number;
   prepaidTaxMonths: number;
   prepaidInsuranceMonths: number;
+  prepaidInterestAmount: number;
+  prepaidTaxAmount: number;
+  prepaidInsuranceAmount: number;
+  loanFee: number;
 }
 
 interface FhaInputs {
@@ -63,6 +66,13 @@ interface FhaInputs {
   prepaidInterestDays: number;
   prepaidTaxMonths: number;
   prepaidInsuranceMonths: number;
+  prepaidInterestAmount: number;
+  prepaidTaxAmount: number;
+  prepaidInsuranceAmount: number;
+  loanFee: number;
+  sellerCreditAmount: number;
+  lenderCreditAmount: number;
+  depositAmount: number;
 }
 
 interface VaInputs {
@@ -83,6 +93,13 @@ interface VaInputs {
   prepaidInterestDays: number;
   prepaidTaxMonths: number;
   prepaidInsuranceMonths: number;
+  prepaidInterestAmount: number;
+  prepaidTaxAmount: number;
+  prepaidInsuranceAmount: number;
+  loanFee: number;
+  sellerCreditAmount: number;
+  lenderCreditAmount: number;
+  depositAmount: number;
 }
 
 // Refinance Inputs
@@ -101,6 +118,10 @@ interface ConventionalRefiInputs {
   prepaidInterestDays: number;
   prepaidTaxMonths: number;
   prepaidInsuranceMonths: number;
+  prepaidInterestAmount: number;
+  prepaidTaxAmount: number;
+  prepaidInsuranceAmount: number;
+  loanFee: number;
 }
 
 interface FhaRefiInputs {
@@ -117,6 +138,10 @@ interface FhaRefiInputs {
   prepaidInterestDays: number;
   prepaidTaxMonths: number;
   prepaidInsuranceMonths: number;
+  prepaidInterestAmount: number;
+  prepaidTaxAmount: number;
+  prepaidInsuranceAmount: number;
+  loanFee: number;
 }
 
 interface VaRefiInputs {
@@ -136,6 +161,10 @@ interface VaRefiInputs {
   prepaidInterestDays: number;
   prepaidTaxMonths: number;
   prepaidInsuranceMonths: number;
+  prepaidInterestAmount: number;
+  prepaidTaxAmount: number;
+  prepaidInsuranceAmount: number;
+  loanFee: number;
 }
 
 interface SellerNetInputs {
@@ -242,10 +271,13 @@ const defaultConventionalInputs: ConventionalInputs = {
   pmiType: 'monthly',
   sellerCreditAmount: 0,
   lenderCreditAmount: 0,
-  originationPoints: 0,
   prepaidInterestDays: 15,
   prepaidTaxMonths: 6,
   prepaidInsuranceMonths: 15,
+  prepaidInterestAmount: 0,
+  prepaidTaxAmount: 0,
+  prepaidInsuranceAmount: 0,
+  loanFee: 4000,
 };
 
 const defaultFhaInputs: FhaInputs = {
@@ -264,6 +296,13 @@ const defaultFhaInputs: FhaInputs = {
   prepaidInterestDays: 15,
   prepaidTaxMonths: 6,
   prepaidInsuranceMonths: 15,
+  prepaidInterestAmount: 0,
+  prepaidTaxAmount: 0,
+  prepaidInsuranceAmount: 0,
+  loanFee: 3860,
+  sellerCreditAmount: 0,
+  lenderCreditAmount: 0,
+  depositAmount: 0,
 };
 
 const defaultVaInputs: VaInputs = {
@@ -284,6 +323,13 @@ const defaultVaInputs: VaInputs = {
   prepaidInterestDays: 15,
   prepaidTaxMonths: 6,
   prepaidInsuranceMonths: 15,
+  prepaidInterestAmount: 0,
+  prepaidTaxAmount: 0,
+  prepaidInsuranceAmount: 0,
+  loanFee: 4500,
+  sellerCreditAmount: 0,
+  lenderCreditAmount: 0,
+  depositAmount: 0,
 };
 
 const defaultSellerNetInputs: SellerNetInputs = {
@@ -344,6 +390,10 @@ const defaultConventionalRefiInputs: ConventionalRefiInputs = {
   prepaidInterestDays: 15,
   prepaidTaxMonths: 0,
   prepaidInsuranceMonths: 0,
+  prepaidInterestAmount: 0,
+  prepaidTaxAmount: 0,
+  prepaidInsuranceAmount: 0,
+  loanFee: 3500,
 };
 
 const defaultFhaRefiInputs: FhaRefiInputs = {
@@ -360,6 +410,10 @@ const defaultFhaRefiInputs: FhaRefiInputs = {
   prepaidInterestDays: 15,
   prepaidTaxMonths: 0,
   prepaidInsuranceMonths: 0,
+  prepaidInterestAmount: 0,
+  prepaidTaxAmount: 0,
+  prepaidInsuranceAmount: 0,
+  loanFee: 3000,
 };
 
 const defaultVaRefiInputs: VaRefiInputs = {
@@ -379,6 +433,10 @@ const defaultVaRefiInputs: VaRefiInputs = {
   prepaidInterestDays: 15,
   prepaidTaxMonths: 0,
   prepaidInsuranceMonths: 0,
+  prepaidInterestAmount: 0,
+  prepaidTaxAmount: 0,
+  prepaidInsuranceAmount: 0,
+  loanFee: 3200,
 };
 
 // ============================================================================
