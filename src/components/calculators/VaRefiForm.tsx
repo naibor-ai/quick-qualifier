@@ -33,6 +33,7 @@ const formSchema = z.object({
   prepaidInterestAmount: z.number().min(0),
   prepaidTaxAmount: z.number().min(0),
   prepaidInsuranceAmount: z.number().min(0),
+  closingCostsTotal: z.number().min(0),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -72,6 +73,7 @@ export function VaRefiForm() {
       prepaidTaxAmount: vaRefiInputs.prepaidTaxAmount || 0,
       prepaidInsuranceAmount: vaRefiInputs.prepaidInsuranceAmount || 0,
       loanFee: vaRefiInputs.loanFee || 0,
+      closingCostsTotal: vaRefiInputs.closingCostsTotal || 0,
     },
   });
 
@@ -114,6 +116,7 @@ export function VaRefiForm() {
         prepaidTaxAmount: data.prepaidTaxAmount || 0,
         prepaidInsuranceAmount: data.prepaidInsuranceAmount || 0,
         loanFee: data.loanFee,
+        closingCostsTotal: data.closingCostsTotal,
       },
       config
     );
@@ -124,6 +127,11 @@ export function VaRefiForm() {
     if (!data.prepaidInterestAmount) setValue('prepaidInterestAmount', result.closingCosts.prepaidInterest);
     if (!data.prepaidTaxAmount) setValue('prepaidTaxAmount', result.closingCosts.taxReserves);
     if (!data.prepaidInsuranceAmount) setValue('prepaidInsuranceAmount', result.closingCosts.insuranceReserves);
+
+    // Sync Closing Costs to input if 0 (auto-calc)
+    if (!data.closingCostsTotal || data.closingCostsTotal === 0) {
+      setValue('closingCostsTotal', result.closingCosts.totalClosingCosts);
+    }
   }, [config, updateVaRefiInputs, setVaRefiResult, setValue]);
 
   const handleReset = () => {
@@ -171,7 +179,7 @@ export function VaRefiForm() {
         <Card className={`${vaRefiResult ? 'h-fit' : 'flex-1 flex flex-col'} overflow-hidden`}>
           <CardHeader className="pb-0">
             <div className="flex justify-center mb-6">
-              <CardTitle className="text-xl font-bold text-slate-800 border-[1.5px] border-blue-300 px-6 py-2 rounded-lg text-center inline-block">
+              <CardTitle className="text-xl font-bold text-slate-800 px-6 py-2 rounded-lg text-center inline-block">
                 {t('vaRefi.title')}
               </CardTitle>
             </div>
@@ -490,6 +498,27 @@ export function VaRefiForm() {
                           value={field.value}
                           onChange={(val) => field.onChange(Number(val) || 0)}
                           suffix="mo"
+                        />
+                      )}
+                    />
+                  </div>
+
+                  {/* Estimated Closing Costs */}
+                  <div className="pt-2 border-t border-slate-100 mb-3">
+                    <h4 className="font-medium text-slate-700 mb-3">Estimated Closing Costs</h4>
+                    <Controller
+                      name="closingCostsTotal"
+                      control={control}
+                      render={({ field }) => (
+                        <InputGroup
+                          label="Closing Costs"
+                          name="closingCostsTotal"
+                          type="number"
+                          value={field.value}
+                          onChange={(val) => field.onChange(Number(val) || 0)}
+                          prefix="$"
+                          placeholder="0.00"
+                          className="text-lg font-semibold"
                         />
                       )}
                     />

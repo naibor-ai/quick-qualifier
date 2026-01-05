@@ -29,6 +29,7 @@ const formSchema = z.object({
   prepaidTaxAmount: z.number().min(0),
   prepaidInsuranceAmount: z.number().min(0),
   loanFee: z.number().min(0),
+  closingCostsTotal: z.number().min(0),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -65,6 +66,7 @@ export function FhaRefiForm() {
       prepaidTaxAmount: fhaRefiInputs.prepaidTaxAmount || 0,
       prepaidInsuranceAmount: fhaRefiInputs.prepaidInsuranceAmount || 0,
       loanFee: fhaRefiInputs.loanFee || 0,
+      closingCostsTotal: fhaRefiInputs.closingCostsTotal || 0,
     },
   });
 
@@ -107,6 +109,7 @@ export function FhaRefiForm() {
         prepaidTaxAmount: data.prepaidTaxAmount || 0,
         prepaidInsuranceAmount: data.prepaidInsuranceAmount || 0,
         loanFee: data.loanFee,
+        closingCostsTotal: data.closingCostsTotal,
       },
       config
     );
@@ -117,6 +120,11 @@ export function FhaRefiForm() {
     if (!data.prepaidInterestAmount) setValue('prepaidInterestAmount', result.closingCosts.prepaidInterest);
     if (!data.prepaidTaxAmount) setValue('prepaidTaxAmount', result.closingCosts.taxReserves);
     if (!data.prepaidInsuranceAmount) setValue('prepaidInsuranceAmount', result.closingCosts.insuranceReserves);
+
+    // Sync Closing Costs to input if 0 (auto-calc)
+    if (!data.closingCostsTotal || data.closingCostsTotal === 0) {
+      setValue('closingCostsTotal', result.closingCosts.totalClosingCosts);
+    }
   }, [config, updateFhaRefiInputs, setFhaRefiResult, setValue]);
 
   const handleReset = () => {
@@ -154,7 +162,7 @@ export function FhaRefiForm() {
         <Card className={`${fhaRefiResult ? 'h-fit' : 'flex-1 flex flex-col'} overflow-hidden`}>
           <CardHeader className="pb-0">
             <div className="flex justify-center mb-6">
-              <CardTitle className="text-xl font-bold text-slate-800 border-[1.5px] border-blue-300 px-6 py-2 rounded-lg text-center inline-block">
+              <CardTitle className="text-xl font-bold text-slate-800 px-6 py-2 rounded-lg text-center inline-block">
                 {t('fhaRefi.title')}
               </CardTitle>
             </div>
@@ -424,6 +432,28 @@ export function FhaRefiForm() {
                     />
                   </div>
 
+
+                  {/* Estimated Closing Costs */}
+                  <div className="pt-2 border-t border-slate-100 mb-3">
+                    <h4 className="font-medium text-slate-700 mb-3">Estimated Closing Costs</h4>
+                    <Controller
+                      name="closingCostsTotal"
+                      control={control}
+                      render={({ field }) => (
+                        <InputGroup
+                          label="Closing Costs"
+                          name="closingCostsTotal"
+                          type="number"
+                          value={field.value}
+                          onChange={(val) => field.onChange(Number(val) || 0)}
+                          prefix="$"
+                          placeholder="0.00"
+                          className="text-lg font-semibold"
+                        />
+                      )}
+                    />
+                  </div>
+
                   <div className="grid grid-cols-3 gap-3">
                     <Controller
                       name="prepaidInterestAmount"
@@ -534,6 +564,6 @@ export function FhaRefiForm() {
           )}
         </div>
       </div>
-    </div>
+    </div >
   );
 }

@@ -38,6 +38,7 @@ const formSchema = z.object({
   prepaidInterestAmount: z.number().min(0),
   prepaidTaxAmount: z.number().min(0),
   prepaidInsuranceAmount: z.number().min(0),
+  closingCostsTotal: z.number().min(0),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -82,6 +83,7 @@ export function ConventionalForm() {
       prepaidTaxAmount: conventionalInputs.prepaidTaxAmount || 0,
       prepaidInsuranceAmount: conventionalInputs.prepaidInsuranceAmount || 0,
       loanFee: conventionalInputs.loanFee || 0,
+      closingCostsTotal: conventionalInputs.closingCostsTotal || 0,
     },
   });
 
@@ -168,6 +170,7 @@ export function ConventionalForm() {
         prepaidTaxAmount: data.prepaidTaxAmount || 0,
         prepaidInsuranceAmount: data.prepaidInsuranceAmount || 0,
         loanFee: data.loanFee,
+        closingCostsTotal: data.closingCostsTotal,
       },
       config
     );
@@ -178,6 +181,11 @@ export function ConventionalForm() {
     if (!data.prepaidInterestAmount) setValue('prepaidInterestAmount', result.closingCosts.prepaidInterest);
     if (!data.prepaidTaxAmount) setValue('prepaidTaxAmount', result.closingCosts.taxReserves);
     if (!data.prepaidInsuranceAmount) setValue('prepaidInsuranceAmount', result.closingCosts.insuranceReserves);
+
+    // Sync Closing Costs to input if 0 (auto-calc)
+    if (!data.closingCostsTotal || data.closingCostsTotal === 0) {
+      setValue('closingCostsTotal', result.closingCosts.totalClosingCosts);
+    }
   }, [config, updateConventionalInputs, setConventionalResult, setValue]);
 
   const handleReset = () => {
@@ -234,7 +242,7 @@ export function ConventionalForm() {
         <Card className={`${conventionalResult ? 'h-fit' : 'flex-1 flex flex-col'} overflow-hidden`}>
           <CardHeader className="pb-0">
             <div className="flex justify-center mb-6">
-              <CardTitle className="text-xl font-bold text-slate-800 border-[1.5px] border-blue-300 px-6 py-2 rounded-lg text-center inline-block">
+              <CardTitle className="text-xl font-bold text-slate-800 px-6 py-2 rounded-lg text-center inline-block">
                 {t('conventional.title')}
               </CardTitle>
             </div>
@@ -641,51 +649,72 @@ export function ConventionalForm() {
                       )}
                     />
                   </div>
+                </div>
 
-                  <div className="grid grid-cols-3 gap-3">
-                    <Controller
-                      name="prepaidInterestAmount"
-                      control={control}
-                      render={({ field }) => (
-                        <InputGroup
-                          label="Interest Amt"
-                          name="prepaidInterestAmount"
-                          type="number"
-                          value={field.value}
-                          onChange={(val) => field.onChange(Number(val) || 0)}
-                          prefix="$"
-                        />
-                      )}
-                    />
-                    <Controller
-                      name="prepaidTaxAmount"
-                      control={control}
-                      render={({ field }) => (
-                        <InputGroup
-                          label="Tax Amt"
-                          name="prepaidTaxAmount"
-                          type="number"
-                          value={field.value}
-                          onChange={(val) => field.onChange(Number(val) || 0)}
-                          prefix="$"
-                        />
-                      )}
-                    />
-                    <Controller
-                      name="prepaidInsuranceAmount"
-                      control={control}
-                      render={({ field }) => (
-                        <InputGroup
-                          label="Ins. Amt"
-                          name="prepaidInsuranceAmount"
-                          type="number"
-                          value={field.value}
-                          onChange={(val) => field.onChange(Number(val) || 0)}
-                          prefix="$"
-                        />
-                      )}
-                    />
-                  </div>
+                {/* Estimated Closing Costs */}
+                <div className="pt-2 border-t border-slate-100">
+                  <h4 className="font-medium text-slate-700 mb-3">Estimated Closing Costs</h4>
+                  <Controller
+                    name="closingCostsTotal"
+                    control={control}
+                    render={({ field }) => (
+                      <InputGroup
+                        label="Closing Costs"
+                        name="closingCostsTotal"
+                        type="number"
+                        value={field.value}
+                        onChange={(val) => field.onChange(Number(val) || 0)}
+                        prefix="$"
+                        placeholder="0.00"
+                        className="text-lg font-semibold"
+                      />
+                    )}
+                  />
+                </div>
+
+                <div className="grid grid-cols-3 gap-3">
+                  <Controller
+                    name="prepaidInterestAmount"
+                    control={control}
+                    render={({ field }) => (
+                      <InputGroup
+                        label="Interest Amt"
+                        name="prepaidInterestAmount"
+                        type="number"
+                        value={field.value}
+                        onChange={(val) => field.onChange(Number(val) || 0)}
+                        prefix="$"
+                      />
+                    )}
+                  />
+                  <Controller
+                    name="prepaidTaxAmount"
+                    control={control}
+                    render={({ field }) => (
+                      <InputGroup
+                        label="Tax Amt"
+                        name="prepaidTaxAmount"
+                        type="number"
+                        value={field.value}
+                        onChange={(val) => field.onChange(Number(val) || 0)}
+                        prefix="$"
+                      />
+                    )}
+                  />
+                  <Controller
+                    name="prepaidInsuranceAmount"
+                    control={control}
+                    render={({ field }) => (
+                      <InputGroup
+                        label="Ins. Amt"
+                        name="prepaidInsuranceAmount"
+                        type="number"
+                        value={field.value}
+                        onChange={(val) => field.onChange(Number(val) || 0)}
+                        prefix="$"
+                      />
+                    )}
+                  />
                 </div>
               </div>
 
@@ -757,6 +786,6 @@ export function ConventionalForm() {
           )}
         </div>
       </div>
-    </div>
+    </div >
   );
 }
