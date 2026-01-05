@@ -198,16 +198,20 @@ export function VaForm() {
     <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 p-4 bg-slate-50 min-h-[calc(100vh-100px)]">
       {/* Left Panel - Input Form */}
       <div className="lg:col-span-5 flex flex-col gap-4">
-        <Card className="flex-1 flex flex-col overflow-hidden">
+        <Card className={`${vaResult ? 'h-fit' : 'flex-1 flex flex-col'} overflow-hidden`}>
           <CardHeader className="pb-0">
-            <CardTitle className="text-xl font-bold text-slate-800 mb-4">{t('va.title')}</CardTitle>
+            <div className="flex justify-center mb-6">
+              <CardTitle className="text-xl font-bold text-slate-800 border-[1.5px] border-blue-300 px-6 py-2 rounded-lg text-center inline-block">
+                {t('va.title')}
+              </CardTitle>
+            </div>
             <div className="flex p-1 bg-slate-100 rounded-lg">
               {tabs.map((tab) => (
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
                   type="button"
-                  className={`flex-1 px-3 py-2 text-sm font-medium rounded-md transition-all ${activeTab === tab.id
+                  className={`flex-1 px-3 py-2 text-sm font-medium rounded-md transition-all cursor-pointer ${activeTab === tab.id
                     ? 'bg-blue-600 text-white shadow-sm'
                     : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200'
                     }`}
@@ -706,9 +710,16 @@ export function VaForm() {
             />
           ) : (
             <Card className="h-full min-h-[500px] flex items-center justify-center bg-white shadow-md border-slate-200">
-              <CardContent>
+              <CardContent className="h-full flex items-center justify-center">
                 <div className="text-center py-12 max-w-md mx-auto">
-                  <div className="text-6xl mb-6 opacity-80">🎖️</div>
+                  <div className="text-6xl mb-6 opacity-30 flex justify-center">
+                    <svg className="w-24 h-24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M21 21H3V3H21V21ZM5 19H19V5H5V19Z" fill="currentColor" />
+                      <path d="M7 11H9V17H7V11Z" fill="currentColor" />
+                      <path d="M11 7H13V17H11V7Z" fill="currentColor" />
+                      <path d="M15 13H17V17H15V13Z" fill="currentColor" />
+                    </svg>
+                  </div>
                   <h3 className="text-2xl font-bold text-slate-800 mb-3">
                     {t('calculator.readyToCalculate')}
                   </h3>
@@ -718,7 +729,7 @@ export function VaForm() {
                   <Button
                     variant="outline"
                     onClick={() => setActiveTab('property')}
-                    className="border-blue-200 text-blue-600 hover:bg-blue-50"
+                    className="border-blue-200 text-blue-600 hover:bg-blue-50 cursor-pointer"
                   >
                     Start with Property Details
                   </Button>

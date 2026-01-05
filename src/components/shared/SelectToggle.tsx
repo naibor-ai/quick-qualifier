@@ -43,7 +43,7 @@ export const SelectToggle: React.FC<SelectToggleProps> = ({
                                 ? 'bg-blue-600 text-white border-transparent'
                                 : 'bg-white text-slate-600 border-slate-300 hover:bg-slate-50 hover:border-slate-400'
                             }
-              ${disabled ? 'opacity-50 cursor-not-allowed' : ''}
+              ${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
             `}
                     >
                         {option.label}

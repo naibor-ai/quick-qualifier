@@ -147,10 +147,12 @@ export function ComparisonForm() {
     <div className="space-y-8">
       {/* Header */}
       <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-slate-800">
-            {t('comparison.title')}
-          </h1>
+        <div className="flex-1 text-center">
+          <div className="flex justify-center mb-2">
+            <h1 className="text-2xl font-bold text-slate-800 border-[1.5px] border-blue-300 px-8 py-2 rounded-lg inline-block">
+              {t('comparison.title')}
+            </h1>
+          </div>
           <p className="text-sm text-slate-500 mt-1">
             {t('comparison.description')}
           </p>
