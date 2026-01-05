@@ -4,7 +4,7 @@ import { useCallback, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { useCalculatorStore } from '@/lib/store';
 import { compareScenarios, type ComparisonResult } from '@/lib/calculations/comparison';
-import { InputGroup, SelectGroup, Button, Card, CardHeader, CardTitle, CardContent } from '@/components/shared';
+import { InputGroup, SelectToggle, Button, Card, CardHeader, CardTitle, CardContent } from '@/components/shared';
 import type { LoanProgram } from '@/lib/schemas';
 
 interface Scenario {
@@ -191,7 +191,7 @@ export function ComparisonForm() {
               </div>
             </CardHeader>
             <CardContent className="space-y-3">
-              <SelectGroup
+              <SelectToggle
                 label={t('calculator.loanProgram')}
                 name={`program-${index}`}
                 value={scenario.program}
@@ -228,7 +228,7 @@ export function ComparisonForm() {
                 step="0.125"
               />
 
-              <SelectGroup
+              <SelectToggle
                 label={t('calculator.term')}
                 name={`term-${index}`}
                 value={String(scenario.termYears)}
