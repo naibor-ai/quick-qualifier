@@ -54,7 +54,7 @@ export default function Home() {
       <main className="mx-auto max-w-7xl px-4 py-12">
         <div className="mb-8 text-center">
           <h2 className="text-3xl font-semibold text-slate-800">
-            Naibor Insta-Qualify
+            Naibor Qualify
           </h2>
           <p className="mt-2 text-slate-500">{t('home.selectCalculator')}</p>
         </div>

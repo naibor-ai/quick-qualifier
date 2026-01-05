@@ -120,7 +120,8 @@ export function calculateConventionalClosingCosts(
     interestAmount?: number;
     taxAmount?: number;
     insuranceAmount?: number;
-  }
+  },
+  closingCostsTotalOverride?: number
 ): ClosingCostsBreakdown {
   const { fees, prepaids } = config;
 
@@ -226,8 +227,17 @@ export function calculateConventionalClosingCosts(
   const totalCredits = sellerCredit + (lenderCreditAmount || 0);
 
   // Totals
-  const totalClosingCosts =
+  const calculatedTotalClosingCosts =
     totalLenderFees + totalThirdPartyFees + totalPrepaids;
+
+  let totalClosingCosts = calculatedTotalClosingCosts;
+  let adjustment = 0;
+
+  if (closingCostsTotalOverride && closingCostsTotalOverride > 0) {
+    totalClosingCosts = closingCostsTotalOverride;
+    adjustment = totalClosingCosts - calculatedTotalClosingCosts;
+  }
+
   const netClosingCosts = totalClosingCosts - totalCredits;
 
   return {
@@ -276,6 +286,7 @@ export function calculateConventionalClosingCosts(
     prepaidInterestDays: interestDays,
     prepaidTaxMonths: taxMonths,
     prepaidInsuranceMonths: insuranceMonths,
+    adjustment: roundToCents(adjustment),
   };
 }
 
@@ -382,7 +393,8 @@ export function calculateConventionalPurchase(
       interestAmount: input.prepaidInterestAmount,
       taxAmount: input.prepaidTaxAmount,
       insuranceAmount: input.prepaidInsuranceAmount,
-    }
+    },
+    input.closingCostsTotal
   );
 
   // Add single premium PMI to closing costs if paid in cash
@@ -585,7 +597,16 @@ export function calculateConventionalRefinance(
   const totalPrepaids = prepaidInterest + taxReserves + insuranceReserves;
 
   const totalCredits = 0;
-  const totalClosingCosts = totalLenderFees + totalThirdPartyFees + totalPrepaids;
+  const calculatedTotalClosingCosts = totalLenderFees + totalThirdPartyFees + totalPrepaids;
+
+  let totalClosingCosts = calculatedTotalClosingCosts;
+  let adjustment = 0;
+
+  if (input.closingCostsTotal && input.closingCostsTotal > 0) {
+    totalClosingCosts = input.closingCostsTotal;
+    adjustment = totalClosingCosts - calculatedTotalClosingCosts;
+  }
+
   const netClosingCosts = totalClosingCosts - totalCredits;
 
   const closingCosts: ClosingCostsBreakdown = {
@@ -629,6 +650,7 @@ export function calculateConventionalRefinance(
     prepaidInterestDays,
     prepaidTaxMonths,
     prepaidInsuranceMonths,
+    adjustment: roundToCents(adjustment),
   };
 
   // Calculate cash to close

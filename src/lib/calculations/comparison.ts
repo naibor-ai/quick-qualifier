@@ -86,6 +86,7 @@ function calculateScenario(
           prepaidInterestDays: 15,
           prepaidTaxMonths: 6,
           prepaidInsuranceMonths: 15,
+          closingCostsTotal: 0,
         },
         config
       );
@@ -109,6 +110,7 @@ function calculateScenario(
           prepaidInterestDays: 15,
           prepaidTaxMonths: 6,
           prepaidInsuranceMonths: 15,
+          closingCostsTotal: 0,
         },
         config
       );
@@ -134,6 +136,7 @@ function calculateScenario(
           prepaidInterestDays: 15,
           prepaidTaxMonths: 6,
           prepaidInsuranceMonths: 15,
+          closingCostsTotal: 0,
         },
         config
       );
@@ -159,6 +162,7 @@ function calculateScenario(
           prepaidInterestDays: 15,
           prepaidTaxMonths: 6,
           prepaidInsuranceMonths: 15,
+          closingCostsTotal: 0,
         },
         config
       );

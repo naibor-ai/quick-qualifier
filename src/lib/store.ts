@@ -48,6 +48,7 @@ interface ConventionalInputs {
   prepaidTaxAmount: number;
   prepaidInsuranceAmount: number;
   loanFee: number;
+  closingCostsTotal: number;
 }
 
 interface FhaInputs {
@@ -70,6 +71,7 @@ interface FhaInputs {
   prepaidTaxAmount: number;
   prepaidInsuranceAmount: number;
   loanFee: number;
+  closingCostsTotal: number;
   sellerCreditAmount: number;
   lenderCreditAmount: number;
   depositAmount: number;
@@ -97,6 +99,7 @@ interface VaInputs {
   prepaidTaxAmount: number;
   prepaidInsuranceAmount: number;
   loanFee: number;
+  closingCostsTotal: number;
   sellerCreditAmount: number;
   lenderCreditAmount: number;
   depositAmount: number;
@@ -122,6 +125,7 @@ interface ConventionalRefiInputs {
   prepaidTaxAmount: number;
   prepaidInsuranceAmount: number;
   loanFee: number;
+  closingCostsTotal: number;
 }
 
 interface FhaRefiInputs {
@@ -142,6 +146,7 @@ interface FhaRefiInputs {
   prepaidTaxAmount: number;
   prepaidInsuranceAmount: number;
   loanFee: number;
+  closingCostsTotal: number;
 }
 
 interface VaRefiInputs {
@@ -165,6 +170,7 @@ interface VaRefiInputs {
   prepaidTaxAmount: number;
   prepaidInsuranceAmount: number;
   loanFee: number;
+  closingCostsTotal: number;
 }
 
 interface SellerNetInputs {
@@ -278,6 +284,7 @@ const defaultConventionalInputs: ConventionalInputs = {
   prepaidTaxAmount: 0,
   prepaidInsuranceAmount: 0,
   loanFee: 4000,
+  closingCostsTotal: 0,
 };
 
 const defaultFhaInputs: FhaInputs = {
@@ -300,6 +307,7 @@ const defaultFhaInputs: FhaInputs = {
   prepaidTaxAmount: 0,
   prepaidInsuranceAmount: 0,
   loanFee: 3860,
+  closingCostsTotal: 0,
   sellerCreditAmount: 0,
   lenderCreditAmount: 0,
   depositAmount: 0,
@@ -327,6 +335,7 @@ const defaultVaInputs: VaInputs = {
   prepaidTaxAmount: 0,
   prepaidInsuranceAmount: 0,
   loanFee: 4500,
+  closingCostsTotal: 0,
   sellerCreditAmount: 0,
   lenderCreditAmount: 0,
   depositAmount: 0,
@@ -394,6 +403,7 @@ const defaultConventionalRefiInputs: ConventionalRefiInputs = {
   prepaidTaxAmount: 0,
   prepaidInsuranceAmount: 0,
   loanFee: 3500,
+  closingCostsTotal: 0,
 };
 
 const defaultFhaRefiInputs: FhaRefiInputs = {
@@ -414,6 +424,7 @@ const defaultFhaRefiInputs: FhaRefiInputs = {
   prepaidTaxAmount: 0,
   prepaidInsuranceAmount: 0,
   loanFee: 3000,
+  closingCostsTotal: 0,
 };
 
 const defaultVaRefiInputs: VaRefiInputs = {
@@ -437,6 +448,7 @@ const defaultVaRefiInputs: VaRefiInputs = {
   prepaidTaxAmount: 0,
   prepaidInsuranceAmount: 0,
   loanFee: 3200,
+  closingCostsTotal: 0,
 };
 
 // ============================================================================

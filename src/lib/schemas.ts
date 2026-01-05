@@ -70,6 +70,7 @@ export const BasePurchaseInputSchema = z.object({
   sellerCreditAmount: z.number().min(0).default(0),
   lenderCreditAmount: z.number().min(0).default(0),
   depositAmount: z.number().min(0).default(0),
+  closingCostsTotal: z.number().min(0).default(0),
 });
 export type BasePurchaseInput = z.infer<typeof BasePurchaseInputSchema>;
 
@@ -120,6 +121,7 @@ export const BaseRefinanceInputSchema = z.object({
   prepaidTaxAmount: z.number().min(0).optional(),
   prepaidInsuranceAmount: z.number().min(0).optional(),
   loanFee: z.number().min(0).default(0),
+  closingCostsTotal: z.number().min(0).default(0),
 });
 export type BaseRefinanceInput = z.infer<typeof BaseRefinanceInputSchema>;
 
@@ -247,6 +249,7 @@ export const ClosingCostsBreakdownSchema = z.object({
   loanFee: z.number().optional(),
   transferTax: z.number().optional(),
   mortgageTax: z.number().optional(),
+  adjustment: z.number().optional(), // For manual closing cost overrides
 
   // Inputs used for calculation (passed back for UI)
   prepaidInterestDays: z.number().optional(),

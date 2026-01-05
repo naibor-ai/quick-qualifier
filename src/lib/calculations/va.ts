@@ -114,7 +114,8 @@ export function calculateVaClosingCosts(
     interestAmount?: number;
     taxAmount?: number;
     insuranceAmount?: number;
-  }
+  },
+  closingCostsTotalOverride?: number
 ): ClosingCostsBreakdown {
   const { fees, prepaids } = config;
 
@@ -189,8 +190,17 @@ export function calculateVaClosingCosts(
   const totalPrepaids = prepaidInterest + taxReserves + insuranceReserves;
 
   const totalCredits = sellerCreditAmount + lenderCreditAmount;
-  const totalClosingCosts =
+  const calculatedTotalClosingCosts =
     totalLenderFees + totalThirdPartyFees + totalPrepaids;
+
+  let totalClosingCosts = calculatedTotalClosingCosts;
+  let adjustment = 0;
+
+  if (closingCostsTotalOverride && closingCostsTotalOverride > 0) {
+    totalClosingCosts = closingCostsTotalOverride;
+    adjustment = totalClosingCosts - calculatedTotalClosingCosts;
+  }
+
   const netClosingCosts = totalClosingCosts - totalCredits;
 
   return {
@@ -234,6 +244,7 @@ export function calculateVaClosingCosts(
     prepaidInterestDays: interestDays,
     prepaidTaxMonths: taxMonths,
     prepaidInsuranceMonths: insuranceMonths,
+    adjustment: roundToCents(adjustment),
   };
 }
 
@@ -337,7 +348,8 @@ export function calculateVaPurchase(
       interestAmount: input.prepaidInterestAmount,
       taxAmount: input.prepaidTaxAmount,
       insuranceAmount: input.prepaidInsuranceAmount,
-    }
+    },
+    input.closingCostsTotal
   );
 
   // Cash to close (funding fee is financed)
@@ -462,7 +474,16 @@ export function calculateVaRefinance(
 
   const totalPrepaids = prepaidInterest + taxReserves + insuranceReserves;
 
-  const totalClosingCosts = totalLenderFees + totalThirdPartyFees + totalPrepaids;
+  const calculatedTotalClosingCosts = totalLenderFees + totalThirdPartyFees + totalPrepaids;
+
+  let totalClosingCosts = calculatedTotalClosingCosts;
+  let adjustment = 0;
+
+  if (input.closingCostsTotal && input.closingCostsTotal > 0) {
+    totalClosingCosts = input.closingCostsTotal;
+    adjustment = totalClosingCosts - calculatedTotalClosingCosts;
+  }
+
   const netClosingCosts = totalClosingCosts;
 
   // Monthly Payment
@@ -525,6 +546,7 @@ export function calculateVaRefinance(
     prepaidInterestDays,
     prepaidTaxMonths,
     prepaidInsuranceMonths,
+    adjustment: roundToCents(adjustment),
   };
 
   // Cash To Close

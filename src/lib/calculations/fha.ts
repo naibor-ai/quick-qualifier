@@ -111,7 +111,8 @@ export function calculateFhaClosingCosts(
     interestAmount?: number;
     taxAmount?: number;
     insuranceAmount?: number;
-  }
+  },
+  closingCostsTotalOverride?: number
 ): ClosingCostsBreakdown {
   const { fees, prepaids } = config;
 
@@ -196,8 +197,18 @@ export function calculateFhaClosingCosts(
   const totalCredits = sellerCreditAmount + lenderCreditAmount;
 
   // Totals
-  const totalClosingCosts =
+  // Totals
+  const calculatedTotalClosingCosts =
     totalLenderFees + totalThirdPartyFees + totalPrepaids;
+
+  let totalClosingCosts = calculatedTotalClosingCosts;
+  let adjustment = 0;
+
+  if (closingCostsTotalOverride && closingCostsTotalOverride > 0) {
+    totalClosingCosts = closingCostsTotalOverride;
+    adjustment = totalClosingCosts - calculatedTotalClosingCosts;
+  }
+
   const netClosingCosts = totalClosingCosts - totalCredits;
 
   return {
@@ -241,6 +252,7 @@ export function calculateFhaClosingCosts(
     prepaidInterestDays: interestDays,
     prepaidTaxMonths: taxMonths,
     prepaidInsuranceMonths: insuranceMonths,
+    adjustment: roundToCents(adjustment),
   };
 }
 
@@ -338,7 +350,8 @@ export function calculateFhaPurchase(
       interestAmount: input.prepaidInterestAmount,
       taxAmount: input.prepaidTaxAmount,
       insuranceAmount: input.prepaidInsuranceAmount,
-    }
+    },
+    input.closingCostsTotal
   );
 
   // Cash to close (UFMIP is financed, not paid at closing)
@@ -497,7 +510,16 @@ export function calculateFhaRefinance(
 
   const totalPrepaids = prepaidInterest + taxReserves + insuranceReserves;
 
-  const totalClosingCosts = totalLenderFees + totalThirdPartyFees + totalPrepaids;
+  const calculatedTotalClosingCosts = totalLenderFees + totalThirdPartyFees + totalPrepaids;
+
+  let totalClosingCosts = calculatedTotalClosingCosts;
+  let adjustment = 0;
+
+  if (input.closingCostsTotal && input.closingCostsTotal > 0) {
+    totalClosingCosts = input.closingCostsTotal;
+    adjustment = totalClosingCosts - calculatedTotalClosingCosts;
+  }
+
   const netClosingCosts = totalClosingCosts;
 
   const closingCosts: ClosingCostsBreakdown = {
@@ -541,6 +563,7 @@ export function calculateFhaRefinance(
     prepaidInterestDays,
     prepaidTaxMonths,
     prepaidInsuranceMonths,
+    adjustment: roundToCents(adjustment),
   };
 
   // Cash To Close Calculation

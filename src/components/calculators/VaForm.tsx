@@ -1,13 +1,13 @@
 'use client';
 
-import { useEffect, useCallback } from 'react';
+import { useEffect, useCallback, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useCalculatorStore } from '@/lib/store';
 import { calculateVaPurchase } from '@/lib/calculations/va';
-import { InputGroup, SelectGroup, CheckboxGroup, Button, Card, CardHeader, CardTitle, CardDescription, CardContent, AgentSelector } from '@/components/shared';
+import { InputGroup, SelectGroup, SelectToggle, CheckboxGroup, Button, Card, CardHeader, CardTitle, CardDescription, CardContent, AgentSelector } from '@/components/shared';
 import { ResultSummary } from '@/components/shared/ResultSummary';
 import type { VaUsage } from '@/lib/schemas';
 
@@ -38,6 +38,7 @@ const formSchema = z.object({
   sellerCreditAmount: z.number().min(0),
   lenderCreditAmount: z.number().min(0),
   depositAmount: z.number().min(0),
+  closingCostsTotal: z.number().min(0),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -83,6 +84,7 @@ export function VaForm() {
       sellerCreditAmount: vaInputs.sellerCreditAmount || 0,
       lenderCreditAmount: vaInputs.lenderCreditAmount || 0,
       depositAmount: vaInputs.depositAmount || 0,
+      closingCostsTotal: vaInputs.closingCostsTotal || 0,
     },
   });
 
@@ -147,6 +149,7 @@ export function VaForm() {
         prepaidTaxAmount: data.prepaidTaxAmount || 0,
         prepaidInsuranceAmount: data.prepaidInsuranceAmount || 0,
         loanFee: data.loanFee,
+        closingCostsTotal: data.closingCostsTotal,
         sellerCreditAmount: data.sellerCreditAmount,
         lenderCreditAmount: data.lenderCreditAmount,
         depositAmount: data.depositAmount,
@@ -160,6 +163,11 @@ export function VaForm() {
     if (!data.prepaidInterestAmount) setValue('prepaidInterestAmount', result.closingCosts.prepaidInterest);
     if (!data.prepaidTaxAmount) setValue('prepaidTaxAmount', result.closingCosts.taxReserves);
     if (!data.prepaidInsuranceAmount) setValue('prepaidInsuranceAmount', result.closingCosts.insuranceReserves);
+
+    // Sync Closing Costs to input if 0 (auto-calc)
+    if (!data.closingCostsTotal || data.closingCostsTotal === 0) {
+      setValue('closingCostsTotal', result.closingCosts.totalClosingCosts);
+    }
   }, [config, updateVaInputs, setVaResult, setValue]);
 
   const handleReset = () => {
@@ -184,123 +192,141 @@ export function VaForm() {
     { value: 'subsequent', label: t('va.usage.subsequent') },
   ];
 
+  const [activeTab, setActiveTab] = useState('property');
+
   const isDisabled = configLoading || !config;
 
+  const tabs = [
+    { id: 'property', label: 'Property & Loan' },
+    { id: 'costs', label: 'Monthly Costs' },
+    { id: 'details', label: 'VA Details & Closing' },
+  ];
+
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-      {/* Form */}
-      <Card>
-        <CardHeader>
-          <CardTitle>{t('va.title')}</CardTitle>
-          <CardDescription>{t('va.description')}</CardDescription>
-        </CardHeader>
-        <CardContent>
-          {!config && !configLoading && (
-            <div className="mb-4 p-4 bg-red-50 rounded-lg">
-              <p className="text-sm text-red-600">
-                {t('errors.configLoadError')}. Please check your GHL configuration.
-              </p>
+    <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 p-4 bg-slate-50 min-h-[calc(100vh-100px)]">
+      {/* Left Panel - Input Form */}
+      <div className="lg:col-span-5 flex flex-col gap-4">
+        <Card className={`${vaResult ? 'h-fit' : 'flex-1 flex flex-col'} overflow-hidden`}>
+          <CardHeader className="pb-0">
+            <div className="flex justify-center mb-6">
+              <CardTitle className="text-xl font-bold text-slate-800 px-6 py-2 rounded-lg text-center inline-block">
+                {t('va.title')}
+              </CardTitle>
             </div>
-          )}
-          <form onSubmit={handleSubmit(onCalculate)} className="space-y-6">
-            {/* Property & Loan */}
-            <div className="space-y-4">
-              <h3 className="text-sm font-semibold text-slate-700 uppercase tracking-wide">
-                Property & Loan
-              </h3>
+            <div className="flex p-1 bg-slate-100 rounded-lg">
+              {tabs.map((tab) => (
+                <button
+                  key={tab.id}
+                  onClick={() => setActiveTab(tab.id)}
+                  type="button"
+                  className={`flex-1 px-3 py-2 text-sm font-medium rounded-md transition-all cursor-pointer ${activeTab === tab.id
+                    ? 'bg-blue-600 text-white shadow-sm'
+                    : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200'
+                    }`}
+                >
+                  {tab.label}
+                </button>
+              ))}
+            </div>
+          </CardHeader>
+          <CardContent className="flex-1 overflow-y-auto pt-6">
+            <form onSubmit={handleSubmit(onCalculate)} className="space-y-6">
 
-              <Controller
-                name="salesPrice"
-                control={control}
-                render={({ field }) => (
-                  <InputGroup
-                    label={t('calculator.salesPrice')}
-                    name="salesPrice"
-                    type="number"
-                    value={field.value}
-                    onChange={(val) => field.onChange(Number(val) || 0)}
-                    prefix="$"
-                    error={errors.salesPrice?.message}
-                    required
-                  />
-                )}
-              />
-
-              <Controller
-                name="downPaymentMode"
-                control={control}
-                render={({ field }) => (
-                  <SelectGroup
-                    label={t('calculator.downPaymentMode')}
-                    name="downPaymentMode"
-                    value={field.value}
-                    onChange={field.onChange}
-                    options={downPaymentModeOptions}
-                  />
-                )}
-              />
-
-              {downPaymentMode === 'percent' ? (
+              {/* Tab 1: Property & Loan */}
+              <div className={activeTab === 'property' ? 'block space-y-5' : 'hidden'}>
                 <Controller
-                  name="downPaymentPercent"
+                  name="salesPrice"
                   control={control}
                   render={({ field }) => (
                     <InputGroup
-                      label={t('calculator.downPaymentPercent')}
-                      name="downPaymentPercent"
-                      type="number"
-                      value={field.value}
-                      onChange={(val) => field.onChange(Number(val) || 0)}
-                      suffix="%"
-                      step="0.1"
-                      error={errors.downPaymentPercent?.message}
-                      helperText="VA allows 0% down payment"
-                    />
-                  )}
-                />
-              ) : (
-                <Controller
-                  name="downPaymentAmount"
-                  control={control}
-                  render={({ field }) => (
-                    <InputGroup
-                      label={t('calculator.downPaymentAmount')}
-                      name="downPaymentAmount"
+                      label={t('calculator.salesPrice')}
+                      name="salesPrice"
                       type="number"
                       value={field.value}
                       onChange={(val) => field.onChange(Number(val) || 0)}
                       prefix="$"
-                      error={errors.downPaymentAmount?.message}
-                      helperText="VA allows 0% down payment"
-                    />
-                  )}
-                />
-              )}
-
-              <div className="grid grid-cols-2 gap-4">
-                <Controller
-                  name="interestRate"
-                  control={control}
-                  render={({ field }) => (
-                    <InputGroup
-                      label={t('calculator.interestRate')}
-                      name="interestRate"
-                      type="number"
-                      value={field.value}
-                      onChange={(val) => field.onChange(Number(val) || 0)}
-                      suffix="%"
-                      step="0.125"
-                      error={errors.interestRate?.message}
+                      error={errors.salesPrice?.message}
+                      className="text-lg"
                       required
                     />
                   )}
                 />
 
                 <Controller
+                  name="downPaymentMode"
+                  control={control}
+                  render={({ field }) => (
+                    <SelectToggle
+                      label={t('calculator.downPaymentMode')}
+                      name="downPaymentMode"
+                      value={field.value ?? 'amount'}
+                      onChange={field.onChange}
+                      options={downPaymentModeOptions}
+                    />
+                  )}
+                />
+
+                {downPaymentMode === 'percent' ? (
+                  <Controller
+                    name="downPaymentPercent"
+                    control={control}
+                    render={({ field }) => (
+                      <InputGroup
+                        label={t('calculator.downPaymentPercent')}
+                        name="downPaymentPercent"
+                        type="number"
+                        value={field.value}
+                        onChange={(val) => field.onChange(Number(val) || 0)}
+                        suffix="%"
+                        step="0.1"
+                        error={errors.downPaymentPercent?.message}
+                        helperText="VA allows 0% down payment"
+                      />
+                    )}
+                  />
+                ) : (
+                  <Controller
+                    name="downPaymentAmount"
+                    control={control}
+                    render={({ field }) => (
+                      <InputGroup
+                        label={t('calculator.downPaymentAmount')}
+                        name="downPaymentAmount"
+                        type="number"
+                        value={field.value}
+                        onChange={(val) => field.onChange(Number(val) || 0)}
+                        prefix="$"
+                        error={errors.downPaymentAmount?.message}
+                        helperText="VA allows 0% down payment"
+                      />
+                    )}
+                  />
+                )}
+
+                <div className="grid grid-cols-2 gap-4">
+                  <Controller
+                    name="interestRate"
+                    control={control}
+                    render={({ field }) => (
+                      <InputGroup
+                        label={t('calculator.interestRate')}
+                        name="interestRate"
+                        type="number"
+                        value={field.value}
+                        onChange={(val) => field.onChange(Number(val) || 0)}
+                        suffix="%"
+                        step="0.125"
+                        error={errors.interestRate?.message}
+                        required
+                      />
+                    )}
+                  />
+                </div>
+                <Controller
                   name="termYears"
                   control={control}
                   render={({ field }) => (
-                    <SelectGroup
+                    <SelectToggle
                       label={t('calculator.term')}
                       name="termYears"
                       value={String(field.value)}
@@ -310,417 +336,437 @@ export function VaForm() {
                   )}
                 />
               </div>
-            </div>
 
-            {/* Monthly Costs */}
-            <div className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
-                <Controller
-                  name="propertyTaxAnnual"
-                  control={control}
-                  render={({ field }) => (
-                    <InputGroup
-                      label={t('calculator.propertyTax')}
-                      name="propertyTaxAnnual"
-                      type="number"
-                      value={field.value}
-                      onChange={(val) => {
-                        const annual = Number(val) || 0;
-                        field.onChange(annual);
-                        setValue('propertyTaxMonthly', parseFloat((annual / 12).toFixed(2)));
-                      }}
-                      prefix="$"
-                      helperText="Annual"
-                    />
-                  )}
-                />
+              {/* Tab 2: Monthly Costs */}
+              <div className={activeTab === 'costs' ? 'block space-y-5' : 'hidden'}>
+                <div className="grid grid-cols-2 gap-4">
+                  <Controller
+                    name="propertyTaxAnnual"
+                    control={control}
+                    render={({ field }) => (
+                      <InputGroup
+                        label={t('calculator.propertyTax')}
+                        name="propertyTaxAnnual"
+                        type="number"
+                        value={field.value}
+                        onChange={(val) => {
+                          const annual = Number(val) || 0;
+                          field.onChange(annual);
+                          setValue('propertyTaxMonthly', parseFloat((annual / 12).toFixed(2)));
+                        }}
+                        prefix="$"
+                        helperText="Annual"
+                      />
+                    )}
+                  />
 
-                <Controller
-                  name="homeInsuranceAnnual"
-                  control={control}
-                  render={({ field }) => (
-                    <InputGroup
-                      label={t('calculator.homeInsurance')}
-                      name="homeInsuranceAnnual"
-                      type="number"
-                      value={field.value}
-                      onChange={(val) => {
-                        const annual = Number(val) || 0;
-                        field.onChange(annual);
-                        setValue('homeInsuranceMonthly', parseFloat((annual / 12).toFixed(2)));
-                      }}
-                      prefix="$"
-                      helperText="Annual"
-                    />
-                  )}
-                />
+                  <Controller
+                    name="homeInsuranceAnnual"
+                    control={control}
+                    render={({ field }) => (
+                      <InputGroup
+                        label={t('calculator.homeInsurance')}
+                        name="homeInsuranceAnnual"
+                        type="number"
+                        value={field.value}
+                        onChange={(val) => {
+                          const annual = Number(val) || 0;
+                          field.onChange(annual);
+                          setValue('homeInsuranceMonthly', parseFloat((annual / 12).toFixed(2)));
+                        }}
+                        prefix="$"
+                        helperText="Annual"
+                      />
+                    )}
+                  />
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <Controller
+                    name="propertyTaxMonthly"
+                    control={control}
+                    render={({ field }) => (
+                      <InputGroup
+                        label="Property Tax (Mo)"
+                        name="propertyTaxMonthly"
+                        type="number"
+                        value={field.value}
+                        onChange={(val) => {
+                          const monthly = Number(val) || 0;
+                          field.onChange(monthly);
+                          setValue('propertyTaxAnnual', Math.round(monthly * 12));
+                        }}
+                        prefix="$"
+                      />
+                    )}
+                  />
+
+                  <Controller
+                    name="homeInsuranceMonthly"
+                    control={control}
+                    render={({ field }) => (
+                      <InputGroup
+                        label="Home Insurance (Mo)"
+                        name="homeInsuranceMonthly"
+                        type="number"
+                        value={field.value}
+                        onChange={(val) => {
+                          const monthly = Number(val) || 0;
+                          field.onChange(monthly);
+                          setValue('homeInsuranceAnnual', Math.round(monthly * 12));
+                        }}
+                        prefix="$"
+                      />
+                    )}
+                  />
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <Controller
+                    name="hoaDuesMonthly"
+                    control={control}
+                    render={({ field }) => (
+                      <InputGroup
+                        label={t('calculator.hoaDues')}
+                        name="hoaDuesMonthly"
+                        type="number"
+                        value={field.value}
+                        onChange={(val) => field.onChange(Number(val) || 0)}
+                        prefix="$"
+                      />
+                    )}
+                  />
+
+                  <Controller
+                    name="floodInsuranceMonthly"
+                    control={control}
+                    render={({ field }) => (
+                      <InputGroup
+                        label={t('calculator.floodInsurance')}
+                        name="floodInsuranceMonthly"
+                        type="number"
+                        value={field.value}
+                        onChange={(val) => field.onChange(Number(val) || 0)}
+                        prefix="$"
+                      />
+                    )}
+                  />
+                </div>
               </div>
 
-              <h3 className="text-sm font-semibold text-slate-700 uppercase tracking-wide mt-6">
-                Monthly Costs
-              </h3>
-
-              <div className="grid grid-cols-2 gap-4">
-                <Controller
-                  name="propertyTaxMonthly"
-                  control={control}
-                  render={({ field }) => (
-                    <InputGroup
-                      label="Property Tax"
-                      name="propertyTaxMonthly"
-                      type="number"
-                      value={field.value}
-                      onChange={(val) => {
-                        const monthly = Number(val) || 0;
-                        field.onChange(monthly);
-                        setValue('propertyTaxAnnual', Math.round(monthly * 12));
-                      }}
-                      prefix="$"
-                      helperText="per month"
-                    />
-                  )}
-                />
-
-                <Controller
-                  name="homeInsuranceMonthly"
-                  control={control}
-                  render={({ field }) => (
-                    <InputGroup
-                      label="Home Insurance"
-                      name="homeInsuranceMonthly"
-                      type="number"
-                      value={field.value}
-                      onChange={(val) => {
-                        const monthly = Number(val) || 0;
-                        field.onChange(monthly);
-                        setValue('homeInsuranceAnnual', Math.round(monthly * 12));
-                      }}
-                      prefix="$"
-                      helperText="per month"
-                    />
-                  )}
-                />
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <Controller
-                  name="hoaDuesMonthly"
-                  control={control}
-                  render={({ field }) => (
-                    <InputGroup
-                      label={t('calculator.hoaDues')}
-                      name="hoaDuesMonthly"
-                      type="number"
-                      value={field.value}
-                      onChange={(val) => field.onChange(Number(val) || 0)}
-                      prefix="$"
-                    />
-                  )}
-                />
-
-                <Controller
-                  name="floodInsuranceMonthly"
-                  control={control}
-                  render={({ field }) => (
-                    <InputGroup
-                      label={t('calculator.floodInsurance')}
-                      name="floodInsuranceMonthly"
-                      type="number"
-                      value={field.value}
-                      onChange={(val) => field.onChange(Number(val) || 0)}
-                      prefix="$"
-                    />
-                  )}
-                />
-              </div>
-            </div>
-
-            {/* VA Options */}
-            <div className="space-y-4">
-              <h3 className="text-sm font-semibold text-slate-700 uppercase tracking-wide">
-                VA Loan Details
-              </h3>
-
-              <Controller
-                name="vaUsage"
-                control={control}
-                render={({ field }) => (
-                  <SelectGroup
-                    label={t('calculator.vaUsage')}
+              {/* Tab 3: VA Details & Closing */}
+              <div className={activeTab === 'details' ? 'block space-y-5' : 'hidden'}>
+                <div className="space-y-4">
+                  <h3 className="text-sm font-semibold text-slate-700 uppercase tracking-wide">
+                    VA Loan Config
+                  </h3>
+                  <Controller
                     name="vaUsage"
-                    value={field.value}
-                    onChange={field.onChange}
-                    options={vaUsageOptions}
+                    control={control}
+                    render={({ field }) => (
+                      <SelectToggle
+                        label={t('calculator.vaUsage')}
+                        name="vaUsage"
+                        value={field.value ?? 'first'}
+                        onChange={field.onChange}
+                        options={vaUsageOptions}
+                      />
+                    )}
                   />
-                )}
-              />
 
-              <Controller
-                name="isDisabledVeteran"
-                control={control}
-                render={({ field }) => (
-                  <CheckboxGroup
-                    label={t('calculator.isDisabledVeteran')}
-                    name="isDisabledVeteran"
-                    checked={field.value ?? false}
-                    onChange={field.onChange}
-                    helperText="Exempt from VA funding fee"
-                    disabled={isDisabled}
-                  />
-                )}
-              />
+                  <div className="grid grid-cols-2 gap-4 bg-slate-50 p-3 rounded-lg border border-slate-100">
+                    <Controller
+                      name="isDisabledVeteran"
+                      control={control}
+                      render={({ field }) => (
+                        <CheckboxGroup
+                          label={t('calculator.isDisabledVeteran')}
+                          name="isDisabledVeteran"
+                          checked={field.value ?? false}
+                          onChange={field.onChange}
+                          helperText="Exempt from VA funding fee"
+                        />
+                      )}
+                    />
 
-              <Controller
-                name="isReservist"
-                control={control}
-                render={({ field }) => (
-                  <CheckboxGroup
-                    label={t('calculator.isReservist')}
-                    name="isReservist"
-                    checked={field.value ?? false}
-                    onChange={field.onChange}
-                    helperText="Higher funding fee rates apply"
-                    disabled={isDisabled || isDisabledVeteran}
-                  />
-                )}
-              />
-            </div>
+                    <Controller
+                      name="isReservist"
+                      control={control}
+                      render={({ field }) => (
+                        <CheckboxGroup
+                          label={t('calculator.isReservist')}
+                          name="isReservist"
+                          checked={field.value ?? false}
+                          onChange={field.onChange}
+                          helperText="Higher funding fee rates apply"
+                          disabled={isDisabledVeteran || false}
+                        />
+                      )}
+                    />
+                  </div>
+                  <div className="bg-blue-50 rounded-lg p-3 text-sm text-blue-700">
+                    <ul className="space-y-1 list-disc pl-4">
+                      <li>No down payment required</li>
+                      <li>No monthly mortgage insurance (PMI)</li>
+                      <li>Funding fee can be financed into loan</li>
+                    </ul>
+                  </div>
+                </div>
 
-            {/* Credits & Points */}
-            <div className="space-y-4">
-              <h3 className="text-sm font-semibold text-slate-700 uppercase tracking-wide">
-                Credits & Points
-              </h3>
-
-              <div className="grid grid-cols-2 gap-4">
-                <Controller
-                  name="sellerCreditAmount"
-                  control={control}
-                  render={({ field }) => (
-                    <InputGroup
-                      label={t('calculator.sellerCredit')}
+                <div className="border-t border-slate-200 pt-4 mt-4">
+                  <h4 className="text-sm font-medium text-slate-700 mb-3">Credits & Points</h4>
+                  <div className="grid grid-cols-2 gap-4">
+                    <Controller
                       name="sellerCreditAmount"
-                      type="number"
-                      value={field.value}
-                      onChange={(val) => field.onChange(Number(val) || 0)}
-                      prefix="$"
-                      disabled={isDisabled}
+                      control={control}
+                      render={({ field }) => (
+                        <InputGroup
+                          label={t('calculator.sellerCredit')}
+                          name="sellerCreditAmount"
+                          type="number"
+                          value={field.value}
+                          onChange={(val) => field.onChange(Number(val) || 0)}
+                          prefix="$"
+                        />
+                      )}
                     />
-                  )}
-                />
 
-                <Controller
-                  name="lenderCreditAmount"
-                  control={control}
-                  render={({ field }) => (
-                    <InputGroup
-                      label={t('calculator.lenderCredit')}
+                    <Controller
                       name="lenderCreditAmount"
-                      type="number"
-                      value={field.value}
-                      onChange={(val) => field.onChange(Number(val) || 0)}
-                      prefix="$"
-                      disabled={isDisabled}
+                      control={control}
+                      render={({ field }) => (
+                        <InputGroup
+                          label={t('calculator.lenderCredit')}
+                          name="lenderCreditAmount"
+                          type="number"
+                          value={field.value}
+                          onChange={(val) => field.onChange(Number(val) || 0)}
+                          prefix="$"
+                        />
+                      )}
                     />
-                  )}
-                />
-              </div>
-
-              <Controller
-                name="depositAmount"
-                control={control}
-                render={({ field }) => (
-                  <InputGroup
-                    label="Deposit (Earnest Money)"
+                  </div>
+                  <Controller
                     name="depositAmount"
-                    type="number"
-                    value={field.value}
-                    onChange={(val) => field.onChange(Number(val) || 0)}
-                    prefix="$"
-                    disabled={isDisabled}
+                    control={control}
+                    render={({ field }) => (
+                      <InputGroup
+                        label="Deposit (Earnest Money)"
+                        name="depositAmount"
+                        type="number"
+                        value={field.value}
+                        onChange={(val) => field.onChange(Number(val) || 0)}
+                        prefix="$"
+                        className="mt-3"
+                      />
+                    )}
                   />
-                )}
-              />
-
-              <Controller
-                name="loanFee"
-                control={control}
-                render={({ field }) => (
-                  <InputGroup
-                    label="Loan Fee / Origination Fee"
+                  <Controller
                     name="loanFee"
-                    type="number"
-                    value={field.value}
-                    onChange={(val) => field.onChange(Number(val) || 0)}
-                    prefix="$"
-                    disabled={isDisabled}
+                    control={control}
+                    render={({ field }) => (
+                      <InputGroup
+                        label="Loan Fee / Origination Fee"
+                        name="loanFee"
+                        type="number"
+                        value={field.value}
+                        onChange={(val) => field.onChange(Number(val) || 0)}
+                        prefix="$"
+                        className="mt-3"
+                      />
+                    )}
                   />
-                )}
-              />
-            </div>
+                </div>
 
-            {/* Prepaid Items Configuration */}
-            <div className="space-y-4">
-              <h3 className="text-sm font-semibold text-slate-700 uppercase tracking-wide">
-                {t('calculator.sections.prepaids')}
-              </h3>
+                <div className="border-t border-slate-200 pt-4 mt-4">
+                  <h4 className="text-sm font-medium text-slate-700 mb-3">Prepaid Items Configuration</h4>
 
-              <div className="grid grid-cols-3 gap-4">
-                <Controller
-                  name="prepaidInterestDays"
-                  control={control}
-                  render={({ field }) => (
-                    <InputGroup
-                      label="Interest Days"
+                  <div className="grid grid-cols-3 gap-3 mb-3">
+                    <Controller
                       name="prepaidInterestDays"
-                      type="number"
-                      value={field.value}
-                      onChange={(val) => field.onChange(Number(val) || 0)}
-                      suffix="days"
+                      control={control}
+                      render={({ field }) => (
+                        <InputGroup
+                          label="Interest Days"
+                          name="prepaidInterestDays"
+                          type="number"
+                          value={field.value}
+                          onChange={(val) => field.onChange(Number(val) || 0)}
+                          suffix="days"
+                          className="text-sm"
+                        />
+                      )}
                     />
-                  )}
-                />
-
-                <Controller
-                  name="prepaidTaxMonths"
-                  control={control}
-                  render={({ field }) => (
-                    <InputGroup
-                      label="Tax Months"
+                    <Controller
                       name="prepaidTaxMonths"
-                      type="number"
-                      value={field.value}
-                      onChange={(val) => field.onChange(Number(val) || 0)}
-                      suffix="mo"
+                      control={control}
+                      render={({ field }) => (
+                        <InputGroup
+                          label="Tax Months"
+                          name="prepaidTaxMonths"
+                          type="number"
+                          value={field.value}
+                          onChange={(val) => field.onChange(Number(val) || 0)}
+                          suffix="mo"
+                        />
+                      )}
                     />
-                  )}
-                />
-
-                <Controller
-                  name="prepaidInsuranceMonths"
-                  control={control}
-                  render={({ field }) => (
-                    <InputGroup
-                      label="Insurance Months"
+                    <Controller
                       name="prepaidInsuranceMonths"
-                      type="number"
-                      value={field.value}
-                      onChange={(val) => field.onChange(Number(val) || 0)}
-                      suffix="mo"
+                      control={control}
+                      render={({ field }) => (
+                        <InputGroup
+                          label="Ins. Months"
+                          name="prepaidInsuranceMonths"
+                          type="number"
+                          value={field.value}
+                          onChange={(val) => field.onChange(Number(val) || 0)}
+                          suffix="mo"
+                        />
+                      )}
                     />
-                  )}
-                />
-              </div>
+                  </div>
 
-              <div className="grid grid-cols-3 gap-4">
-                <Controller
-                  name="prepaidInterestAmount"
-                  control={control}
-                  render={({ field }) => (
-                    <InputGroup
-                      label="Pre. Interest Amount"
+                  {/* Estimated Closing Costs */}
+                  <div className="pt-2 border-t border-slate-100 mb-3">
+                    <h4 className="font-medium text-slate-700 mb-3">Estimated Closing Costs</h4>
+                    <Controller
+                      name="closingCostsTotal"
+                      control={control}
+                      render={({ field }) => (
+                        <InputGroup
+                          label="Closing Costs"
+                          name="closingCostsTotal"
+                          type="number"
+                          value={field.value}
+                          onChange={(val) => field.onChange(Number(val) || 0)}
+                          prefix="$"
+                          placeholder="0.00"
+                          className="text-lg font-semibold"
+                        />
+                      )}
+                    />
+                  </div>
+
+                  <div className="grid grid-cols-3 gap-3">
+                    <Controller
                       name="prepaidInterestAmount"
-                      type="number"
-                      value={field.value}
-                      onChange={(val) => field.onChange(Number(val) || 0)}
-                      prefix="$"
-                      disabled={isDisabled}
+                      control={control}
+                      render={({ field }) => (
+                        <InputGroup
+                          label="Interest Amt"
+                          name="prepaidInterestAmount"
+                          type="number"
+                          value={field.value}
+                          onChange={(val) => field.onChange(Number(val) || 0)}
+                          prefix="$"
+                        />
+                      )}
                     />
-                  )}
-                />
-
-                <Controller
-                  name="prepaidTaxAmount"
-                  control={control}
-                  render={({ field }) => (
-                    <InputGroup
-                      label="Prepaid Tax Amount"
+                    <Controller
                       name="prepaidTaxAmount"
-                      type="number"
-                      value={field.value}
-                      onChange={(val) => field.onChange(Number(val) || 0)}
-                      prefix="$"
-                      disabled={isDisabled}
+                      control={control}
+                      render={({ field }) => (
+                        <InputGroup
+                          label="Tax Amt"
+                          name="prepaidTaxAmount"
+                          type="number"
+                          value={field.value}
+                          onChange={(val) => field.onChange(Number(val) || 0)}
+                          prefix="$"
+                        />
+                      )}
                     />
-                  )}
-                />
-
-                <Controller
-                  name="prepaidInsuranceAmount"
-                  control={control}
-                  render={({ field }) => (
-                    <InputGroup
-                      label="Prepaid Ins Amount"
+                    <Controller
                       name="prepaidInsuranceAmount"
-                      type="number"
-                      value={field.value}
-                      onChange={(val) => field.onChange(Number(val) || 0)}
-                      prefix="$"
-                      disabled={isDisabled}
+                      control={control}
+                      render={({ field }) => (
+                        <InputGroup
+                          label="Ins. Amt"
+                          name="prepaidInsuranceAmount"
+                          type="number"
+                          value={field.value}
+                          onChange={(val) => field.onChange(Number(val) || 0)}
+                          prefix="$"
+                        />
+                      )}
                     />
-                  )}
-                />
+                  </div>
+                </div>
+
+                <div className="border-t border-slate-200 pt-4 mt-4">
+                  <h4 className="text-sm font-medium text-slate-700 mb-3">Partner Agent</h4>
+                  <AgentSelector />
+                </div>
               </div>
-            </div>
 
-            {/* VA Fee Info */}
-            <div className="bg-green-50 rounded-lg p-4">
-              <h4 className="text-sm font-medium text-green-800 mb-2">
-                VA Loan Benefits
-              </h4>
-              <ul className="text-sm text-green-700 space-y-1">
-                <li>• No down payment required</li>
-                <li>• No monthly mortgage insurance (PMI)</li>
-                <li>• Funding fee can be financed into loan</li>
-                <li>• Disabled veterans are exempt from funding fee</li>
-              </ul>
-            </div>
-
-            {/* Partner Agent */}
-            <div className="space-y-4">
-              <h3 className="text-sm font-semibold text-slate-700 uppercase tracking-wide">
-                Partner Agent
-              </h3>
-              <AgentSelector disabled={isDisabled} />
-            </div>
-
-            {/* Actions */}
-            <div className="flex gap-3 pt-4">
-              <Button type="submit" fullWidth disabled={isDisabled} loading={configLoading}>
-                {t('common.calculate')}
-              </Button>
-              <Button type="button" variant="outline" onClick={handleReset} disabled={isDisabled}>
-                {t('common.reset')}
-              </Button>
-            </div>
-          </form>
-        </CardContent>
-      </Card>
-
-      {/* Results */}
-      <div>
-        {vaResult ? (
-          <ResultSummary
-            result={vaResult}
-            config={config}
-            loanType={t('va.title')}
-            formId="va"
-          />
-        ) : (
-          <Card className="h-full flex items-center justify-center">
-            <CardContent>
-              <div className="text-center py-12">
-                <div className="text-6xl mb-4">🎖️</div>
-                <h3 className="text-lg font-medium text-slate-800 mb-2">
-                  Ready to Calculate
-                </h3>
-                <p className="text-sm text-slate-500">
-                  Enter your VA loan details and click Calculate to see your estimated payment breakdown.
-                </p>
+              {/* Action Buttons (Sticky Bottom) */}
+              <div className="pt-4 border-t border-slate-100 flex gap-3">
+                <Button
+                  type="submit"
+                  fullWidth
+                  size="lg"
+                  disabled={isDisabled}
+                  loading={configLoading}
+                  className="bg-blue-600 hover:bg-blue-700 text-white shadow-md transition-all hover:scale-[1.02]"
+                >
+                  {t('common.calculate')}
+                </Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={handleReset}
+                  disabled={isDisabled}
+                  className="px-6"
+                >
+                  {t('common.reset')}
+                </Button>
               </div>
-            </CardContent>
-          </Card>
-        )}
+            </form>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Right Panel - Results */}
+      <div className="lg:col-span-7">
+        <div className="h-full sticky top-4">
+          {vaResult ? (
+            <ResultSummary
+              result={vaResult}
+              config={config}
+              loanType={t('va.title')}
+              formId="va"
+            />
+          ) : (
+            <Card className="h-full min-h-[500px] flex items-center justify-center bg-white shadow-md border-slate-200">
+              <CardContent className="h-full flex items-center justify-center">
+                <div className="text-center py-12 max-w-md mx-auto">
+                  <div className="text-6xl mb-6 opacity-30 flex justify-center">
+                    <svg className="w-24 h-24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M21 21H3V3H21V21ZM5 19H19V5H5V19Z" fill="currentColor" />
+                      <path d="M7 11H9V17H7V11Z" fill="currentColor" />
+                      <path d="M11 7H13V17H11V7Z" fill="currentColor" />
+                      <path d="M15 13H17V17H15V13Z" fill="currentColor" />
+                    </svg>
+                  </div>
+                  <h3 className="text-2xl font-bold text-slate-800 mb-3">
+                    {t('calculator.readyToCalculate')}
+                  </h3>
+                  <p className="text-slate-500 text-lg mb-8 leading-relaxed">
+                    Enter your VA loan details and click Calculate to see your comprehensive breakdown.
+                  </p>
+                  <Button
+                    variant="outline"
+                    onClick={() => setActiveTab('property')}
+                    className="border-blue-200 text-blue-600 hover:bg-blue-50 cursor-pointer"
+                  >
+                    Start with Property Details
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+        </div>
       </div>
     </div>
   );

@@ -131,292 +131,346 @@ export function SellerNetForm() {
     setResult(null);
   };
 
+  // ... imports and state ...
+  const [activeTab, setActiveTab] = useState('sale');
+
+  const tabs = [
+    { id: 'sale', label: 'Sale & Loans' },
+    { id: 'costs', label: 'Closing Costs' },
+    { id: 'credits', label: 'Credits/Debits' },
+  ];
+
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-      {/* Form */}
-      <Card>
-        <CardHeader>
-          <CardTitle>{t('sellerNet.title')}</CardTitle>
-          <CardDescription>{t('sellerNet.description')}</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={handleSubmit(onCalculate)} className="space-y-6">
-            {/* Property */}
-            <div className="space-y-4">
-              <h3 className="text-sm font-semibold text-slate-700 uppercase tracking-wide">
-                Property Sale
-              </h3>
-
-              <Controller
-                name="salesPrice"
-                control={control}
-                render={({ field }) => (
-                  <InputGroup
-                    label={t('sellerNet.inputs.salesPrice')}
-                    name="salesPrice"
-                    type="number"
-                    value={field.value}
-                    onChange={(val) => field.onChange(Number(val) || 0)}
-                    prefix="$"
-                    error={errors.salesPrice?.message}
-                    required
-                  />
-                )}
-              />
+    <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 p-4 bg-slate-50 min-h-[calc(100vh-100px)]">
+      {/* Left Panel - Input Form */}
+      <div className="lg:col-span-5 flex flex-col gap-4">
+        <Card className={`${result ? 'h-fit' : 'flex-1 flex flex-col'} overflow-hidden`}>
+          <CardHeader className="pb-0">
+            <div className="flex justify-center mb-6">
+              <CardTitle className="text-xl font-bold text-slate-800 px-6 py-2 rounded-lg text-center inline-block">
+                {t('sellerNet.title')}
+              </CardTitle>
             </div>
-
-            {/* Loan Payoffs */}
-            <div className="space-y-4">
-              <h3 className="text-sm font-semibold text-slate-700 uppercase tracking-wide">
-                Loan Payoffs
-              </h3>
-
-              <Controller
-                name="existingLoanPayoff"
-                control={control}
-                render={({ field }) => (
-                  <InputGroup
-                    label={t('sellerNet.inputs.existingLoanPayoff')}
-                    name="existingLoanPayoff"
-                    type="number"
-                    value={field.value}
-                    onChange={(val) => field.onChange(Number(val) || 0)}
-                    prefix="$"
-                  />
-                )}
-              />
-
-              <Controller
-                name="secondLienPayoff"
-                control={control}
-                render={({ field }) => (
-                  <InputGroup
-                    label={t('sellerNet.inputs.secondLienPayoff')}
-                    name="secondLienPayoff"
-                    type="number"
-                    value={field.value}
-                    onChange={(val) => field.onChange(Number(val) || 0)}
-                    prefix="$"
-                    helperText="HELOC, 2nd mortgage, etc."
-                  />
-                )}
-              />
+            <div className="flex p-1 bg-slate-100 rounded-lg">
+              {tabs.map((tab) => (
+                <button
+                  key={tab.id}
+                  onClick={() => setActiveTab(tab.id)}
+                  type="button"
+                  className={`flex-1 px-3 py-2 text-sm font-medium rounded-md transition-all cursor-pointer ${activeTab === tab.id
+                    ? 'bg-blue-600 text-white shadow-sm'
+                    : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200'
+                    }`}
+                >
+                  {tab.label}
+                </button>
+              ))}
             </div>
+          </CardHeader>
+          <CardContent className="flex-1 overflow-y-auto pt-6">
+            <form onSubmit={handleSubmit(onCalculate)} className="space-y-6">
 
-            {/* Commission & Fees */}
-            <div className="space-y-4">
-              <h3 className="text-sm font-semibold text-slate-700 uppercase tracking-wide">
-                Commission & Fees
-              </h3>
-
-              <Controller
-                name="commissionPercent"
-                control={control}
-                render={({ field }) => (
-                  <InputGroup
-                    label={t('sellerNet.inputs.commissionPercent')}
-                    name="commissionPercent"
-                    type="number"
-                    value={field.value}
-                    onChange={(val) => field.onChange(Number(val) || 0)}
-                    suffix="%"
-                    step="0.5"
-                    helperText="Total buyer + seller agent commission"
-                  />
-                )}
-              />
-
-              <div className="grid grid-cols-2 gap-4">
-                <Controller
-                  name="titleInsurance"
-                  control={control}
-                  render={({ field }) => (
-                    <InputGroup
-                      label={t('sellerNet.inputs.titleInsurance')}
-                      name="titleInsurance"
-                      type="number"
-                      value={field.value}
-                      onChange={(val) => field.onChange(Number(val) || 0)}
-                      prefix="$"
-                    />
-                  )}
-                />
-
-                <Controller
-                  name="escrowFee"
-                  control={control}
-                  render={({ field }) => (
-                    <InputGroup
-                      label={t('sellerNet.inputs.escrowFee')}
-                      name="escrowFee"
-                      type="number"
-                      value={field.value}
-                      onChange={(val) => field.onChange(Number(val) || 0)}
-                      prefix="$"
-                    />
-                  )}
-                />
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <Controller
-                  name="transferTax"
-                  control={control}
-                  render={({ field }) => (
-                    <InputGroup
-                      label={t('sellerNet.inputs.transferTax')}
-                      name="transferTax"
-                      type="number"
-                      value={field.value}
-                      onChange={(val) => field.onChange(Number(val) || 0)}
-                      prefix="$"
-                    />
-                  )}
-                />
-
-                <Controller
-                  name="recordingFees"
-                  control={control}
-                  render={({ field }) => (
-                    <InputGroup
-                      label={t('sellerNet.inputs.recordingFees')}
-                      name="recordingFees"
-                      type="number"
-                      value={field.value}
-                      onChange={(val) => field.onChange(Number(val) || 0)}
-                      prefix="$"
-                    />
-                  )}
-                />
-              </div>
-            </div>
-
-            {/* Other Costs */}
-            <div className="space-y-4">
-              <h3 className="text-sm font-semibold text-slate-700 uppercase tracking-wide">
-                Other Costs
-              </h3>
-
-              <div className="grid grid-cols-2 gap-4">
-                <Controller
-                  name="repairCredits"
-                  control={control}
-                  render={({ field }) => (
-                    <InputGroup
-                      label={t('sellerNet.inputs.repairCredits')}
-                      name="repairCredits"
-                      type="number"
-                      value={field.value}
-                      onChange={(val) => field.onChange(Number(val) || 0)}
-                      prefix="$"
-                      helperText="Credit to buyer for repairs"
-                    />
-                  )}
-                />
-
-                <Controller
-                  name="hoaPayoff"
-                  control={control}
-                  render={({ field }) => (
-                    <InputGroup
-                      label={t('sellerNet.inputs.hoaPayoff')}
-                      name="hoaPayoff"
-                      type="number"
-                      value={field.value}
-                      onChange={(val) => field.onChange(Number(val) || 0)}
-                      prefix="$"
-                    />
-                  )}
-                />
-              </div>
-
-              <Controller
-                name="otherDebits"
-                control={control}
-                render={({ field }) => (
-                  <InputGroup
-                    label={t('sellerNet.inputs.otherDebits')}
-                    name="otherDebits"
-                    type="number"
-                    value={field.value}
-                    onChange={(val) => field.onChange(Number(val) || 0)}
-                    prefix="$"
-                    helperText="Any other seller costs"
-                  />
-                )}
-              />
-            </div>
-
-            {/* Credits */}
-            <div className="space-y-4">
-              <h3 className="text-sm font-semibold text-slate-700 uppercase tracking-wide">
-                Credits to Seller
-              </h3>
-
-              <Controller
-                name="propertyTaxProration"
-                control={control}
-                render={({ field }) => (
-                  <InputGroup
-                    label={t('sellerNet.inputs.propertyTaxProration')}
-                    name="propertyTaxProration"
-                    type="number"
-                    value={field.value}
-                    onChange={(val) => field.onChange(Number(val) || 0)}
-                    prefix="$"
-                    helperText="Credit if taxes prepaid"
-                  />
-                )}
-              />
-
-              <Controller
-                name="otherCredits"
-                control={control}
-                render={({ field }) => (
-                  <InputGroup
-                    label={t('sellerNet.inputs.otherCredits')}
-                    name="otherCredits"
-                    type="number"
-                    value={field.value}
-                    onChange={(val) => field.onChange(Number(val) || 0)}
-                    prefix="$"
-                  />
-                )}
-              />
-            </div>
-
-            {/* Actions */}
-            <div className="flex gap-3 pt-4">
-              <Button type="submit" fullWidth>
-                {t('common.calculate')}
-              </Button>
-              <Button type="button" variant="outline" onClick={handleReset}>
-                {t('common.reset')}
-              </Button>
-            </div>
-          </form>
-        </CardContent>
-      </Card>
-
-      {/* Results */}
-      <div>
-        {result ? (
-          <SellerNetResult result={result} />
-        ) : (
-          <Card className="h-full flex items-center justify-center">
-            <CardContent>
-              <div className="text-center py-12">
-                <div className="text-6xl mb-4">💰</div>
-                <h3 className="text-lg font-medium text-slate-800 mb-2">
-                  Ready to Calculate
+              {/* Tab 1: Sale & Loans */}
+              <div className={activeTab === 'sale' ? 'block space-y-5' : 'hidden'}>
+                <h3 className="text-sm font-semibold text-slate-700 uppercase tracking-wide">
+                  Property Sale
                 </h3>
-                <p className="text-sm text-slate-500">
-                  Enter sale details and click Calculate to see estimated net proceeds.
-                </p>
+                <Controller
+                  name="salesPrice"
+                  control={control}
+                  render={({ field }) => (
+                    <InputGroup
+                      label={t('sellerNet.inputs.salesPrice')}
+                      name="salesPrice"
+                      type="number"
+                      value={field.value}
+                      onChange={(val) => field.onChange(Number(val) || 0)}
+                      prefix="$"
+                      error={errors.salesPrice?.message}
+                      className="text-lg"
+                      required
+                    />
+                  )}
+                />
+
+                <div className="border-t border-slate-200 pt-4 mt-4">
+                  <h3 className="text-sm font-semibold text-slate-700 uppercase tracking-wide mb-3">
+                    Loan Payoffs
+                  </h3>
+                  <div className="space-y-4">
+                    <Controller
+                      name="existingLoanPayoff"
+                      control={control}
+                      render={({ field }) => (
+                        <InputGroup
+                          label={t('sellerNet.inputs.existingLoanPayoff')}
+                          name="existingLoanPayoff"
+                          type="number"
+                          value={field.value}
+                          onChange={(val) => field.onChange(Number(val) || 0)}
+                          prefix="$"
+                        />
+                      )}
+                    />
+
+                    <Controller
+                      name="secondLienPayoff"
+                      control={control}
+                      render={({ field }) => (
+                        <InputGroup
+                          label={t('sellerNet.inputs.secondLienPayoff')}
+                          name="secondLienPayoff"
+                          type="number"
+                          value={field.value}
+                          onChange={(val) => field.onChange(Number(val) || 0)}
+                          prefix="$"
+                          helperText="HELOC, 2nd mortgage, etc."
+                        />
+                      )}
+                    />
+                  </div>
+                </div>
               </div>
-            </CardContent>
-          </Card>
-        )}
+
+              {/* Tab 2: Closing Costs */}
+              <div className={activeTab === 'costs' ? 'block space-y-5' : 'hidden'}>
+                <h3 className="text-sm font-semibold text-slate-700 uppercase tracking-wide">
+                  Commission & Fees
+                </h3>
+                <Controller
+                  name="commissionPercent"
+                  control={control}
+                  render={({ field }) => (
+                    <InputGroup
+                      label={t('sellerNet.inputs.commissionPercent')}
+                      name="commissionPercent"
+                      type="number"
+                      value={field.value}
+                      onChange={(val) => field.onChange(Number(val) || 0)}
+                      suffix="%"
+                      step="0.5"
+                      helperText="Total buyer + seller agent commission"
+                    />
+                  )}
+                />
+
+                <div className="grid grid-cols-2 gap-4">
+                  <Controller
+                    name="titleInsurance"
+                    control={control}
+                    render={({ field }) => (
+                      <InputGroup
+                        label={t('sellerNet.inputs.titleInsurance')}
+                        name="titleInsurance"
+                        type="number"
+                        value={field.value}
+                        onChange={(val) => field.onChange(Number(val) || 0)}
+                        prefix="$"
+                      />
+                    )}
+                  />
+
+                  <Controller
+                    name="escrowFee"
+                    control={control}
+                    render={({ field }) => (
+                      <InputGroup
+                        label={t('sellerNet.inputs.escrowFee')}
+                        name="escrowFee"
+                        type="number"
+                        value={field.value}
+                        onChange={(val) => field.onChange(Number(val) || 0)}
+                        prefix="$"
+                      />
+                    )}
+                  />
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <Controller
+                    name="transferTax"
+                    control={control}
+                    render={({ field }) => (
+                      <InputGroup
+                        label={t('sellerNet.inputs.transferTax')}
+                        name="transferTax"
+                        type="number"
+                        value={field.value}
+                        onChange={(val) => field.onChange(Number(val) || 0)}
+                        prefix="$"
+                      />
+                    )}
+                  />
+
+                  <Controller
+                    name="recordingFees"
+                    control={control}
+                    render={({ field }) => (
+                      <InputGroup
+                        label={t('sellerNet.inputs.recordingFees')}
+                        name="recordingFees"
+                        type="number"
+                        value={field.value}
+                        onChange={(val) => field.onChange(Number(val) || 0)}
+                        prefix="$"
+                      />
+                    )}
+                  />
+                </div>
+              </div>
+
+              {/* Tab 3: Credits/Debits */}
+              <div className={activeTab === 'credits' ? 'block space-y-5' : 'hidden'}>
+                <h3 className="text-sm font-semibold text-slate-700 uppercase tracking-wide">
+                  Other Costs & Credits
+                </h3>
+                <div className="grid grid-cols-2 gap-4">
+                  <Controller
+                    name="repairCredits"
+                    control={control}
+                    render={({ field }) => (
+                      <InputGroup
+                        label={t('sellerNet.inputs.repairCredits')}
+                        name="repairCredits"
+                        type="number"
+                        value={field.value}
+                        onChange={(val) => field.onChange(Number(val) || 0)}
+                        prefix="$"
+                        helperText="Credit to buyer"
+                      />
+                    )}
+                  />
+
+                  <Controller
+                    name="hoaPayoff"
+                    control={control}
+                    render={({ field }) => (
+                      <InputGroup
+                        label={t('sellerNet.inputs.hoaPayoff')}
+                        name="hoaPayoff"
+                        type="number"
+                        value={field.value}
+                        onChange={(val) => field.onChange(Number(val) || 0)}
+                        prefix="$"
+                      />
+                    )}
+                  />
+                </div>
+
+                <Controller
+                  name="otherDebits"
+                  control={control}
+                  render={({ field }) => (
+                    <InputGroup
+                      label={t('sellerNet.inputs.otherDebits')}
+                      name="otherDebits"
+                      type="number"
+                      value={field.value}
+                      onChange={(val) => field.onChange(Number(val) || 0)}
+                      prefix="$"
+                      helperText="Any other seller costs"
+                    />
+                  )}
+                />
+
+                <div className="border-t border-slate-200 pt-4 mt-4">
+                  <h3 className="text-sm font-semibold text-slate-700 uppercase tracking-wide mb-3">
+                    Credits to Seller
+                  </h3>
+                  <div className="grid grid-cols-2 gap-4">
+                    <Controller
+                      name="propertyTaxProration"
+                      control={control}
+                      render={({ field }) => (
+                        <InputGroup
+                          label={t('sellerNet.inputs.propertyTaxProration')}
+                          name="propertyTaxProration"
+                          type="number"
+                          value={field.value}
+                          onChange={(val) => field.onChange(Number(val) || 0)}
+                          prefix="$"
+                          helperText="Prepaid taxes"
+                        />
+                      )}
+                    />
+
+                    <Controller
+                      name="otherCredits"
+                      control={control}
+                      render={({ field }) => (
+                        <InputGroup
+                          label={t('sellerNet.inputs.otherCredits')}
+                          name="otherCredits"
+                          type="number"
+                          value={field.value}
+                          onChange={(val) => field.onChange(Number(val) || 0)}
+                          prefix="$"
+                        />
+                      )}
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Action Buttons (Sticky Bottom) */}
+              <div className="pt-4 border-t border-slate-100 flex gap-3">
+                <Button
+                  type="submit"
+                  fullWidth
+                  size="lg"
+                  className="bg-blue-600 hover:bg-blue-700 text-white shadow-md transition-all hover:scale-[1.02]"
+                >
+                  {t('common.calculate')}
+                </Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={handleReset}
+                  className="px-6"
+                >
+                  {t('common.reset')}
+                </Button>
+              </div>
+            </form>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Right Panel - Results */}
+      <div className="lg:col-span-7">
+        <div className="h-full sticky top-4">
+          {result ? (
+            <SellerNetResult result={result} />
+          ) : (
+            <Card className="h-full min-h-[500px] flex items-center justify-center bg-white shadow-md border-slate-200">
+              <CardContent className="h-full flex items-center justify-center">
+                <div className="text-center py-12 max-w-md mx-auto">
+                  <div className="text-6xl mb-6 opacity-30 flex justify-center">
+                    <svg className="w-24 h-24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M21 21H3V3H21V21ZM5 19H19V5H5V19Z" fill="currentColor" />
+                      <path d="M7 11H9V17H7V11Z" fill="currentColor" />
+                      <path d="M11 7H13V17H11V7Z" fill="currentColor" />
+                      <path d="M15 13H17V17H15V13Z" fill="currentColor" />
+                    </svg>
+                  </div>
+                  <h3 className="text-2xl font-bold text-slate-800 mb-3">
+                    {t('calculator.readyToCalculate')}
+                  </h3>
+                  <p className="text-slate-500 text-lg mb-8 leading-relaxed">
+                    Enter sale details and click Calculate to see estimated net proceeds for the seller.
+                  </p>
+                  <Button
+                    variant="outline"
+                    onClick={() => setActiveTab('sale')}
+                    className="border-blue-200 text-blue-600 hover:bg-blue-50 cursor-pointer"
+                  >
+                    Start with Sale Price
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+        </div>
       </div>
     </div>
   );

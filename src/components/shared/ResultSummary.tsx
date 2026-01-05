@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import { useTranslations } from 'next-intl';
 import type { LoanCalculationResult, GhlConfig } from '@/lib/schemas';
 import { PdfDownloadButtons } from './PdfDownloadButtons';
@@ -65,6 +66,8 @@ export function ResultSummary({
   formId,
 }: ResultSummaryProps) {
   const t = useTranslations('calculator');
+  const [activeTab, setActiveTab] = useState('summary');
+  const [closingTab, setClosingTab] = useState('prepaid');
 
   const isRefi = formId?.includes('refi');
 
@@ -81,56 +84,88 @@ export function ResultSummary({
     return `${value.toFixed(3)}%`;
   };
 
-  return (
-    <div className="space-y-6">
-      {/* Primary Results */}
-      <div className="bg-white rounded-xl border border-slate-200 p-6">
-        <h3 className="text-lg font-semibold text-slate-800 mb-4">
-          {t('results.title')}
-        </h3>
+  const mainTabs = [
+    { id: 'summary', label: 'Loan Summary' },
+    { id: 'payment', label: 'Monthly Payment' },
+    { id: 'closing', label: 'Closing Costs' },
+    { id: 'cash', label: 'Cash to Close' },
+  ];
 
-        <div className="space-y-2">
-          <ResultItem
-            label={t('results.loanAmount')}
-            value={formatCurrency(result.loanAmount)}
-          />
-          <ResultItem
-            label={t('results.downPayment')}
-            value={formatCurrency(result.downPayment)}
-            subtext={formatPercent(100 - result.ltv)}
-          />
-          <ResultItem
-            label={t('results.ltv')}
-            value={formatPercent(result.ltv)}
-          />
-          {formId === 'fha' && result.totalLoanAmount !== result.loanAmount && (
-            <ResultItem
-              label="Loan with MIP"
-              value={formatCurrency(result.totalLoanAmount)}
-            />
-          )}
-          {/* Hide Monthly Payment highlight for Conventional, FHA, and VA as per user request */}
-          {!['conventional', 'conventional-refi', 'fha', 'va', 'fha-refi', 'va-refi'].includes(formId || '') && (
-            <ResultItem
-              label={t('results.monthlyPayment')}
-              value={formatCurrency(result.monthlyPayment.totalMonthly)}
-              highlight
-            />
-          )}
-          <ResultItem
-            label="Prepaids"
-            value={formatCurrency(result.closingCosts.totalPrepaids)}
-          />
-          <ResultItem
-            label="Closing Costs (Fees Only)"
-            value={formatCurrency(result.closingCosts.totalLenderFees + result.closingCosts.totalThirdPartyFees)}
-          />
+  const closingTabs = [
+    { id: 'prepaid', label: 'Prepaid Items' },
+    { id: 'lender', label: 'Lender Fees' },
+    { id: 'title', label: 'Title Fees' },
+  ];
+
+  return (
+    <div className="space-y-4">
+      {/* Main Tabs Navigation */}
+      <div className="bg-white p-1 rounded-lg border border-slate-200">
+        <div className="flex gap-1 overflow-x-auto no-scrollbar">
+          {mainTabs.map((tab) => (
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id)}
+              className={`flex-1 min-w-max px-3 py-2 text-sm font-medium rounded-md transition-all whitespace-nowrap cursor-pointer ${activeTab === tab.id
+                ? 'bg-blue-600 text-white shadow-sm'
+                : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
+                }`}
+            >
+              {tab.label}
+            </button>
+          ))}
         </div>
       </div>
 
-      {/* Monthly Payment Breakdown */}
-      {showMonthlyBreakdown && (
-        <div className="bg-white rounded-xl border border-slate-200 p-6">
+      {/* Tab 1: Loan Summary */}
+      {activeTab === 'summary' && (
+        <div className="bg-white rounded-xl border border-slate-200 p-6 animate-in fade-in duration-300">
+          <h3 className="text-lg font-semibold text-slate-800 mb-4">
+            {t('results.title')}
+          </h3>
+
+          <div className="space-y-2">
+            <ResultItem
+              label={t('results.loanAmount')}
+              value={formatCurrency(result.loanAmount)}
+            />
+            <ResultItem
+              label={t('results.downPayment')}
+              value={formatCurrency(result.downPayment)}
+              subtext={formatPercent(100 - result.ltv)}
+            />
+            <ResultItem
+              label={t('results.ltv')}
+              value={formatPercent(result.ltv)}
+            />
+            {formId === 'fha' && result.totalLoanAmount !== result.loanAmount && (
+              <ResultItem
+                label="Loan with MIP"
+                value={formatCurrency(result.totalLoanAmount)}
+              />
+            )}
+            {!['conventional', 'conventional-refi', 'fha', 'va', 'fha-refi', 'va-refi'].includes(formId || '') && (
+              <ResultItem
+                label={t('results.monthlyPayment')}
+                value={formatCurrency(result.monthlyPayment.totalMonthly)}
+                highlight
+              />
+            )}
+            <ResultItem
+              label="Prepaids"
+              value={formatCurrency(result.closingCosts.totalPrepaids)}
+            />
+            <ResultItem
+              label="Closing Costs (Fees Only)"
+              value={formatCurrency(result.closingCosts.totalLenderFees + result.closingCosts.totalThirdPartyFees)}
+            />
+          </div>
+        </div>
+      )}
+
+      {/* Tab 2: Monthly Payment */}
+      {activeTab === 'payment' && showMonthlyBreakdown && (
+        <div className="bg-white rounded-xl border border-slate-200 p-6 animate-in fade-in duration-300">
           <h3 className="text-lg font-semibold text-slate-800 mb-4">
             {t('results.monthlyBreakdown')}
           </h3>
@@ -181,184 +216,233 @@ export function ResultSummary({
         </div>
       )}
 
-      {/* Closing Costs */}
-      {showClosingCosts && (
-        <div className="bg-white rounded-xl border border-slate-200 p-6">
-          <h3 className="text-lg font-semibold text-slate-800 mb-4">
-            {t('results.closingCosts')}
-          </h3>
-
-          <ResultSection title={t('results.prepaidItems')}>
-            <ResultItem
-              label={`Prepaid Interest (${result.closingCosts.prepaidInterestDays ?? 15} days)`}
-              value={formatCurrency(result.closingCosts.prepaidInterest)}
-            />
-            <ResultItem
-              label={`Prepaid property tax (${result.closingCosts.prepaidTaxMonths ?? 0} months)`}
-              value={formatCurrency(result.closingCosts.taxReserves)}
-            />
-            <ResultItem
-              label={`Prepaid hazard ins (${result.closingCosts.prepaidInsuranceMonths ?? 0} months)`}
-              value={formatCurrency(result.closingCosts.insuranceReserves)}
-            />
-          </ResultSection>
-
-          <div className="mt-4">
-            <ResultSection title={t('results.lenderFees')}>
-              {result.closingCosts.loanFee !== undefined && (
-                <ResultItem
-                  label="Loan Fee / Origination Fee"
-                  value={formatCurrency(result.closingCosts.loanFee)}
-                />
-              )}
-              {result.closingCosts.adminFee > 0 && (
-                <ResultItem
-                  label={t('results.adminFee')}
-                  value={formatCurrency(result.closingCosts.adminFee)}
-                />
-              )}
-              <ResultItem
-                label={t('results.docPrepFee')}
-                value={formatCurrency(result.closingCosts.docPrepFee)}
-              />
-              <ResultItem
-                label={t('results.processingFee')}
-                value={formatCurrency(result.closingCosts.processingFee)}
-              />
-              <ResultItem
-                label={t('results.underwritingFee')}
-                value={formatCurrency(result.closingCosts.underwritingFee)}
-              />
-              <ResultItem
-                label={t('results.appraisalFee')}
-                value={formatCurrency(result.closingCosts.appraisalFee)}
-              />
-              <ResultItem
-                label={t('results.creditReportFee')}
-                value={formatCurrency(result.closingCosts.creditReportFee)}
-              />
-              <ResultItem
-                label={t('results.floodCertFee')}
-                value={formatCurrency(result.closingCosts.floodCertFee)}
-              />
-              <ResultItem
-                label={t('results.taxServiceFee')}
-                value={formatCurrency(result.closingCosts.taxServiceFee)}
-              />
-            </ResultSection>
+      {/* Tab 3: Closing Costs */}
+      {activeTab === 'closing' && showClosingCosts && (
+        <div className="bg-white rounded-xl border border-slate-200 overflow-hidden animate-in fade-in duration-300">
+          <div className="p-4 border-b border-slate-100 bg-slate-50">
+            <div className="flex gap-2 text-sm">
+              {closingTabs.map((tab) => (
+                <button
+                  key={tab.id}
+                  onClick={() => setClosingTab(tab.id)}
+                  className={`px-3 py-1.5 rounded-full transition-colors cursor-pointer ${closingTab === tab.id
+                    ? 'bg-slate-800 text-white font-medium'
+                    : 'text-slate-600 hover:bg-slate-200'
+                    }`}
+                >
+                  {tab.label}
+                </button>
+              ))}
+            </div>
           </div>
 
-          <div className="mt-4">
-            <ResultSection title={t('results.titleFees')}>
-              <ResultItem
-                label={t('results.lenderTitlePolicy')}
-                value={formatCurrency(result.closingCosts.lenderTitlePolicy)}
-              />
-              {!isRefi && (
-                <ResultItem
-                  label={t('results.ownerTitlePolicy')}
-                  value={formatCurrency(result.closingCosts.ownerTitlePolicy)}
-                />
-              )}
-              <ResultItem
-                label={t('results.escrowFee')}
-                value={formatCurrency(result.closingCosts.escrowFee)}
-              />
-              <ResultItem
-                label={t('results.recordingFee')}
-                value={formatCurrency(result.closingCosts.recordingFee)}
-              />
-              <ResultItem
-                label={t('results.notaryFee')}
-                value={formatCurrency(result.closingCosts.notaryFee)}
-              />
-              {/* Courier Fee removed as per user request/images */}
+          <div className="p-6">
+            {closingTab === 'prepaid' && (
+              <div className="space-y-4 animate-in slide-in-from-left-2 duration-200">
+                <ResultSection title={t('results.prepaidItems')}>
+                  <ResultItem
+                    label={`Prepaid Interest (${result.closingCosts.prepaidInterestDays ?? 15} days)`}
+                    value={formatCurrency(result.closingCosts.prepaidInterest)}
+                  />
+                  <ResultItem
+                    label={`Prepaid property tax (${result.closingCosts.prepaidTaxMonths ?? 0} months)`}
+                    value={formatCurrency(result.closingCosts.taxReserves)}
+                  />
+                  <ResultItem
+                    label={`Prepaid hazard ins (${result.closingCosts.prepaidInsuranceMonths ?? 0} months)`}
+                    value={formatCurrency(result.closingCosts.insuranceReserves)}
+                  />
+                </ResultSection>
+                <div className="pt-2 border-t border-slate-100">
+                  <ResultItem
+                    label="Total Prepaids"
+                    value={formatCurrency(result.closingCosts.totalPrepaids)}
+                    highlight
+                  />
+                </div>
+              </div>
+            )}
 
-              {!isRefi && (
-                <>
-                  <ResultItem
-                    label={t('results.pestInspectionFee')}
-                    value={formatCurrency(result.closingCosts.pestInspectionFee)}
-                  />
-                  <ResultItem
-                    label={t('results.propertyInspectionFee')}
-                    value={formatCurrency(result.closingCosts.propertyInspectionFee)}
-                  />
-                  {formId !== 'va' && (
+            {closingTab === 'lender' && (
+              <div className="space-y-4 animate-in slide-in-from-left-2 duration-200">
+                <ResultSection title={t('results.lenderFees')}>
+                  {result.closingCosts.loanFee !== undefined && (
                     <ResultItem
-                      label={t('results.poolInspectionFee')}
-                      value={formatCurrency(result.closingCosts.poolInspectionFee)}
+                      label="Loan Fee / Origination Fee"
+                      value={formatCurrency(result.closingCosts.loanFee)}
                     />
                   )}
-                </>
-              )}
-              {result.closingCosts.transferTax !== undefined && (
-                <ResultItem
-                  label="Transfer Tax"
-                  value={formatCurrency(result.closingCosts.transferTax)}
-                />
-              )}
-              {result.closingCosts.mortgageTax !== undefined && (
-                <ResultItem
-                  label="Mortgage Tax"
-                  value={formatCurrency(result.closingCosts.mortgageTax)}
-                />
-              )}
-            </ResultSection>
-          </div>
+                  {result.closingCosts.adminFee > 0 && (
+                    <ResultItem
+                      label={t('results.adminFee')}
+                      value={formatCurrency(result.closingCosts.adminFee)}
+                    />
+                  )}
+                  <ResultItem
+                    label={t('results.docPrepFee')}
+                    value={formatCurrency(result.closingCosts.docPrepFee)}
+                  />
+                  <ResultItem
+                    label={t('results.processingFee')}
+                    value={formatCurrency(result.closingCosts.processingFee)}
+                  />
+                  <ResultItem
+                    label={t('results.underwritingFee')}
+                    value={formatCurrency(result.closingCosts.underwritingFee)}
+                  />
+                  <ResultItem
+                    label={t('results.appraisalFee')}
+                    value={formatCurrency(result.closingCosts.appraisalFee)}
+                  />
+                  <ResultItem
+                    label={t('results.creditReportFee')}
+                    value={formatCurrency(result.closingCosts.creditReportFee)}
+                  />
+                  <ResultItem
+                    label={t('results.floodCertFee')}
+                    value={formatCurrency(result.closingCosts.floodCertFee)}
+                  />
+                  <ResultItem
+                    label={t('results.taxServiceFee')}
+                    value={formatCurrency(result.closingCosts.taxServiceFee)}
+                  />
+                </ResultSection>
 
-          {(result.closingCosts.sellerCredit > 0 || result.closingCosts.lenderCredit > 0) && (
-            <div className="mt-4">
-              <ResultSection title={t('results.credits')}>
-                {result.closingCosts.sellerCredit > 0 && (
-                  <ResultItem
-                    label={t('results.sellerCredit')}
-                    value={`-${formatCurrency(result.closingCosts.sellerCredit)}`}
-                  />
+                {(result.closingCosts.sellerCredit > 0 || result.closingCosts.lenderCredit > 0) && (
+                  <div className="mt-4">
+                    <ResultSection title={t('results.credits')}>
+                      {result.closingCosts.sellerCredit > 0 && (
+                        <ResultItem
+                          label={t('results.sellerCredit')}
+                          value={`-${formatCurrency(result.closingCosts.sellerCredit)}`}
+                        />
+                      )}
+                      {result.closingCosts.lenderCredit > 0 && (
+                        <ResultItem
+                          label={t('results.lenderCredit')}
+                          value={`-${formatCurrency(result.closingCosts.lenderCredit)}`}
+                        />
+                      )}
+                    </ResultSection>
+                  </div>
                 )}
-                {result.closingCosts.lenderCredit > 0 && (
+                <div className="pt-2 border-t border-slate-100">
                   <ResultItem
-                    label={t('results.lenderCredit')}
-                    value={`-${formatCurrency(result.closingCosts.lenderCredit)}`}
+                    label="Total Lender Fees"
+                    value={formatCurrency(result.closingCosts.totalLenderFees)}
+                    highlight
                   />
-                )}
-              </ResultSection>
+                </div>
+              </div>
+            )}
+
+            {closingTab === 'title' && (
+              <div className="space-y-4 animate-in slide-in-from-left-2 duration-200">
+                <ResultSection title={t('results.titleFees')}>
+                  <ResultItem
+                    label={t('results.lenderTitlePolicy')}
+                    value={formatCurrency(result.closingCosts.lenderTitlePolicy)}
+                  />
+                  {!isRefi && (
+                    <ResultItem
+                      label={t('results.ownerTitlePolicy')}
+                      value={formatCurrency(result.closingCosts.ownerTitlePolicy)}
+                    />
+                  )}
+                  <ResultItem
+                    label={t('results.escrowFee')}
+                    value={formatCurrency(result.closingCosts.escrowFee)}
+                  />
+                  <ResultItem
+                    label={t('results.recordingFee')}
+                    value={formatCurrency(result.closingCosts.recordingFee)}
+                  />
+                  <ResultItem
+                    label={t('results.notaryFee')}
+                    value={formatCurrency(result.closingCosts.notaryFee)}
+                  />
+                  {!isRefi && (
+                    <>
+                      <ResultItem
+                        label={t('results.pestInspectionFee')}
+                        value={formatCurrency(result.closingCosts.pestInspectionFee)}
+                      />
+                      <ResultItem
+                        label={t('results.propertyInspectionFee')}
+                        value={formatCurrency(result.closingCosts.propertyInspectionFee)}
+                      />
+                      {formId !== 'va' && (
+                        <ResultItem
+                          label={t('results.poolInspectionFee')}
+                          value={formatCurrency(result.closingCosts.poolInspectionFee)}
+                        />
+                      )}
+                    </>
+                  )}
+                  {result.closingCosts.transferTax !== undefined && (
+                    <ResultItem
+                      label="Transfer Tax"
+                      value={formatCurrency(result.closingCosts.transferTax)}
+                    />
+                  )}
+                  {result.closingCosts.mortgageTax !== undefined && (
+                    <ResultItem
+                      label="Mortgage Tax"
+                      value={formatCurrency(result.closingCosts.mortgageTax)}
+                    />
+                  )}
+                </ResultSection>
+                <div className="pt-2 border-t border-slate-100">
+                  <ResultItem
+                    label="Total Third Party Fees"
+                    value={formatCurrency(result.closingCosts.totalThirdPartyFees)}
+                    highlight
+                  />
+                </div>
+              </div>
+            )}
+
+            <div className="border-t border-slate-200 pt-4 mt-4 bg-slate-50/50 -mx-6 -mb-6 p-6">
+              <ResultItem
+                label={t('results.totalClosingCosts')}
+                value={formatCurrency(result.closingCosts.totalClosingCosts)}
+                highlight
+              />
             </div>
-          )}
-
-          <div className="border-t border-slate-200 pt-4 mt-4">
-            <ResultItem
-              label={t('results.totalClosingCosts')}
-              value={formatCurrency(result.closingCosts.totalClosingCosts)}
-              highlight
-            />
           </div>
         </div>
       )}
 
+      {/* Tab 4: Cash to Close */}
+      {activeTab === 'cash' && (
+        <div className="space-y-6 animate-in fade-in duration-300">
+          <div className="bg-linear-to-r from-[#2A8BB3] to-[#31B2E8] rounded-xl p-6 text-white shadow-lg">
+            <h3 className="text-lg font-semibold mb-2 opacity-90">
+              Estimated Cash to Close
+            </h3>
+            <p className="text-4xl font-bold mb-4 tracking-tight">
+              {formatCurrency(result.cashToClose)}
+            </p>
+            <div className="flex flex-col sm:flex-row gap-2 text-sm bg-white/10 rounded-lg p-3 backdrop-blur-sm">
+              <span className="opacity-90">Down Payment: <strong>{formatCurrency(result.downPayment)}</strong></span>
+              <span className="hidden sm:inline opacity-50">•</span>
+              <span className="opacity-90">Closing Costs: <strong>{formatCurrency(result.closingCosts.totalClosingCosts)}</strong></span>
+            </div>
+          </div>
 
-      {/* Cash to Close */}
-      <div className="bg-linear-to-r from-[#2A8BB3] to-[#31B2E8] rounded-xl p-6 text-white">
-        <h3 className="text-lg font-semibold mb-2">
-          Estimated Cash to Close
-        </h3>
-        <p className="text-3xl font-bold">
-          {formatCurrency(result.cashToClose)}
-        </p>
-        <p className="text-sm text-slate-100 mt-2">
-          Down Payment: {formatCurrency(result.downPayment)} + Closing Costs: {formatCurrency(result.closingCosts.totalClosingCosts)}
-        </p>
-      </div>
-
-      {/* PDF Download Buttons */}
-      {config && (
-        <div className="bg-white rounded-xl border border-slate-200 p-6">
-          <PdfDownloadButtons
-            result={result}
-            config={config}
-            loanType={loanType}
-            propertyAddress={propertyAddress}
-          />
+          {config && (
+            <div className="bg-white rounded-xl border border-slate-200 p-6">
+              {/* <h4 className="text-sm font-semibold text-slate-700 uppercase tracking-wide mb-4">
+                Download Reports
+              </h4> */}
+              <PdfDownloadButtons
+                result={result}
+                config={config}
+                loanType={loanType}
+                propertyAddress={propertyAddress}
+              />
+            </div>
+          )}
         </div>
       )}
     </div>

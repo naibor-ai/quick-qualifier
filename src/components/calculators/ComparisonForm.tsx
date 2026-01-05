@@ -4,7 +4,7 @@ import { useCallback, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { useCalculatorStore } from '@/lib/store';
 import { compareScenarios, type ComparisonResult } from '@/lib/calculations/comparison';
-import { InputGroup, SelectGroup, Button, Card, CardHeader, CardTitle, CardContent } from '@/components/shared';
+import { InputGroup, SelectToggle, Button, Card, CardHeader, CardTitle, CardContent } from '@/components/shared';
 import type { LoanProgram } from '@/lib/schemas';
 
 interface Scenario {
@@ -147,10 +147,12 @@ export function ComparisonForm() {
     <div className="space-y-8">
       {/* Header */}
       <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-slate-800">
-            {t('comparison.title')}
-          </h1>
+        <div className="flex-1 text-center">
+          <div className="flex justify-center mb-2">
+            <h1 className="text-2xl font-bold text-slate-800 px-8 py-2 rounded-lg inline-block">
+              {t('comparison.title')}
+            </h1>
+          </div>
           <p className="text-sm text-slate-500 mt-1">
             {t('comparison.description')}
           </p>
@@ -191,7 +193,7 @@ export function ComparisonForm() {
               </div>
             </CardHeader>
             <CardContent className="space-y-3">
-              <SelectGroup
+              <SelectToggle
                 label={t('calculator.loanProgram')}
                 name={`program-${index}`}
                 value={scenario.program}
@@ -228,7 +230,7 @@ export function ComparisonForm() {
                 step="0.125"
               />
 
-              <SelectGroup
+              <SelectToggle
                 label={t('calculator.term')}
                 name={`term-${index}`}
                 value={String(scenario.termYears)}

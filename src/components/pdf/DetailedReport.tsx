@@ -275,6 +275,19 @@ export function DetailedReport({
           </View>
         </View>
 
+        {/* Closing Costs Adjustment (if present) */}
+        {closingCosts.adjustment && closingCosts.adjustment !== 0 ? (
+          <View style={pdfStyles.section}>
+            <Text style={pdfStyles.sectionTitle}>Adjustments</Text>
+            <View style={pdfStyles.tableRow}>
+              <Text style={[pdfStyles.tableCell, pdfStyles.tableCellLabel]}>Manual Adjustment</Text>
+              <Text style={[pdfStyles.tableCell, pdfStyles.tableCellValue]}>
+                {formatCurrency(closingCosts.adjustment)}
+              </Text>
+            </View>
+          </View>
+        ) : null}
+
         {/* Section D: Credits */}
         {closingCosts.totalCredits > 0 && (
           <View style={pdfStyles.section}>
@@ -307,22 +320,58 @@ export function DetailedReport({
         )}
 
         {/* Cash to Close Section - matching reference image */}
+        {/* Cash to Close Breakdown */}
         <View style={pdfStyles.cashToCloseBox}>
+          <Text style={[pdfStyles.cashToCloseLabel, { color: '#ffffff', marginBottom: 6, fontSize: 12, borderBottomWidth: 1, borderBottomColor: '#ffffff', paddingBottom: 4 }]}>
+            Cash to Close Breakdown
+          </Text>
+
           <View style={pdfStyles.cashToCloseRow}>
-            <Text style={pdfStyles.cashToCloseLabel}>Total Closing Costs</Text>
-            <Text style={pdfStyles.cashToCloseValue}>
+            <Text style={[pdfStyles.cashToCloseLabel, { color: '#e2e8f0', fontSize: 10 }]}>Down Payment</Text>
+            <Text style={[pdfStyles.cashToCloseValue, { color: '#ffffff', fontSize: 10 }]}>
+              {formatCurrency(result.downPayment)}
+            </Text>
+          </View>
+
+          <View style={pdfStyles.cashToCloseRow}>
+            <Text style={[pdfStyles.cashToCloseLabel, { color: '#e2e8f0', fontSize: 10 }]}>+ Total Closing Costs</Text>
+            <Text style={[pdfStyles.cashToCloseValue, { color: '#ffffff', fontSize: 10 }]}>
               {formatCurrency(closingCosts.totalClosingCosts)}
             </Text>
           </View>
-          <View style={[pdfStyles.cashToCloseRow, { marginTop: 8 }]}>
-            <Text style={pdfStyles.cashToCloseHighlightLabel}>Estimated Cash to Close</Text>
-            <Text style={pdfStyles.cashToCloseHighlightValue}>
+
+          {closingCosts.totalCredits > 0 && (
+            <View style={pdfStyles.cashToCloseRow}>
+              <Text style={[pdfStyles.cashToCloseLabel, { color: '#86efac', fontSize: 10 }]}>- Total Credits</Text>
+              <Text style={[pdfStyles.cashToCloseValue, { color: '#86efac', fontSize: 10 }]}>
+                {formatCurrency(closingCosts.totalCredits)}
+              </Text>
+            </View>
+          )}
+
+          {/* Calculate Implied Deposit: CashToClose = Down + (Costs - Credits) - Deposit */}
+          {/* Deposit = Down + Costs - Credits - CashToClose */}
+          {(() => {
+            const impliedDeposit = (result.downPayment + closingCosts.totalClosingCosts - closingCosts.totalCredits) - cashToClose;
+            if (impliedDeposit > 1) { // Threshold for float errors
+              return (
+                <View style={pdfStyles.cashToCloseRow}>
+                  <Text style={[pdfStyles.cashToCloseLabel, { color: '#86efac', fontSize: 10 }]}>- Deposit / Earnest Money</Text>
+                  <Text style={[pdfStyles.cashToCloseValue, { color: '#86efac', fontSize: 10 }]}>
+                    {formatCurrency(impliedDeposit)}
+                  </Text>
+                </View>
+              );
+            }
+            return null;
+          })()}
+
+          <View style={[pdfStyles.cashToCloseRow, { marginTop: 8, paddingTop: 8, borderTopWidth: 1, borderTopColor: 'rgba(255,255,255,0.3)' }]}>
+            <Text style={[pdfStyles.cashToCloseHighlightLabel, { fontSize: 14 }]}>Estimated Cash to Close</Text>
+            <Text style={[pdfStyles.cashToCloseHighlightValue, { fontSize: 14 }]}>
               {formatCurrency(cashToClose)}
             </Text>
           </View>
-          <Text style={{ fontSize: 9, color: '#1E293B', marginTop: 4 }}>
-            Down Payment: {formatCurrency(result.downPayment)} + Closing Costs: {formatCurrency(closingCosts.totalClosingCosts)}
-          </Text>
         </View>
 
         {/* Footer */}
