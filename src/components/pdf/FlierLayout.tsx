@@ -55,37 +55,49 @@ export function FlierLayout({
         </View>
 
         <View style={pdfStyles.twoColumn}>
-          {/* Detailed Breakdown Column */}
+          {/* Monthly Payment Breakdown - Replacing the old Payment Breakdown */}
           <View style={[pdfStyles.column, { flex: 1.2 }]}>
-            <View style={pdfStyles.section}>
-              <Text style={pdfStyles.sectionTitleBlue}>Payment Breakdown</Text>
-              <View style={pdfStyles.tableRow}>
-                <Text style={pdfStyles.tableCell}>Principal & Interest</Text>
-                <Text style={pdfStyles.tableCellValue}>{formatCurrency(monthlyPayment.principalAndInterest)}</Text>
+            <View style={pdfStyles.cashToCloseBox}>
+              <Text style={{ color: '#2563EB', fontSize: 9, fontWeight: 'bold', textTransform: 'uppercase', marginBottom: 10 }}>Monthly Payment Breakdown</Text>
+
+              <View style={[pdfStyles.cashToCloseRow, { paddingVertical: 6 }]}>
+                <Text style={pdfStyles.cashToCloseLabel}>Principal & Interest</Text>
+                <Text style={pdfStyles.cashToCloseValue}>{formatCurrency(monthlyPayment.principalAndInterest)}</Text>
               </View>
-              <View style={pdfStyles.tableRow}>
-                <Text style={pdfStyles.tableCell}>Property Taxes</Text>
-                <Text style={pdfStyles.tableCellValue}>{formatCurrency(monthlyPayment.propertyTax)}</Text>
+              <View style={[pdfStyles.cashToCloseRow, { paddingVertical: 6 }]}>
+                <Text style={pdfStyles.cashToCloseLabel}>Property Taxes</Text>
+                <Text style={pdfStyles.cashToCloseValue}>{formatCurrency(monthlyPayment.propertyTax)}</Text>
               </View>
-              <View style={pdfStyles.tableRow}>
-                <Text style={pdfStyles.tableCell}>Hazard Insurance</Text>
-                <Text style={pdfStyles.tableCellValue}>{formatCurrency(monthlyPayment.homeInsurance)}</Text>
+              <View style={[pdfStyles.cashToCloseRow, { paddingVertical: 6 }]}>
+                <Text style={pdfStyles.cashToCloseLabel}>Home Insurance</Text>
+                <Text style={pdfStyles.cashToCloseValue}>{formatCurrency(monthlyPayment.homeInsurance)}</Text>
               </View>
               {monthlyPayment.mortgageInsurance > 0 && (
-                <View style={pdfStyles.tableRow}>
-                  <Text style={pdfStyles.tableCell}>Mortgage Insurance</Text>
-                  <Text style={pdfStyles.tableCellValue}>{formatCurrency(monthlyPayment.mortgageInsurance)}</Text>
+                <View style={[pdfStyles.cashToCloseRow, { paddingVertical: 6 }]}>
+                  <Text style={pdfStyles.cashToCloseLabel}>Mortgage Insurance</Text>
+                  <Text style={pdfStyles.cashToCloseValue}>{formatCurrency(monthlyPayment.mortgageInsurance)}</Text>
                 </View>
               )}
               {monthlyPayment.hoaDues > 0 && (
-                <View style={pdfStyles.tableRow}>
-                  <Text style={pdfStyles.tableCell}>HOA Dues</Text>
-                  <Text style={pdfStyles.tableCellValue}>{formatCurrency(monthlyPayment.hoaDues)}</Text>
+                <View style={[pdfStyles.cashToCloseRow, { paddingVertical: 6 }]}>
+                  <Text style={pdfStyles.cashToCloseLabel}>HOA Dues</Text>
+                  <Text style={pdfStyles.cashToCloseValue}>{formatCurrency(monthlyPayment.hoaDues)}</Text>
                 </View>
               )}
+              {monthlyPayment.floodInsurance > 0 && (
+                <View style={[pdfStyles.cashToCloseRow, { paddingVertical: 6 }]}>
+                  <Text style={pdfStyles.cashToCloseLabel}>Flood Insurance</Text>
+                  <Text style={pdfStyles.cashToCloseValue}>{formatCurrency(monthlyPayment.floodInsurance)}</Text>
+                </View>
+              )}
+
+              <View style={[pdfStyles.cashToCloseRowLast, { marginTop: 8, paddingTop: 10, borderTopWidth: 1, borderTopColor: '#DBEAFE' }]}>
+                <Text style={pdfStyles.cashToCloseHighlightLabel}>Total Monthly Payment</Text>
+                <Text style={pdfStyles.cashToCloseHighlightValue}>{formatCurrency(monthlyPayment.totalMonthly)}</Text>
+              </View>
             </View>
 
-            <View style={[pdfStyles.section, { marginTop: 5 }]}>
+            <View style={[pdfStyles.section, { marginTop: 15 }]}>
               <Text style={pdfStyles.sectionTitleBlue}>Loan Summary</Text>
               <View style={pdfStyles.tableRow}>
                 <Text style={pdfStyles.tableCell}>Base Loan Amount</Text>
@@ -128,7 +140,7 @@ export function FlierLayout({
 
         {/* Cash to Close Highlight - Moved to bottom for final impact */}
         <View style={pdfStyles.cashToCloseBox}>
-          <Text style={{ color: '#0369A1', fontSize: 9, fontWeight: 'bold', textTransform: 'uppercase', marginBottom: 10 }}>Estimated Cash to Close</Text>
+          <Text style={{ color: '#2563EB', fontSize: 9, fontWeight: 'bold', textTransform: 'uppercase', marginBottom: 10 }}>Estimated Cash to Close</Text>
 
           <View style={{ flexDirection: 'row', gap: 30 }}>
             <View style={{ flex: 1 }}>
@@ -153,7 +165,7 @@ export function FlierLayout({
             </View>
           </View>
 
-          <View style={[pdfStyles.cashToCloseRowLast, { marginTop: 8, paddingTop: 10, borderTopWidth: 1, borderTopColor: '#BAE6FD' }]}>
+          <View style={[pdfStyles.cashToCloseRowLast, { marginTop: 8, paddingTop: 10, borderTopWidth: 1, borderTopColor: '#DBEAFE' }]}>
             <Text style={pdfStyles.cashToCloseHighlightLabel}>Total Estimated Cash Due at Closing</Text>
             <Text style={pdfStyles.cashToCloseHighlightValue}>{formatCurrency(cashToClose)}</Text>
           </View>

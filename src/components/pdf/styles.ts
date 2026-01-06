@@ -170,7 +170,7 @@ export const pdfStyles = StyleSheet.create({
     color: '#1E40AF',
   },
 
-  // Cash to Close highlight styles - matching reference image
+  // Cash to Close highlight styles - matching reference image with blue-600 theme
   cashToCloseBox: {
     backgroundColor: '#F0F9FF',
     padding: 20,
@@ -178,7 +178,7 @@ export const pdfStyles = StyleSheet.create({
     marginBottom: 20,
     marginTop: 15,
     borderWidth: 2,
-    borderColor: '#BAE6FD',
+    borderColor: '#2563EB', // Updated to blue-600 for consistency
   },
   cashToCloseRow: {
     flexDirection: 'row',
@@ -186,7 +186,7 @@ export const pdfStyles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: 10,
     borderBottomWidth: 1,
-    borderBottomColor: '#E0F2FE',
+    borderBottomColor: '#DBEAFE', // Updated to match blue-600 theme
     borderBottomStyle: 'solid',
   },
   cashToCloseRowLast: {
