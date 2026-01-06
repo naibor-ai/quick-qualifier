@@ -14,8 +14,8 @@ export const pdfStyles = StyleSheet.create({
 
   // Header section
   header: {
-    marginBottom: 20,
-    paddingBottom: 15,
+    marginBottom: 10,
+    paddingBottom: 10,
     borderBottomWidth: 2,
     borderBottomColor: '#2563EB',
     borderBottomStyle: 'solid',
@@ -59,14 +59,24 @@ export const pdfStyles = StyleSheet.create({
     marginBottom: 15,
   },
   sectionTitle: {
-    fontSize: 12,
+    fontSize: 14,
     fontWeight: 'bold',
     color: '#1E40AF',
-    marginBottom: 8,
+    marginBottom: 10,
+    marginTop: 15,
     paddingBottom: 4,
-    borderBottomWidth: 1,
-    borderBottomColor: '#E2E8F0',
+    borderBottomWidth: 1.5,
+    borderBottomColor: '#BFDBFE',
     borderBottomStyle: 'solid',
+  },
+  sectionTitleBlue: {
+    backgroundColor: '#EFF6FF',
+    color: '#1E40AF',
+    padding: '6 12',
+    borderRadius: 4,
+    fontSize: 12,
+    fontWeight: 'bold',
+    marginBottom: 10,
   },
 
   // Table styles
@@ -92,28 +102,46 @@ export const pdfStyles = StyleSheet.create({
   },
   tableCell: {
     flex: 1,
-    fontSize: 10,
-    color: '#334155',
+    fontSize: 8.5,
+    color: '#475569',
   },
   tableCellLabel: {
     flex: 2,
+    fontWeight: 'normal',
   },
   tableCellValue: {
     flex: 1,
     textAlign: 'right',
+    color: '#1E293B',
+    fontWeight: 'medium',
+    fontSize: 8.5,
   },
   tableCellBold: {
     fontWeight: 'bold',
+    fontSize: 10,
+    color: '#1E3A8A',
+  },
+  card: {
+    backgroundColor: '#FFFFFF',
+    padding: 10,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
+    marginBottom: 12,
+  },
+  accentCard: {
+    backgroundColor: '#F0F9FF',
+    borderColor: '#BAE6FD',
   },
 
   // Summary box
   summaryBox: {
-    backgroundColor: '#EFF6FF',
-    padding: 15,
+    backgroundColor: '#F8FAFC',
+    padding: 12,
     borderRadius: 6,
     marginBottom: 15,
     borderWidth: 1,
-    borderColor: '#BFDBFE',
+    borderColor: '#E2E8F0',
     borderStyle: 'solid',
   },
   summaryTitle: {
@@ -142,52 +170,71 @@ export const pdfStyles = StyleSheet.create({
     color: '#1E40AF',
   },
 
-  // Cash to Close highlight styles - matching reference image
+  // Cash to Close highlight styles - matching reference image with blue-600 theme
   cashToCloseBox: {
-    backgroundColor: '#F1F5F9',
-    padding: 15,
-    borderRadius: 6,
+    backgroundColor: '#F0F9FF',
+    padding: 20,
+    borderRadius: 12,
     marginBottom: 20,
-    marginTop: 10,
-    borderWidth: 1,
-    borderColor: '#E2E8F0',
-    borderStyle: 'solid',
+    marginTop: 15,
+    borderWidth: 2,
+    borderColor: '#2563EB', // Updated to blue-600 for consistency
   },
   cashToCloseRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingVertical: 8,
+    paddingVertical: 10,
     borderBottomWidth: 1,
-    borderBottomColor: '#E2E8F0',
+    borderBottomColor: '#DBEAFE', // Updated to match blue-600 theme
     borderBottomStyle: 'solid',
   },
   cashToCloseRowLast: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingVertical: 8,
+    paddingVertical: 10,
     borderBottomWidth: 0,
   },
   cashToCloseLabel: {
     fontSize: 12,
-    color: '#64748B',
+    color: '#475569',
     fontWeight: 'normal',
   },
   cashToCloseValue: {
     fontSize: 12,
     color: '#1E293B',
-    fontWeight: 'normal',
+    fontWeight: 'medium',
   },
   cashToCloseHighlightLabel: {
-    fontSize: 12,
-    color: '#64748B',
-    fontWeight: 'normal',
+    fontSize: 14,
+    color: '#1E3A8A',
+    fontWeight: 'bold',
   },
   cashToCloseHighlightValue: {
-    fontSize: 12,
+    fontSize: 16,
     color: '#2563EB',
     fontWeight: 'bold',
+  },
+  paymentCard: {
+    backgroundColor: '#F8FAFC',
+    borderLeftWidth: 4,
+    borderLeftColor: '#3B82F6',
+    padding: 12,
+    borderRadius: 6,
+    marginBottom: 12,
+  },
+  paymentMainValue: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#1E40AF',
+    textAlign: 'center',
+    marginVertical: 4,
+  },
+  paymentSubLabel: {
+    fontSize: 9,
+    color: '#64748B',
+    textAlign: 'center',
   },
 
   // Two-column layout

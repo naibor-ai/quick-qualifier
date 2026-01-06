@@ -16,6 +16,8 @@ import type {
   MonthlyPaymentBreakdown,
   ClosingCostsBreakdown,
   GhlConfig,
+  BasePurchaseInput,
+  BaseRefinanceInput,
 } from '../schemas';
 import {
   calculateMonthlyPI,
@@ -112,7 +114,8 @@ export function calculateFhaClosingCosts(
     taxAmount?: number;
     insuranceAmount?: number;
   },
-  closingCostsTotalOverride?: number
+  closingCostsTotalOverride?: number,
+  feeOverrides?: Partial<BasePurchaseInput>
 ): ClosingCostsBreakdown {
   const { fees, prepaids } = config;
 
@@ -120,26 +123,26 @@ export function calculateFhaClosingCosts(
   const taxMonths = prepaidOptions?.taxMonths ?? 6;
   const insuranceMonths = prepaidOptions?.insuranceMonths ?? 15;
 
-  // Manual Fees from Image for FHA Sale
-  const manualFees = {
-    processing: 995,
-    underwriting: 1495,
-    docPrep: 295,
-    appraisal: 650,
-    creditReport: 150,
-    floodCert: 30,
-    taxService: 85,
-    ownerTitlePolicy: 1730,
-    lenderTitlePolicy: 1515,
-    settlement: 1115, // Escrow/closing fee
-    recording: 275,
-    notary: 350,
-    pestInspection: 150,
-    propertyInspection: 450,
-    poolInspection: 100,
-    transferTax: 0,
-    mortgageTax: 0
-  };
+  // Section A - Lender Fees
+  const processingFee = feeOverrides?.processingFee ?? 995;
+  const underwritingFee = feeOverrides?.underwritingFee ?? 1495;
+  const docPrepFee = feeOverrides?.docPrepFee ?? 295;
+  const appraisalFee = feeOverrides?.appraisalFee ?? 650;
+  const creditReportFee = feeOverrides?.creditReportFee ?? 150;
+  const floodCertFee = feeOverrides?.floodCertFee ?? 30;
+  const taxServiceFee = feeOverrides?.taxServiceFee ?? 85;
+
+  // Section B - Third Party Fees
+  const escrowFee = feeOverrides?.escrowFee ?? 1115;
+  const notaryFee = feeOverrides?.notaryFee ?? 350;
+  const recordingFee = feeOverrides?.recordingFee ?? 275;
+  const ownerTitlePolicy = feeOverrides?.ownerTitlePolicy ?? 1730;
+  const lenderTitlePolicy = feeOverrides?.lenderTitlePolicy ?? 1515;
+  const pestInspectionFee = feeOverrides?.pestInspectionFee ?? 150;
+  const propertyInspectionFee = feeOverrides?.propertyInspectionFee ?? 450;
+  const poolInspectionFee = feeOverrides?.poolInspectionFee ?? 100;
+  const transferTax = feeOverrides?.transferTax ?? 0;
+  const mortgageTax = feeOverrides?.mortgageTax ?? 0;
 
   // Section A - Lender Fees
   const totalLoanAmount = baseLoanAmount + ufmipAmount;
@@ -153,26 +156,26 @@ export function calculateFhaClosingCosts(
     loanFee +
     originationFee +
     adminFee +
-    manualFees.processing +
-    manualFees.underwriting +
-    manualFees.appraisal +
-    manualFees.creditReport +
-    manualFees.floodCert +
-    manualFees.taxService +
-    manualFees.docPrep;
+    processingFee +
+    underwritingFee +
+    appraisalFee +
+    creditReportFee +
+    floodCertFee +
+    taxServiceFee +
+    docPrepFee;
 
   // Section B - Third Party Fees
   const totalThirdPartyFees =
-    manualFees.settlement +
-    manualFees.notary +
-    manualFees.recording +
-    manualFees.ownerTitlePolicy +
-    manualFees.lenderTitlePolicy +
-    manualFees.pestInspection +
-    manualFees.propertyInspection +
-    manualFees.poolInspection +
-    manualFees.transferTax +
-    manualFees.mortgageTax;
+    escrowFee +
+    notaryFee +
+    recordingFee +
+    ownerTitlePolicy +
+    lenderTitlePolicy +
+    pestInspectionFee +
+    propertyInspectionFee +
+    poolInspectionFee +
+    transferTax +
+    mortgageTax;
 
   // Section C - Prepaids
   // Formula: (Loan * Rate / 365) * 15
@@ -215,26 +218,26 @@ export function calculateFhaClosingCosts(
     loanFee,
     originationFee,
     adminFee,
-    processingFee: manualFees.processing,
-    underwritingFee: manualFees.underwriting,
-    appraisalFee: manualFees.appraisal,
-    creditReportFee: manualFees.creditReport,
-    floodCertFee: manualFees.floodCert,
-    taxServiceFee: manualFees.taxService,
-    docPrepFee: manualFees.docPrep,
+    processingFee,
+    underwritingFee,
+    appraisalFee,
+    creditReportFee,
+    floodCertFee,
+    taxServiceFee,
+    docPrepFee,
     totalLenderFees: roundToCents(totalLenderFees),
 
-    ownerTitlePolicy: manualFees.ownerTitlePolicy,
-    lenderTitlePolicy: manualFees.lenderTitlePolicy,
-    escrowFee: manualFees.settlement,
-    notaryFee: manualFees.notary,
-    recordingFee: manualFees.recording,
+    ownerTitlePolicy,
+    lenderTitlePolicy,
+    escrowFee,
+    notaryFee,
+    recordingFee,
     courierFee: 0,
-    pestInspectionFee: manualFees.pestInspection,
-    propertyInspectionFee: manualFees.propertyInspection,
-    poolInspectionFee: manualFees.poolInspection,
-    transferTax: manualFees.transferTax,
-    mortgageTax: manualFees.mortgageTax,
+    pestInspectionFee,
+    propertyInspectionFee,
+    poolInspectionFee,
+    transferTax,
+    mortgageTax,
     totalThirdPartyFees: roundToCents(totalThirdPartyFees),
 
     prepaidInterest,
@@ -292,12 +295,11 @@ export function calculateFhaPurchase(
   const totalLoanAmount = baseLoanAmount + ufmipAmount;
 
   // Calculate monthly MIP
-  // Formula: (loanAmount * 0.55%) / 12
-  // Assuming "loanAmount" refers to Base Loan Amount as standard, but checking request. 
-  // Config has mipRate, but user requested specific formula "(loanAmount* 0.55%) / 12".
-  const mipRate = 0.55;
+  // Formula: (loanAmount * MIP %) / 12
+  // If loan amount > $720,000, rate is 0.75%, otherwise 0.55%
+  const mipRate = baseLoanAmount > 720000 ? 0.75 : 0.55;
   let monthlyMip = 0;
-  if (mortgageInsuranceMonthly !== undefined) {
+  if (mortgageInsuranceMonthly !== undefined && mortgageInsuranceMonthly > 0) {
     monthlyMip = mortgageInsuranceMonthly;
   } else {
     monthlyMip = calculateMonthlyMip(baseLoanAmount, mipRate);
@@ -351,7 +353,8 @@ export function calculateFhaPurchase(
       taxAmount: input.prepaidTaxAmount,
       insuranceAmount: input.prepaidInsuranceAmount,
     },
-    input.closingCostsTotal
+    input.closingCostsTotal,
+    input
   );
 
   // Cash to close (UFMIP is financed, not paid at closing)
@@ -453,21 +456,19 @@ export function calculateFhaRefinance(
   // Fees Calculation
   // Reference implies points on total (407k -> 4070).
   // Fees Calculation
-  // Manual Fees from Image for FHA Refinance
-  const manualFees = {
-    appraisal: 650,
-    creditReport: 150,
-    lenderTitlePolicy: 1015,
-    escrow: 400, // Escrow/closing fee
-    recording: 275,
-    notary: 350,
-    mortgageTax: 0, // Explicitly 0 in image
-    docPrep: 595, // Document fee
-    processing: 895,
-    underwriting: 995,
-    taxService: 59,
-    floodCert: 30
-  };
+  // Fees Calculation
+  const processingFee = input.processingFee ?? 895;
+  const underwritingFee = input.underwritingFee ?? 995;
+  const appraisalFee = input.appraisalFee ?? 650;
+  const creditReportFee = input.creditReportFee ?? 150;
+  const floodCertFee = input.floodCertFee ?? 30;
+  const taxServiceFee = input.taxServiceFee ?? 59;
+  const docPrepFee = input.docPrepFee ?? 595;
+  const escrowFee = input.escrowFee ?? 400;
+  const notaryFee = input.notaryFee ?? 350;
+  const recordingFee = input.recordingFee ?? 275;
+  const lenderTitlePolicy = input.lenderTitlePolicy ?? 1015;
+  const mortgageTax = input.mortgageTax ?? 0;
 
   // Loan Fee passed from input
   const loanFee = input.loanFee || 0;
@@ -476,20 +477,20 @@ export function calculateFhaRefinance(
   const totalLenderFees =
     loanFee +
     originationFee +
-    manualFees.processing +
-    manualFees.underwriting +
-    manualFees.appraisal +
-    manualFees.creditReport +
-    manualFees.floodCert +
-    manualFees.taxService +
-    manualFees.docPrep; // Added docPrep here as it's often admin/lender. Image lists it separately.
+    processingFee +
+    underwritingFee +
+    appraisalFee +
+    creditReportFee +
+    floodCertFee +
+    taxServiceFee +
+    docPrepFee;
 
   // Section B - Third Party Fees
   const totalThirdPartyFees =
-    manualFees.escrow +
-    manualFees.notary +
-    manualFees.recording +
-    manualFees.lenderTitlePolicy;
+    escrowFee +
+    notaryFee +
+    recordingFee +
+    lenderTitlePolicy;
 
   // Prepaids
   // Formula: Loan Amount * (Rate / 100) / 365 * days.
@@ -526,26 +527,26 @@ export function calculateFhaRefinance(
     loanFee,
     originationFee,
     adminFee: 0,
-    processingFee: manualFees.processing,
-    underwritingFee: manualFees.underwriting,
-    appraisalFee: manualFees.appraisal,
-    creditReportFee: manualFees.creditReport,
-    floodCertFee: manualFees.floodCert,
-    taxServiceFee: manualFees.taxService,
-    docPrepFee: manualFees.docPrep,
+    processingFee,
+    underwritingFee,
+    appraisalFee,
+    creditReportFee,
+    floodCertFee,
+    taxServiceFee,
+    docPrepFee,
     totalLenderFees: roundToCents(totalLenderFees),
 
     ownerTitlePolicy: 0,
-    lenderTitlePolicy: manualFees.lenderTitlePolicy,
-    escrowFee: manualFees.escrow,
-    notaryFee: manualFees.notary,
-    recordingFee: manualFees.recording,
+    lenderTitlePolicy,
+    escrowFee,
+    notaryFee,
+    recordingFee,
     courierFee: 0,
     pestInspectionFee: 0,
     propertyInspectionFee: 0,
     poolInspectionFee: 0,
     transferTax: 0,
-    mortgageTax: manualFees.mortgageTax,
+    mortgageTax,
     totalThirdPartyFees: roundToCents(totalThirdPartyFees),
 
     prepaidInterest,

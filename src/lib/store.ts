@@ -48,7 +48,27 @@ interface ConventionalInputs {
   prepaidTaxAmount: number;
   prepaidInsuranceAmount: number;
   loanFee: number;
+  loanFeePercent: number;
+  loanFeeMode: 'amount' | 'percent';
   closingCostsTotal: number;
+  depositAmount: number;
+  processingFee?: number;
+  underwritingFee?: number;
+  docPrepFee?: number;
+  appraisalFee?: number;
+  creditReportFee?: number;
+  floodCertFee?: number;
+  taxServiceFee?: number;
+  escrowFee?: number;
+  notaryFee?: number;
+  recordingFee?: number;
+  ownerTitlePolicy?: number;
+  lenderTitlePolicy?: number;
+  pestInspectionFee?: number;
+  propertyInspectionFee?: number;
+  poolInspectionFee?: number;
+  transferTax?: number;
+  mortgageTax?: number;
 }
 
 interface FhaInputs {
@@ -71,10 +91,29 @@ interface FhaInputs {
   prepaidTaxAmount: number;
   prepaidInsuranceAmount: number;
   loanFee: number;
+  loanFeePercent: number;
+  loanFeeMode: 'amount' | 'percent';
   closingCostsTotal: number;
   sellerCreditAmount: number;
   lenderCreditAmount: number;
   depositAmount: number;
+  processingFee?: number;
+  underwritingFee?: number;
+  docPrepFee?: number;
+  appraisalFee?: number;
+  creditReportFee?: number;
+  floodCertFee?: number;
+  taxServiceFee?: number;
+  escrowFee?: number;
+  notaryFee?: number;
+  recordingFee?: number;
+  ownerTitlePolicy?: number;
+  lenderTitlePolicy?: number;
+  pestInspectionFee?: number;
+  propertyInspectionFee?: number;
+  poolInspectionFee?: number;
+  transferTax?: number;
+  mortgageTax?: number;
 }
 
 interface VaInputs {
@@ -99,10 +138,29 @@ interface VaInputs {
   prepaidTaxAmount: number;
   prepaidInsuranceAmount: number;
   loanFee: number;
+  loanFeePercent: number;
+  loanFeeMode: 'amount' | 'percent';
   closingCostsTotal: number;
   sellerCreditAmount: number;
   lenderCreditAmount: number;
   depositAmount: number;
+  processingFee?: number;
+  underwritingFee?: number;
+  docPrepFee?: number;
+  appraisalFee?: number;
+  creditReportFee?: number;
+  floodCertFee?: number;
+  taxServiceFee?: number;
+  escrowFee?: number;
+  notaryFee?: number;
+  recordingFee?: number;
+  ownerTitlePolicy?: number;
+  lenderTitlePolicy?: number;
+  pestInspectionFee?: number;
+  propertyInspectionFee?: number;
+  poolInspectionFee?: number;
+  transferTax?: number;
+  mortgageTax?: number;
 }
 
 // Refinance Inputs
@@ -125,7 +183,26 @@ interface ConventionalRefiInputs {
   prepaidTaxAmount: number;
   prepaidInsuranceAmount: number;
   loanFee: number;
+  loanFeePercent: number;
+  loanFeeMode: 'amount' | 'percent';
   closingCostsTotal: number;
+  processingFee?: number;
+  underwritingFee?: number;
+  docPrepFee?: number;
+  appraisalFee?: number;
+  creditReportFee?: number;
+  floodCertFee?: number;
+  taxServiceFee?: number;
+  escrowFee?: number;
+  notaryFee?: number;
+  recordingFee?: number;
+  ownerTitlePolicy?: number;
+  lenderTitlePolicy?: number;
+  pestInspectionFee?: number;
+  propertyInspectionFee?: number;
+  poolInspectionFee?: number;
+  transferTax?: number;
+  mortgageTax?: number;
 }
 
 interface FhaRefiInputs {
@@ -146,7 +223,26 @@ interface FhaRefiInputs {
   prepaidTaxAmount: number;
   prepaidInsuranceAmount: number;
   loanFee: number;
+  loanFeePercent: number;
+  loanFeeMode: 'amount' | 'percent';
   closingCostsTotal: number;
+  processingFee?: number;
+  underwritingFee?: number;
+  docPrepFee?: number;
+  appraisalFee?: number;
+  creditReportFee?: number;
+  floodCertFee?: number;
+  taxServiceFee?: number;
+  escrowFee?: number;
+  notaryFee?: number;
+  recordingFee?: number;
+  ownerTitlePolicy?: number;
+  lenderTitlePolicy?: number;
+  pestInspectionFee?: number;
+  propertyInspectionFee?: number;
+  poolInspectionFee?: number;
+  transferTax?: number;
+  mortgageTax?: number;
 }
 
 interface VaRefiInputs {
@@ -170,7 +266,26 @@ interface VaRefiInputs {
   prepaidTaxAmount: number;
   prepaidInsuranceAmount: number;
   loanFee: number;
+  loanFeePercent: number;
+  loanFeeMode: 'amount' | 'percent';
   closingCostsTotal: number;
+  processingFee?: number;
+  underwritingFee?: number;
+  docPrepFee?: number;
+  appraisalFee?: number;
+  creditReportFee?: number;
+  floodCertFee?: number;
+  taxServiceFee?: number;
+  escrowFee?: number;
+  notaryFee?: number;
+  recordingFee?: number;
+  ownerTitlePolicy?: number;
+  lenderTitlePolicy?: number;
+  pestInspectionFee?: number;
+  propertyInspectionFee?: number;
+  poolInspectionFee?: number;
+  transferTax?: number;
+  mortgageTax?: number;
 }
 
 interface SellerNetInputs {
@@ -283,8 +398,28 @@ const defaultConventionalInputs: ConventionalInputs = {
   prepaidInterestAmount: 0,
   prepaidTaxAmount: 0,
   prepaidInsuranceAmount: 0,
-  loanFee: 4000,
+  loanFee: 5000,
+  loanFeePercent: 1.0,
+  loanFeeMode: 'amount',
   closingCostsTotal: 0,
+  depositAmount: 1000,
+  processingFee: 995,
+  underwritingFee: 1495,
+  docPrepFee: 295,
+  appraisalFee: 650,
+  creditReportFee: 150,
+  floodCertFee: 30,
+  taxServiceFee: 85,
+  escrowFee: 1115,
+  notaryFee: 350,
+  recordingFee: 275,
+  ownerTitlePolicy: 1730,
+  lenderTitlePolicy: 1225,
+  pestInspectionFee: 150,
+  propertyInspectionFee: 450,
+  poolInspectionFee: 100,
+  transferTax: 0,
+  mortgageTax: 0,
 };
 
 const defaultFhaInputs: FhaInputs = {
@@ -306,11 +441,30 @@ const defaultFhaInputs: FhaInputs = {
   prepaidInterestAmount: 0,
   prepaidTaxAmount: 0,
   prepaidInsuranceAmount: 0,
-  loanFee: 3860,
+  loanFee: 4000,
+  loanFeePercent: 1.0,
+  loanFeeMode: 'amount',
   closingCostsTotal: 0,
   sellerCreditAmount: 0,
   lenderCreditAmount: 0,
   depositAmount: 0,
+  processingFee: 995,
+  underwritingFee: 1495,
+  docPrepFee: 295,
+  appraisalFee: 650,
+  creditReportFee: 150,
+  floodCertFee: 30,
+  taxServiceFee: 85,
+  escrowFee: 1115,
+  notaryFee: 350,
+  recordingFee: 275,
+  ownerTitlePolicy: 1730,
+  lenderTitlePolicy: 1515,
+  pestInspectionFee: 150,
+  propertyInspectionFee: 450,
+  poolInspectionFee: 100,
+  transferTax: 0,
+  mortgageTax: 0,
 };
 
 const defaultVaInputs: VaInputs = {
@@ -335,10 +489,29 @@ const defaultVaInputs: VaInputs = {
   prepaidTaxAmount: 0,
   prepaidInsuranceAmount: 0,
   loanFee: 4500,
+  loanFeePercent: 1.0,
+  loanFeeMode: 'amount',
   closingCostsTotal: 0,
   sellerCreditAmount: 0,
   lenderCreditAmount: 0,
   depositAmount: 0,
+  processingFee: 995,
+  underwritingFee: 1495,
+  docPrepFee: 295,
+  appraisalFee: 650,
+  creditReportFee: 150,
+  floodCertFee: 30,
+  taxServiceFee: 85,
+  escrowFee: 1115,
+  notaryFee: 350,
+  recordingFee: 275,
+  ownerTitlePolicy: 1730,
+  lenderTitlePolicy: 1515,
+  pestInspectionFee: 150,
+  propertyInspectionFee: 450,
+  poolInspectionFee: 0,
+  transferTax: 0,
+  mortgageTax: 0,
 };
 
 const defaultSellerNetInputs: SellerNetInputs = {
@@ -403,7 +576,26 @@ const defaultConventionalRefiInputs: ConventionalRefiInputs = {
   prepaidTaxAmount: 0,
   prepaidInsuranceAmount: 0,
   loanFee: 3500,
+  loanFeePercent: 1.0,
+  loanFeeMode: 'amount',
   closingCostsTotal: 0,
+  processingFee: 895,
+  underwritingFee: 995,
+  docPrepFee: 595,
+  appraisalFee: 650,
+  creditReportFee: 150,
+  floodCertFee: 30,
+  taxServiceFee: 59,
+  escrowFee: 400,
+  notaryFee: 350,
+  recordingFee: 275,
+  lenderTitlePolicy: 1015,
+  ownerTitlePolicy: 0,
+  pestInspectionFee: 0,
+  propertyInspectionFee: 0,
+  poolInspectionFee: 0,
+  transferTax: 0,
+  mortgageTax: 0,
 };
 
 const defaultFhaRefiInputs: FhaRefiInputs = {
@@ -424,7 +616,26 @@ const defaultFhaRefiInputs: FhaRefiInputs = {
   prepaidTaxAmount: 0,
   prepaidInsuranceAmount: 0,
   loanFee: 3000,
+  loanFeePercent: 1.0,
+  loanFeeMode: 'amount',
   closingCostsTotal: 0,
+  processingFee: 895,
+  underwritingFee: 995,
+  docPrepFee: 595,
+  appraisalFee: 650,
+  creditReportFee: 150,
+  floodCertFee: 30,
+  taxServiceFee: 59,
+  escrowFee: 400,
+  notaryFee: 350,
+  recordingFee: 275,
+  lenderTitlePolicy: 1015,
+  ownerTitlePolicy: 0,
+  pestInspectionFee: 0,
+  propertyInspectionFee: 0,
+  poolInspectionFee: 0,
+  transferTax: 0,
+  mortgageTax: 0,
 };
 
 const defaultVaRefiInputs: VaRefiInputs = {
@@ -448,7 +659,26 @@ const defaultVaRefiInputs: VaRefiInputs = {
   prepaidTaxAmount: 0,
   prepaidInsuranceAmount: 0,
   loanFee: 3200,
+  loanFeePercent: 1.0,
+  loanFeeMode: 'amount',
   closingCostsTotal: 0,
+  processingFee: 895,
+  underwritingFee: 995,
+  docPrepFee: 595,
+  appraisalFee: 650,
+  creditReportFee: 150,
+  floodCertFee: 30,
+  taxServiceFee: 59,
+  escrowFee: 400,
+  notaryFee: 350,
+  recordingFee: 275,
+  lenderTitlePolicy: 1115,
+  ownerTitlePolicy: 0,
+  pestInspectionFee: 0,
+  propertyInspectionFee: 0,
+  poolInspectionFee: 0,
+  transferTax: 0,
+  mortgageTax: 0,
 };
 
 // ============================================================================

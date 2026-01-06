@@ -70,6 +70,7 @@
     "isDisabledVeteran": "Disabled Veteran",
     "isReservist": "National Guard/Reservist",
     "readyToCalculate": "Ready to Calculate",
+    "readyDescription": "Enter your loan details and click Calculate to see your estimated payment breakdown.",
     "enterDetails": "Enter your loan details and click Calculate to see your estimated payment breakdown.",
     "partnerAgent": "Partner Agent",
     "noAgentSelected": "No agent selected (optional)",
@@ -85,7 +86,10 @@
       "creditsPoints": "Credits & Points",
       "credit": "Credit",
       "vaEligibility": "VA Eligibility",
-      "prepaids": "Prepaid Items"
+      "prepaids": "Prepaid Items",
+      "general": "General",
+      "lender": "Lender Fees",
+      "title": "Title Fees"
     },
     "results": {
       "title": "Loan Summary",

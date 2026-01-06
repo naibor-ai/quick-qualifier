@@ -65,32 +65,119 @@ html {
 }
 
 /* Override legacy blue utility classes to use the new brand color */
-.text-blue-600 { color: var(--primary-600) !important; }
-.text-blue-700 { color: var(--primary-700) !important; }
-.text-blue-800 { color: var(--primary-800) !important; }
-.text-blue-100 { color: var(--primary-100) !important; }
-.bg-blue-50 { background-color: var(--primary-50) !important; }
-.bg-blue-100 { background-color: var(--primary-100) !important; }
-.bg-blue-200 { background-color: var(--primary-200) !important; }
-.bg-blue-400 { background-color: var(--primary-400) !important; }
-.bg-blue-500 { background-color: var(--primary-500) !important; }
-.bg-blue-600 { background-color: var(--primary-600) !important; }
-.bg-blue-700 { background-color: var(--primary-700) !important; }
-.bg-blue-800 { background-color: var(--primary-800) !important; }
-.border-blue-100 { border-color: var(--primary-100) !important; }
-.border-blue-200 { border-color: var(--primary-200) !important; }
-.border-t-blue-500 { border-top-color: var(--primary-500) !important; }
-.hover\:border-blue-200:hover { border-color: var(--primary-200) !important; }
-.hover\:bg-blue-50:hover { background-color: var(--primary-50) !important; }
-.hover\:bg-blue-100:hover { background-color: var(--primary-100) !important; }
-.hover\:text-blue-600:hover { color: var(--primary-600) !important; }
-.active\:bg-blue-800:active { background-color: var(--primary-800) !important; }
-.focus\:border-blue-500:focus { border-color: var(--primary-500) !important; }
-.focus\:ring-blue-500:focus { --tw-ring-color: var(--primary-500) !important; }
-.focus\:ring-blue-200:focus { --tw-ring-color: var(--primary-200) !important; }
+.text-blue-600 {
+  color: var(--primary-600) !important;
+}
+
+.text-blue-700 {
+  color: var(--primary-700) !important;
+}
+
+.text-blue-800 {
+  color: var(--primary-800) !important;
+}
+
+.text-blue-100 {
+  color: var(--primary-100) !important;
+}
+
+.bg-blue-50 {
+  background-color: var(--primary-50) !important;
+}
+
+.bg-blue-100 {
+  background-color: var(--primary-100) !important;
+}
+
+.bg-blue-200 {
+  background-color: var(--primary-200) !important;
+}
+
+.bg-blue-400 {
+  background-color: var(--primary-400) !important;
+}
+
+.bg-blue-500 {
+  background-color: var(--primary-500) !important;
+}
+
+.bg-blue-600 {
+  background-color: var(--primary-600) !important;
+}
+
+.bg-blue-700 {
+  background-color: var(--primary-700) !important;
+}
+
+.bg-blue-800 {
+  background-color: var(--primary-800) !important;
+}
+
+.border-blue-100 {
+  border-color: var(--primary-100) !important;
+}
+
+.border-blue-200 {
+  border-color: var(--primary-200) !important;
+}
+
+.border-t-blue-500 {
+  border-top-color: var(--primary-500) !important;
+}
+
+.hover\:border-blue-200:hover {
+  border-color: var(--primary-200) !important;
+}
+
+.hover\:bg-blue-50:hover {
+  background-color: var(--primary-50) !important;
+}
+
+.hover\:bg-blue-100:hover {
+  background-color: var(--primary-100) !important;
+}
+
+.hover\:text-blue-600:hover {
+  color: var(--primary-600) !important;
+}
+
+.active\:bg-blue-800:active {
+  background-color: var(--primary-800) !important;
+}
+
+.focus\:border-blue-500:focus {
+  border-color: var(--primary-500) !important;
+}
+
+.focus\:ring-blue-500:focus {
+  --tw-ring-color: var(--primary-500) !important;
+}
+
+.focus\:ring-blue-200:focus {
+  --tw-ring-color: var(--primary-200) !important;
+}
+
 .from-blue-500 {
   --tw-gradient-from: var(--primary-500) var(--tw-gradient-from-position);
   --tw-gradient-to: rgb(64 158 193 / 0);
   --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
 }
-.to-blue-600 { --tw-gradient-to: var(--primary-600) var(--tw-gradient-to-position); }
+
+.to-blue-600 {
+  --tw-gradient-to: var(--primary-600) var(--tw-gradient-to-position);
+}
+
+/* Global Cursor Pointer for Interactive Elements */
+button:not(:disabled),
+a,
+[role="button"]:not(:disabled),
+input[type="button"]:not(:disabled),
+input[type="submit"]:not(:disabled),
+.cursor-pointer:not(.disabled),
+select:not(:disabled),
+.select-toggle-option:not(.disabled),
+input[type="checkbox"]:not(:disabled),
+input[type="radio"]:not(:disabled),
+label[for] {
+  cursor: pointer !important;
+}

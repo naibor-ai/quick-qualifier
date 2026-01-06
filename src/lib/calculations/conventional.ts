@@ -12,6 +12,8 @@ import type {
   GhlConfig,
   CreditScoreTier,
   PmiType,
+  BasePurchaseInput,
+  BaseRefinanceInput,
 } from '../schemas';
 import {
   calculateMonthlyPI,
@@ -121,7 +123,8 @@ export function calculateConventionalClosingCosts(
     taxAmount?: number;
     insuranceAmount?: number;
   },
-  closingCostsTotalOverride?: number
+  closingCostsTotalOverride?: number,
+  feeOverrides?: Partial<BasePurchaseInput>
 ): ClosingCostsBreakdown {
   const { fees, prepaids } = config;
 
@@ -131,40 +134,30 @@ export function calculateConventionalClosingCosts(
 
   // Section A - Lender Fees
 
-  // Fixed values from image
-  const manualFees = {
-    docPrep: 295,
-    processing: 995,
-    underwriting: 1495,
-    appraisal: 650,
-    creditReport: 150,
-    floodCert: 30,
-    taxService: 85,
-    ownerTitlePolicy: 1730,
-    lenderTitlePolicy: 1225,
-    settlement: 1115, // Escrow/closing fee
-    pestInspection: 150,
-    propertyInspection: 450,
-    poolInspection: 100,
-    notary: 350,
-    recording: 275,
-    transferTax: 0,
-    mortgageTax: 0
-  };
+  // Default values or user overrides
+  const processingFee = feeOverrides?.processingFee ?? 995;
+  const underwritingFee = feeOverrides?.underwritingFee ?? 1495;
+  const docPrepFee = feeOverrides?.docPrepFee ?? 295;
+  const appraisalFee = feeOverrides?.appraisalFee ?? 650;
+  const creditReportFee = feeOverrides?.creditReportFee ?? 150;
+  const floodCertFee = feeOverrides?.floodCertFee ?? 30;
+  const taxServiceFee = feeOverrides?.taxServiceFee ?? 85;
 
-  // Section A - Lender Fees
+  // Section B - Third Party Fees
+  const escrowFee = feeOverrides?.escrowFee ?? 1115;
+  const notaryFee = feeOverrides?.notaryFee ?? 350;
+  const recordingFee = feeOverrides?.recordingFee ?? 275;
+  const ownerTitlePolicy = feeOverrides?.ownerTitlePolicy ?? 1730;
+  const lenderTitlePolicy = feeOverrides?.lenderTitlePolicy ?? 1225;
+  const pestInspectionFee = feeOverrides?.pestInspectionFee ?? 150;
+  const propertyInspectionFee = feeOverrides?.propertyInspectionFee ?? 450;
+  const poolInspectionFee = feeOverrides?.poolInspectionFee ?? 100;
+  const transferTax = feeOverrides?.transferTax ?? 0;
+  const mortgageTax = feeOverrides?.mortgageTax ?? 0;
+
   // Origination fee removed as per user request (Origination Fee and Loan Fee are considered same)
   const originationFee = 0;
-
-  // Admin fee removed as per request
   const adminFee = 0;
-  const processingFee = manualFees.processing;
-  const underwritingFee = manualFees.underwriting;
-  const appraisalFee = manualFees.appraisal;
-  const creditReportFee = manualFees.creditReport;
-  const floodCertFee = manualFees.floodCert;
-  const taxServiceFee = manualFees.taxService;
-  const docPrepFee = manualFees.docPrep;
 
   const totalLenderFees =
     loanFee +
@@ -179,20 +172,10 @@ export function calculateConventionalClosingCosts(
     docPrepFee;
 
   // Section B - Third Party Fees
-  const settlementFee = manualFees.settlement;
-  const notaryFee = manualFees.notary;
-  const recordingFee = manualFees.recording;
-  const courierFee = 0; // Image did not have courier fee
-  const ownerTitlePolicy = manualFees.ownerTitlePolicy;
-  const lenderTitlePolicy = manualFees.lenderTitlePolicy;
-  const pestInspectionFee = manualFees.pestInspection;
-  const propertyInspectionFee = manualFees.propertyInspection;
-  const poolInspectionFee = manualFees.poolInspection;
-  const transferTax = manualFees.transferTax;
-  const mortgageTax = manualFees.mortgageTax;
+  const courierFee = 0;
 
   const totalThirdPartyFees =
-    settlementFee +
+    escrowFee +
     notaryFee +
     recordingFee +
     courierFee +
@@ -203,6 +186,7 @@ export function calculateConventionalClosingCosts(
     poolInspectionFee +
     transferTax +
     mortgageTax;
+
 
   // Section C - Prepaids
   // Formula: (loan amount * interestRate / 365 * days)
@@ -257,7 +241,7 @@ export function calculateConventionalClosingCosts(
     // Section B
     ownerTitlePolicy,
     lenderTitlePolicy,
-    escrowFee: settlementFee,
+    escrowFee,
     notaryFee,
     recordingFee,
     courierFee,
@@ -394,7 +378,8 @@ export function calculateConventionalPurchase(
       taxAmount: input.prepaidTaxAmount,
       insuranceAmount: input.prepaidInsuranceAmount,
     },
-    input.closingCostsTotal
+    input.closingCostsTotal,
+    input
   );
 
   // Add single premium PMI to closing costs if paid in cash
@@ -529,13 +514,13 @@ export function calculateConventionalRefinance(
   // Origination fee removed as per user request (Origination Fee and Loan Fee are considered same)
   const originationFee = 0;
   const adminFee = 0;
-  const processingFee = manualFees.processing;
-  const underwritingFee = manualFees.underwriting;
-  const appraisalFee = manualFees.appraisal;
-  const creditReportFee = manualFees.creditReport;
-  const floodCertFee = manualFees.floodCert;
-  const taxServiceFee = manualFees.taxService;
-  const docPrepFee = manualFees.docPrep;
+  const processingFee = input.processingFee ?? 895;
+  const underwritingFee = input.underwritingFee ?? 995;
+  const appraisalFee = input.appraisalFee ?? 650;
+  const creditReportFee = input.creditReportFee ?? 150;
+  const floodCertFee = input.floodCertFee ?? 30;
+  const taxServiceFee = input.taxServiceFee ?? 59;
+  const docPrepFee = input.docPrepFee ?? 595;
 
   const totalLenderFees =
     loanFee +
@@ -550,22 +535,22 @@ export function calculateConventionalRefinance(
     docPrepFee;
 
   // Section B - Third Party Fees
-  const settlementFee = manualFees.settlement;
-  const notaryFee = manualFees.notary;
-  const recordingFee = manualFees.recording;
+  const escrowFee = input.escrowFee ?? 400;
+  const notaryFee = input.notaryFee ?? 350;
+  const recordingFee = input.recordingFee ?? 275;
   const courierFee = 0;
-  const lenderTitlePolicy = manualFees.lenderTitlePolicy;
+  const lenderTitlePolicy = input.lenderTitlePolicy ?? 1015;
 
   // Excluded fees for Refi
-  const ownerTitlePolicy = 0;
-  const pestInspectionFee = 0;
-  const propertyInspectionFee = 0;
-  const poolInspectionFee = 0;
-  const transferTax = 0;
-  const mortgageTax = 0;
+  const ownerTitlePolicy = input.ownerTitlePolicy ?? 0;
+  const pestInspectionFee = input.pestInspectionFee ?? 0;
+  const propertyInspectionFee = input.propertyInspectionFee ?? 0;
+  const poolInspectionFee = input.poolInspectionFee ?? 0;
+  const transferTax = input.transferTax ?? 0;
+  const mortgageTax = input.mortgageTax ?? 0;
 
   const totalThirdPartyFees =
-    settlementFee +
+    escrowFee +
     notaryFee +
     recordingFee +
     courierFee +
@@ -576,6 +561,7 @@ export function calculateConventionalRefinance(
     poolInspectionFee +
     transferTax +
     mortgageTax;
+
 
   // Section C - Prepaids
   // Prepaid Interest
@@ -624,7 +610,7 @@ export function calculateConventionalRefinance(
 
     ownerTitlePolicy,
     lenderTitlePolicy,
-    escrowFee: settlementFee,
+    escrowFee,
     notaryFee,
     recordingFee,
     courierFee,
