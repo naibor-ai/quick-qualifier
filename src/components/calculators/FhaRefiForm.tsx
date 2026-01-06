@@ -174,7 +174,7 @@ export function FhaRefiForm() {
   if (!isMounted) return null;
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 p-4 bg-slate-50 min-h-[calc(100vh-100px)]">
+    <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 p-4 bg-[#cbe5f2] min-h-[calc(100vh-100px)]">
       <div className="lg:col-span-5 flex flex-col gap-4">
         <Card className={`${fhaRefiResult ? 'h-fit' : 'flex-1 flex flex-col'} overflow-hidden`}>
           <CardHeader className="pb-0">

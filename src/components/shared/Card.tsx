@@ -77,7 +77,7 @@ interface CardFooterProps {
 export function CardFooter({ children, className = '' }: CardFooterProps) {
   return (
     <div
-      className={`px-6 py-4 border-t border-slate-200 bg-slate-50 rounded-b-xl ${className}`}
+      className={`px-6 py-4 border-t border-slate-200 bg-[#cbe5f2] rounded-b-xl ${className}`}
     >
       {children}
     </div>

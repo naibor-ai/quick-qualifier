@@ -36,7 +36,7 @@ export default function CalculatorsLayout({ children }: CalculatorsLayoutProps) 
   const isActive = (href: string) => pathname === href;
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen bg-[#cbe5f2]">
       {/* Navigation */}
       <nav className="sticky top-0 z-50 bg-white/95 backdrop-blur-sm border-b border-slate-200 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
