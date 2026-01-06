@@ -18,6 +18,7 @@ interface InputGroupProps {
   max?: number;
   step?: number | string;
   required?: boolean;
+  inputClassName?: string;
 }
 
 export function InputGroup({
@@ -37,6 +38,7 @@ export function InputGroup({
   step,
   required = false,
   className = '',
+  inputClassName = '',
 }: InputGroupProps & { className?: string }) {
   const id = useId();
 
@@ -79,6 +81,7 @@ export function InputGroup({
               : 'border-slate-300 focus:border-blue-500 focus:ring-blue-200'
             }
             ${disabled ? 'cursor-not-allowed bg-slate-100' : ''}
+            ${inputClassName}
           `}
         />
 

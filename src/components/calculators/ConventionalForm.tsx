@@ -107,8 +107,8 @@ export function ConventionalForm() {
       prepaidInsuranceAmount: conventionalInputs.prepaidInsuranceAmount || 0,
       loanFee: conventionalInputs.loanFee || 0,
       closingCostsTotal: conventionalInputs.closingCostsTotal || 0,
-      loanFeePercent: conventionalInputs.loanFeePercent || 0,
-      loanFeeMode: conventionalInputs.loanFeeMode || 'amount',
+      loanFeePercent: conventionalInputs.loanFeePercent || 1.0,
+      loanFeeMode: conventionalInputs.loanFeeMode || 'percent',
       processingFee: conventionalInputs.processingFee ?? 995,
       underwritingFee: conventionalInputs.underwritingFee ?? 1495,
       docPrepFee: conventionalInputs.docPrepFee ?? 295,
@@ -662,56 +662,64 @@ export function ConventionalForm() {
                     )}
                   />
                   <div className="space-y-1">
-                    <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider block">Orig. Fee</label>
-                    <div className="grid grid-cols-2 gap-2">
-                      <Controller
-                        name="loanFeeMode"
-                        control={control}
-                        render={({ field }) => (
-                          <SelectToggle
-                            name="loanFeeMode"
-                            value={field.value ?? 'amount'}
-                            onChange={field.onChange}
-                            options={[
-                              { value: 'amount', label: '$' },
-                              { value: 'percent', label: '%' },
-                            ]}
-                            className="h-[42px]"
+                    <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider block">Loan Fee</label>
+                    <div className="flex gap-3 items-start">
+                      <div className="flex bg-slate-100 rounded-full p-1 flex-shrink-0">
+                        <button
+                          type="button"
+                          onClick={() => setValue('loanFeeMode', 'amount')}
+                          className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-medium transition-all ${watchedValues.loanFeeMode === 'amount'
+                            ? 'bg-blue-600 text-white shadow-sm'
+                            : 'text-slate-600 hover:text-slate-900'
+                            }`}
+                        >
+                          $
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setValue('loanFeeMode', 'percent')}
+                          className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-medium transition-all ${watchedValues.loanFeeMode === 'percent'
+                            ? 'bg-blue-600 text-white shadow-sm'
+                            : 'text-slate-600 hover:text-slate-900'
+                            }`}
+                        >
+                          %
+                        </button>
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        {watchedValues.loanFeeMode === 'percent' ? (
+                          <Controller
+                            name="loanFeePercent"
+                            control={control}
+                            render={({ field }) => (
+                              <InputGroup
+                                label=""
+                                name="loanFeePercent"
+                                type="number"
+                                value={field.value}
+                                onChange={(val) => field.onChange(Number(val) || 0)}
+                                suffix="%"
+                                step="0.125"
+                              />
+                            )}
+                          />
+                        ) : (
+                          <Controller
+                            name="loanFee"
+                            control={control}
+                            render={({ field }) => (
+                              <InputGroup
+                                label=""
+                                name="loanFee"
+                                type="number"
+                                value={field.value}
+                                onChange={(val) => field.onChange(Number(val) || 0)}
+                                prefix="$"
+                              />
+                            )}
                           />
                         )}
-                      />
-                      {watchedValues.loanFeeMode === 'percent' ? (
-                        <Controller
-                          name="loanFeePercent"
-                          control={control}
-                          render={({ field }) => (
-                            <InputGroup
-                              label="Loan Fee %"
-                              name="loanFeePercent"
-                              type="number"
-                              value={field.value}
-                              onChange={(val) => field.onChange(Number(val) || 0)}
-                              suffix="%"
-                              step="0.125"
-                            />
-                          )}
-                        />
-                      ) : (
-                        <Controller
-                          name="loanFee"
-                          control={control}
-                          render={({ field }) => (
-                            <InputGroup
-                              label="Loan Fee $"
-                              name="loanFee"
-                              type="number"
-                              value={field.value}
-                              onChange={(val) => field.onChange(Number(val) || 0)}
-                              prefix="$"
-                            />
-                          )}
-                        />
-                      )}
+                      </div>
                     </div>
                   </div>
                 </div>

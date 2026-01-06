@@ -232,14 +232,39 @@ export function FhaRefiForm() {
                   <Controller name="isStreamline" control={control} render={({ field }) => <SelectToggle label={t('refinance.fhaRefiType')} name="isStreamline" value={String(field.value ?? false)} onChange={(v) => field.onChange(v === 'true')} options={[{ value: 'false', label: t('refinance.standardRefi') }, { value: 'true', label: t('refinance.streamline') }]} />} />
 
                   <div className="space-y-1">
-                    <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider block">Origination Fee</label>
-                    <div className="grid grid-cols-2 gap-2">
-                      <Controller name="loanFeeMode" control={control} render={({ field }) => <SelectToggle name="loanFeeMode" value={field.value ?? 'amount'} onChange={field.onChange} options={[{ value: 'amount', label: '$' }, { value: 'percent', label: '%' }]} />} />
-                      {watchedValues.loanFeeMode === 'percent' ? (
-                        <Controller name="loanFeePercent" control={control} render={({ field }) => <InputGroup label="Loan Fee %" name="loanFeePercent" type="number" value={field.value} onChange={(v) => field.onChange(Number(v))} suffix="%" step="0.125" />} />
-                      ) : (
-                        <Controller name="loanFee" control={control} render={({ field }) => <InputGroup label="Loan Fee $" name="loanFee" type="number" value={field.value} onChange={(v) => field.onChange(Number(v))} prefix="$" />} />
-                      )}
+                    <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider block">Loan Fee</label>
+                    <div className="flex gap-2 items-start">
+                      <div className="flex bg-slate-100 rounded-full p-1">
+                        <button
+                          type="button"
+                          onClick={() => setValue('loanFeeMode', 'amount')}
+                          className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-medium transition-all ${
+                            watchedValues.loanFeeMode === 'amount'
+                              ? 'bg-blue-600 text-white shadow-sm'
+                              : 'text-slate-600 hover:text-slate-900'
+                          }`}
+                        >
+                          $
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setValue('loanFeeMode', 'percent')}
+                          className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-medium transition-all ${
+                            watchedValues.loanFeeMode === 'percent'
+                              ? 'bg-blue-600 text-white shadow-sm'
+                              : 'text-slate-600 hover:text-slate-900'
+                          }`}
+                        >
+                          %
+                        </button>
+                      </div>
+                      <div className="flex-1">
+                        {watchedValues.loanFeeMode === 'percent' ? (
+                          <Controller name="loanFeePercent" control={control} render={({ field }) => <InputGroup label="" name="loanFeePercent" type="number" value={field.value} onChange={(v) => field.onChange(Number(v))} suffix="%" step="0.125" />} />
+                        ) : (
+                          <Controller name="loanFee" control={control} render={({ field }) => <InputGroup label="" name="loanFee" type="number" value={field.value} onChange={(v) => field.onChange(Number(v))} prefix="$" />} />
+                        )}
+                      </div>
                     </div>
                   </div>
 
