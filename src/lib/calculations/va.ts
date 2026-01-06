@@ -17,6 +17,8 @@ import type {
   ClosingCostsBreakdown,
   GhlConfig,
   VaUsage,
+  BasePurchaseInput,
+  BaseRefinanceInput,
 } from '../schemas';
 import {
   calculateMonthlyPI,
@@ -115,7 +117,8 @@ export function calculateVaClosingCosts(
     taxAmount?: number;
     insuranceAmount?: number;
   },
-  closingCostsTotalOverride?: number
+  closingCostsTotalOverride?: number,
+  feeOverrides?: Partial<BasePurchaseInput>
 ): ClosingCostsBreakdown {
   const { fees, prepaids } = config;
 
@@ -123,67 +126,65 @@ export function calculateVaClosingCosts(
   const taxMonths = prepaidOptions?.taxMonths ?? 6;
   const insuranceMonths = prepaidOptions?.insuranceMonths ?? 15;
 
-  // Manual Fees from Image/User Request
-  const manualFees = {
-    appraisal: 650,
-    creditReport: 150,
-    ownerTitlePolicy: 1730,
-    lenderTitlePolicy: 1515,
-    escrow: 1115, // Settlement
-    recording: 275,
-    notary: 350,
-    transferTax: 0,
-    mortgageTax: 0,
-    docPrep: 295,
-    processing: 995,
-    underwriting: 1495,
-    taxService: 85,
-    floodCert: 30,
-    pestInspection: 150,
-    propertyInspection: 450,
-  };
+  // Section A - Lender Fees
+  const processingFee = feeOverrides?.processingFee ?? 995;
+  const underwritingFee = feeOverrides?.underwritingFee ?? 1495;
+  const docPrepFee = feeOverrides?.docPrepFee ?? 295;
+  const appraisalFee = feeOverrides?.appraisalFee ?? 650;
+  const creditReportFee = feeOverrides?.creditReportFee ?? 150;
+  const floodCertFee = feeOverrides?.floodCertFee ?? 30;
+  const taxServiceFee = feeOverrides?.taxServiceFee ?? 85;
+
+  // Section B - Third Party Fees
+  const escrowFee = feeOverrides?.escrowFee ?? 1115;
+  const notaryFee = feeOverrides?.notaryFee ?? 350;
+  const recordingFee = feeOverrides?.recordingFee ?? 275;
+  const ownerTitlePolicy = feeOverrides?.ownerTitlePolicy ?? 1730;
+  const lenderTitlePolicy = feeOverrides?.lenderTitlePolicy ?? 1515;
+  const pestInspectionFee = feeOverrides?.pestInspectionFee ?? 150;
+  const propertyInspectionFee = feeOverrides?.propertyInspectionFee ?? 450;
+  const poolInspectionFee = feeOverrides?.poolInspectionFee ?? 0;
+  const transferTax = feeOverrides?.transferTax ?? 0;
+  const mortgageTax = feeOverrides?.mortgageTax ?? 0;
 
   // Section A - Lender Fees
   const totalLenderFees =
     loanFee +
-    manualFees.docPrep +
-    manualFees.processing +
-    manualFees.underwriting +
-    manualFees.appraisal +
-    manualFees.creditReport +
-    manualFees.floodCert +
-    manualFees.taxService;
+    docPrepFee +
+    processingFee +
+    underwritingFee +
+    appraisalFee +
+    creditReportFee +
+    floodCertFee +
+    taxServiceFee;
 
   // Section B - Third Party Fees
   const totalThirdPartyFees =
-    manualFees.escrow +
-    manualFees.notary +
-    manualFees.recording +
-    manualFees.ownerTitlePolicy +
-    manualFees.lenderTitlePolicy +
-    manualFees.pestInspection +
-    manualFees.propertyInspection +
-    manualFees.transferTax +
-    manualFees.mortgageTax;
+    escrowFee +
+    notaryFee +
+    recordingFee +
+    ownerTitlePolicy +
+    lenderTitlePolicy +
+    pestInspectionFee +
+    propertyInspectionFee +
+    transferTax +
+    mortgageTax;
 
   // Section C - Prepaids
   const totalLoanAmount = baseLoanAmount + fundingFeeAmount;
 
   // 1. Prepaid Interest (15 days dynamic)
-  // Formula: Loan Amount * (APR / 100) / 365 * days
-  // Prepaids - Check for manual overrides from UI/input
-  // Image/Request values are defaults if no override
   const prepaidInterest = prepaidOptions?.interestAmount || calculatePrepaidInterest(
     totalLoanAmount,
     interestRate,
     interestDays
   );
 
-  // 2. Prepaid Property Tax (6 months) - Formula: (Property Value * 0.0125 / 12) * 6
+  // 2. Prepaid Property Tax (6 months)
   const calculatedTaxReserves = roundToCents(((propertyValue || 0) * 0.0125 / 12) * taxMonths);
   const taxReserves = prepaidOptions?.taxAmount || calculatedTaxReserves;
 
-  // 3. Prepaid Insurance (15 months) - Formula: (Property Value * 0.0035 / 12) * 15
+  // 3. Prepaid Insurance (15 months)
   const calculatedInsuranceReserves = roundToCents(((propertyValue || 0) * 0.0035 / 12) * insuranceMonths);
   const insuranceReserves = prepaidOptions?.insuranceAmount || calculatedInsuranceReserves;
 
@@ -207,26 +208,26 @@ export function calculateVaClosingCosts(
     originationFee: 0,
     loanFee,
     adminFee: 0,
-    processingFee: manualFees.processing,
-    underwritingFee: manualFees.underwriting,
-    appraisalFee: manualFees.appraisal,
-    creditReportFee: manualFees.creditReport,
-    floodCertFee: manualFees.floodCert,
-    taxServiceFee: manualFees.taxService,
-    docPrepFee: manualFees.docPrep,
+    processingFee,
+    underwritingFee,
+    appraisalFee,
+    creditReportFee,
+    floodCertFee,
+    taxServiceFee,
+    docPrepFee,
     totalLenderFees: roundToCents(totalLenderFees),
 
-    ownerTitlePolicy: manualFees.ownerTitlePolicy,
-    lenderTitlePolicy: manualFees.lenderTitlePolicy,
-    escrowFee: manualFees.escrow,
-    notaryFee: manualFees.notary,
-    recordingFee: manualFees.recording,
+    ownerTitlePolicy,
+    lenderTitlePolicy,
+    escrowFee,
+    notaryFee,
+    recordingFee,
     courierFee: 0,
-    pestInspectionFee: manualFees.pestInspection,
-    propertyInspectionFee: manualFees.propertyInspection,
-    poolInspectionFee: 0,
-    transferTax: manualFees.transferTax,
-    mortgageTax: manualFees.mortgageTax,
+    pestInspectionFee,
+    propertyInspectionFee,
+    poolInspectionFee,
+    transferTax,
+    mortgageTax,
     totalThirdPartyFees: roundToCents(totalThirdPartyFees),
 
     prepaidInterest,
@@ -349,7 +350,8 @@ export function calculateVaPurchase(
       taxAmount: input.prepaidTaxAmount,
       insuranceAmount: input.prepaidInsuranceAmount,
     },
-    input.closingCostsTotal
+    input.closingCostsTotal,
+    input
   );
 
   // Cash to close (funding fee is financed)
@@ -419,21 +421,18 @@ export function calculateVaRefinance(
   const totalLoanAmount = newLoanAmount + fundingFeeAmount;
 
   // Fees Calculation
-  // Manual Fees from Image for VA Refinance
-  const manualFees = {
-    appraisal: 650,
-    creditReport: 150,
-    lenderTitlePolicy: 1115,
-    escrow: 400, // Escrow/closing fee
-    recording: 275,
-    notary: 350,
-    mortgageTax: 0,
-    docPrep: 595,
-    processing: 895,
-    underwriting: 995,
-    taxService: 59,
-    floodCert: 30
-  };
+  const processingFee = input.processingFee ?? 895;
+  const underwritingFee = input.underwritingFee ?? 995;
+  const appraisalFee = input.appraisalFee ?? 650;
+  const creditReportFee = input.creditReportFee ?? 150;
+  const floodCertFee = input.floodCertFee ?? 30;
+  const taxServiceFee = input.taxServiceFee ?? 59;
+  const docPrepFee = input.docPrepFee ?? 595;
+  const escrowFee = input.escrowFee ?? 400;
+  const notaryFee = input.notaryFee ?? 350;
+  const recordingFee = input.recordingFee ?? 275;
+  const lenderTitlePolicy = input.lenderTitlePolicy ?? 1115;
+  const mortgageTax = input.mortgageTax ?? 0;
 
   // Loan Fee
   const loanFee = input.loanFee || 0;
@@ -442,20 +441,20 @@ export function calculateVaRefinance(
   const totalLenderFees =
     loanFee +
     originationFee +
-    manualFees.processing +
-    manualFees.underwriting +
-    manualFees.appraisal +
-    manualFees.creditReport +
-    manualFees.floodCert +
-    manualFees.taxService +
-    manualFees.docPrep;
+    processingFee +
+    underwritingFee +
+    appraisalFee +
+    creditReportFee +
+    floodCertFee +
+    taxServiceFee +
+    docPrepFee;
 
   // Section B - Third Party Fees
   const totalThirdPartyFees =
-    manualFees.escrow +
-    manualFees.notary +
-    manualFees.recording +
-    manualFees.lenderTitlePolicy;
+    escrowFee +
+    notaryFee +
+    recordingFee +
+    lenderTitlePolicy;
 
   // Prepaids
   const calculatedPrepaidInterest = calculatePrepaidInterest(
@@ -509,26 +508,26 @@ export function calculateVaRefinance(
     loanFee,
     originationFee,
     adminFee: 0,
-    processingFee: manualFees.processing,
-    underwritingFee: manualFees.underwriting,
-    appraisalFee: manualFees.appraisal,
-    creditReportFee: manualFees.creditReport,
-    floodCertFee: manualFees.floodCert,
-    taxServiceFee: manualFees.taxService,
-    docPrepFee: manualFees.docPrep,
+    processingFee,
+    underwritingFee,
+    appraisalFee,
+    creditReportFee,
+    floodCertFee,
+    taxServiceFee,
+    docPrepFee,
     totalLenderFees: roundToCents(totalLenderFees),
 
     ownerTitlePolicy: 0,
-    lenderTitlePolicy: manualFees.lenderTitlePolicy,
-    escrowFee: manualFees.escrow,
-    notaryFee: manualFees.notary,
-    recordingFee: manualFees.recording,
+    lenderTitlePolicy,
+    escrowFee,
+    notaryFee,
+    recordingFee,
     courierFee: 0,
     pestInspectionFee: 0,
     propertyInspectionFee: 0,
     poolInspectionFee: 0,
     transferTax: 0,
-    mortgageTax: manualFees.mortgageTax,
+    mortgageTax,
     totalThirdPartyFees: roundToCents(totalThirdPartyFees),
 
     prepaidInterest,

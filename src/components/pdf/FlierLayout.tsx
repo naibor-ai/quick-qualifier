@@ -35,186 +35,141 @@ export function FlierLayout({
           title={`${loanType} Estimate`}
         />
 
-        {/* Property Address if provided */}
+        {/* Property Address Area */}
         {propertyAddress && (
-          <View style={[pdfStyles.section, pdfStyles.mb16]}>
-            <Text style={{ fontSize: 11, color: '#64748B' }}>Property:</Text>
-            <Text style={{ fontSize: 12, fontWeight: 'bold', color: '#1E293B' }}>
+          <View style={[pdfStyles.card, pdfStyles.accentCard, { marginTop: -10, padding: 8 }]}>
+            <Text style={{ fontSize: 8, color: '#0EA5E9', fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: 1, marginBottom: 2 }}>Property Review</Text>
+            <Text style={{ fontSize: 11, fontWeight: 'bold', color: '#0C4A6E' }}>
               {propertyAddress}
             </Text>
           </View>
         )}
 
-        {/* Main Summary Box */}
-        <View style={pdfStyles.summaryBox}>
-          <Text style={pdfStyles.summaryTitle}>Your Estimated Monthly Payment</Text>
-          <View style={[pdfStyles.summaryRow, { marginBottom: 12 }]}>
-            <Text style={pdfStyles.summaryLabel}>Total PITI</Text>
-            <Text style={pdfStyles.summaryValueLarge}>
-              {formatCurrency(monthlyPayment.totalMonthly)}/mo
-            </Text>
-          </View>
-
-          <View style={pdfStyles.summaryRow}>
-            <Text style={pdfStyles.summaryLabel}>Principal & Interest</Text>
-            <Text style={pdfStyles.summaryValue}>
-              {formatCurrency(monthlyPayment.principalAndInterest)}
-            </Text>
-          </View>
-          <View style={pdfStyles.summaryRow}>
-            <Text style={pdfStyles.summaryLabel}>Property Tax</Text>
-            <Text style={pdfStyles.summaryValue}>
-              {formatCurrency(monthlyPayment.propertyTax)}
-            </Text>
-          </View>
-          <View style={pdfStyles.summaryRow}>
-            <Text style={pdfStyles.summaryLabel}>Home Insurance</Text>
-            <Text style={pdfStyles.summaryValue}>
-              {formatCurrency(monthlyPayment.homeInsurance)}
-            </Text>
-          </View>
-          {monthlyPayment.mortgageInsurance > 0 && (
-            <View style={pdfStyles.summaryRow}>
-              <Text style={pdfStyles.summaryLabel}>Mortgage Insurance</Text>
-              <Text style={pdfStyles.summaryValue}>
-                {formatCurrency(monthlyPayment.mortgageInsurance)}
-              </Text>
-            </View>
-          )}
-          {monthlyPayment.hoaDues > 0 && (
-            <View style={pdfStyles.summaryRow}>
-              <Text style={pdfStyles.summaryLabel}>HOA Dues</Text>
-              <Text style={pdfStyles.summaryValue}>
-                {formatCurrency(monthlyPayment.hoaDues)}
-              </Text>
-            </View>
-          )}
+        {/* Hero Section: Monthly Payment */}
+        <View style={[pdfStyles.paymentCard, { padding: 12, alignItems: 'center', backgroundColor: '#F0F9FF', borderLeftColor: '#0EA5E9', borderLeftWidth: 6, marginBottom: 12 }]}>
+          <Text style={{ fontSize: 10, color: '#0369A1', fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: 1.2 }}>Estimated Monthly Payment</Text>
+          <Text style={{ fontSize: 24, color: '#1E40AF', fontWeight: 'bold', marginVertical: 4 }}>
+            {formatCurrency(monthlyPayment.totalMonthly)}
+          </Text>
+          <Text style={{ fontSize: 8, color: '#64748B' }}>*Includes Principal, Interest, Taxes, and Insurance</Text>
         </View>
 
-        {/* Two Column Layout */}
         <View style={pdfStyles.twoColumn}>
-          {/* Loan Details */}
-          <View style={pdfStyles.column}>
+          {/* Detailed Breakdown Column */}
+          <View style={[pdfStyles.column, { flex: 1.2 }]}>
             <View style={pdfStyles.section}>
-              <Text style={pdfStyles.sectionTitle}>Loan Details</Text>
-
+              <Text style={pdfStyles.sectionTitleBlue}>Payment Breakdown</Text>
               <View style={pdfStyles.tableRow}>
-                <Text style={[pdfStyles.tableCell, pdfStyles.tableCellLabel]}>Base Loan Amount</Text>
-                <Text style={[pdfStyles.tableCell, pdfStyles.tableCellValue]}>
-                  {formatCurrency(loanAmount)}
-                </Text>
+                <Text style={pdfStyles.tableCell}>Principal & Interest</Text>
+                <Text style={pdfStyles.tableCellValue}>{formatCurrency(monthlyPayment.principalAndInterest)}</Text>
               </View>
-              {totalLoanAmount !== loanAmount && (
+              <View style={pdfStyles.tableRow}>
+                <Text style={pdfStyles.tableCell}>Property Taxes</Text>
+                <Text style={pdfStyles.tableCellValue}>{formatCurrency(monthlyPayment.propertyTax)}</Text>
+              </View>
+              <View style={pdfStyles.tableRow}>
+                <Text style={pdfStyles.tableCell}>Hazard Insurance</Text>
+                <Text style={pdfStyles.tableCellValue}>{formatCurrency(monthlyPayment.homeInsurance)}</Text>
+              </View>
+              {monthlyPayment.mortgageInsurance > 0 && (
                 <View style={pdfStyles.tableRow}>
-                  <Text style={[pdfStyles.tableCell, pdfStyles.tableCellLabel]}>Total Loan Amount</Text>
-                  <Text style={[pdfStyles.tableCell, pdfStyles.tableCellValue]}>
-                    {formatCurrency(totalLoanAmount)}
-                  </Text>
+                  <Text style={pdfStyles.tableCell}>Mortgage Insurance</Text>
+                  <Text style={pdfStyles.tableCellValue}>{formatCurrency(monthlyPayment.mortgageInsurance)}</Text>
                 </View>
               )}
-              <View style={pdfStyles.tableRow}>
-                <Text style={[pdfStyles.tableCell, pdfStyles.tableCellLabel]}>Loan-to-Value (LTV)</Text>
-                <Text style={[pdfStyles.tableCell, pdfStyles.tableCellValue]}>
-                  {formatPercentSimple(ltv, 'en', { maximumFractionDigits: 2 })}
-                </Text>
-              </View>
-              {result.downPayment > 0 && (
+              {monthlyPayment.hoaDues > 0 && (
                 <View style={pdfStyles.tableRow}>
-                  <Text style={[pdfStyles.tableCell, pdfStyles.tableCellLabel]}>Down Payment</Text>
-                  <Text style={[pdfStyles.tableCell, pdfStyles.tableCellValue]}>
-                    {formatCurrency(result.downPayment)}
-                  </Text>
+                  <Text style={pdfStyles.tableCell}>HOA Dues</Text>
+                  <Text style={pdfStyles.tableCellValue}>{formatCurrency(monthlyPayment.hoaDues)}</Text>
                 </View>
               )}
             </View>
+
+            <View style={[pdfStyles.section, { marginTop: 5 }]}>
+              <Text style={pdfStyles.sectionTitleBlue}>Loan Summary</Text>
+              <View style={pdfStyles.tableRow}>
+                <Text style={pdfStyles.tableCell}>Base Loan Amount</Text>
+                <Text style={pdfStyles.tableCellValue}>{formatCurrency(loanAmount)}</Text>
+              </View>
+              <View style={pdfStyles.tableRow}>
+                <Text style={pdfStyles.tableCell}>Down Payment</Text>
+                <Text style={pdfStyles.tableCellValue}>{formatCurrency(result.downPayment)}</Text>
+              </View>
+              <View style={pdfStyles.tableRow}>
+                <Text style={pdfStyles.tableCell}>LTV</Text>
+                <Text style={pdfStyles.tableCellValue}>{formatPercentSimple(ltv, 'en', { maximumFractionDigits: 2 })}</Text>
+              </View>
+            </View>
           </View>
 
-          {/* Program-specific details */}
+          {/* Highlights Column */}
+          <View style={[pdfStyles.column, { flex: 1 }]}>
+            {/* Next Steps Card */}
+            <View style={[pdfStyles.card, { backgroundColor: '#F8FAFC', padding: 15, marginBottom: 15 }]}>
+              <Text style={{ fontSize: 10, fontWeight: 'bold', color: '#1E40AF', marginBottom: 8, textTransform: 'uppercase' }}>Next Steps</Text>
+              <View style={{ gap: 6 }}>
+                <Text style={{ fontSize: 9, color: '#475569' }}>• Contact your loan officer today</Text>
+                <Text style={{ fontSize: 9, color: '#475569' }}>• Get pre-approved in minutes</Text>
+                <Text style={{ fontSize: 9, color: '#475569' }}>• Lock in your custom interest rate</Text>
+              </View>
+            </View>
 
-          <View style={pdfStyles.column}>
-
+            {/* Program Specific if FHA/VA */}
             {(result.ufmip || result.vaFundingFee) && (
-              <View style={pdfStyles.section}>
-                <Text style={pdfStyles.sectionTitle}>Program Fees</Text>
-                {result.ufmip && (
-                  <View style={pdfStyles.tableRow}>
-                    <Text style={[pdfStyles.tableCell, pdfStyles.tableCellLabel]}>
-                      Upfront MIP (Financed)
-                    </Text>
-                    <Text style={[pdfStyles.tableCell, pdfStyles.tableCellValue]}>
-                      {formatCurrency(result.ufmip)}
-                    </Text>
-                  </View>
-                )}
-                {result.vaFundingFee && (
-                  <View style={pdfStyles.tableRow}>
-                    <Text style={[pdfStyles.tableCell, pdfStyles.tableCellLabel]}>
-                      VA Funding Fee (Financed)
-                    </Text>
-                    <Text style={[pdfStyles.tableCell, pdfStyles.tableCellValue]}>
-                      {formatCurrency(result.vaFundingFee)}
-                    </Text>
-                  </View>
-                )}
+              <View style={[pdfStyles.card, { borderColor: '#BAE6FD', backgroundColor: '#F0F9FF' }]}>
+                <Text style={{ fontSize: 8, color: '#0369A1', fontWeight: 'bold', textTransform: 'uppercase', marginBottom: 4 }}>Financed Fee</Text>
+                <Text style={{ fontSize: 12, fontWeight: 'bold', color: '#1E40AF' }}>
+                  {formatCurrency(result.ufmip || result.vaFundingFee || 0)}
+                </Text>
               </View>
             )}
           </View>
         </View>
 
-        {/* Cash to Close Section - matching reference image */}
-        {/* Cash to Close Breakdown */}
+        {/* Cash to Close Highlight - Moved to bottom for final impact */}
         <View style={pdfStyles.cashToCloseBox}>
-          <Text style={[pdfStyles.cashToCloseLabel, { color: '#1E293B', marginBottom: 6, fontSize: 12, borderBottomWidth: 1, borderBottomColor: '#CBD5E1', paddingBottom: 4, fontWeight: 'bold' }]}>
-            Cash to Close Breakdown
-          </Text>
+          <Text style={{ color: '#0369A1', fontSize: 9, fontWeight: 'bold', textTransform: 'uppercase', marginBottom: 10 }}>Estimated Cash to Close</Text>
 
-          <View style={pdfStyles.cashToCloseRow}>
-            <Text style={[pdfStyles.cashToCloseLabel, { color: '#475569', fontSize: 10 }]}>Down Payment</Text>
-            <Text style={[pdfStyles.cashToCloseValue, { color: '#1E293B', fontSize: 10 }]}>
-              {formatCurrency(result.downPayment)}
-            </Text>
-          </View>
-
-          <View style={pdfStyles.cashToCloseRow}>
-            <Text style={[pdfStyles.cashToCloseLabel, { color: '#475569', fontSize: 10 }]}>+ Total Closing Costs</Text>
-            <Text style={[pdfStyles.cashToCloseValue, { color: '#1E293B', fontSize: 10 }]}>
-              {formatCurrency(closingCosts.totalClosingCosts)}
-            </Text>
-          </View>
-
-          {closingCosts.totalCredits > 0 && (
-            <View style={pdfStyles.cashToCloseRow}>
-              <Text style={[pdfStyles.cashToCloseLabel, { color: '#86efac', fontSize: 10 }]}>- Total Credits</Text>
-              <Text style={[pdfStyles.cashToCloseValue, { color: '#86efac', fontSize: 10 }]}>
-                {formatCurrency(closingCosts.totalCredits)}
-              </Text>
+          <View style={{ flexDirection: 'row', gap: 30 }}>
+            <View style={{ flex: 1 }}>
+              <View style={[pdfStyles.cashToCloseRow, { paddingVertical: 6 }]}>
+                <Text style={pdfStyles.cashToCloseLabel}>Down Payment</Text>
+                <Text style={pdfStyles.cashToCloseValue}>{formatCurrency(result.downPayment)}</Text>
+              </View>
             </View>
-          )}
-
-          {/* Calculate Implied Deposit: CashToClose = Down + (Costs - Credits) - Deposit */}
-          {/* Deposit = Down + Costs - Credits - CashToClose */}
-          {(() => {
-            const impliedDeposit = (result.downPayment + closingCosts.totalClosingCosts - closingCosts.totalCredits) - cashToClose;
-            if (impliedDeposit > 1) { // Threshold for float errors
-              return (
-                <View style={pdfStyles.cashToCloseRow}>
-                  <Text style={[pdfStyles.cashToCloseLabel, { color: '#86efac', fontSize: 10 }]}>- Deposit / Earnest Money</Text>
-                  <Text style={[pdfStyles.cashToCloseValue, { color: '#86efac', fontSize: 10 }]}>
-                    {formatCurrency(impliedDeposit)}
-                  </Text>
+            <View style={{ flex: 1 }}>
+              <View style={[pdfStyles.cashToCloseRow, { paddingVertical: 6 }]}>
+                <Text style={pdfStyles.cashToCloseLabel}>Closing Costs</Text>
+                <Text style={pdfStyles.cashToCloseValue}>+{formatCurrency(closingCosts.totalClosingCosts)}</Text>
+              </View>
+            </View>
+            <View style={{ flex: 1 }}>
+              {closingCosts.totalCredits > 0 && (
+                <View style={[pdfStyles.cashToCloseRow, { paddingVertical: 6 }]}>
+                  <Text style={[pdfStyles.cashToCloseLabel, { color: '#059669' }]}>Total Credits</Text>
+                  <Text style={[pdfStyles.cashToCloseValue, { color: '#059669' }]}>-{formatCurrency(closingCosts.totalCredits)}</Text>
                 </View>
-              );
-            }
-            return null;
-          })()}
+              )}
+            </View>
+          </View>
 
-          <View style={[pdfStyles.cashToCloseRow, { marginTop: 8, paddingTop: 8, borderTopWidth: 1, borderTopColor: '#CBD5E1' }]}>
-            <Text style={[pdfStyles.cashToCloseHighlightLabel, { fontSize: 14, color: '#1E293B', fontWeight: 'bold' }]}>Estimated Cash to Close</Text>
-            <Text style={[pdfStyles.cashToCloseHighlightValue, { fontSize: 14 }]}>
-              {formatCurrency(cashToClose)}
-            </Text>
+          <View style={[pdfStyles.cashToCloseRowLast, { marginTop: 8, paddingTop: 10, borderTopWidth: 1, borderTopColor: '#BAE6FD' }]}>
+            <Text style={pdfStyles.cashToCloseHighlightLabel}>Total Estimated Cash Due at Closing</Text>
+            <Text style={pdfStyles.cashToCloseHighlightValue}>{formatCurrency(cashToClose)}</Text>
           </View>
         </View>
+
+        {/* Program Specific if FHA/VA */}
+        {(result.ufmip || result.vaFundingFee) && (
+          <View style={[pdfStyles.card, { marginTop: 10, borderColor: '#BFDBFE', backgroundColor: '#F0F9FF' }]}>
+            <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+              <Text style={{ fontSize: 10, fontWeight: 'bold', color: '#1E40AF' }}>Program Fees Financed</Text>
+              <Text style={{ fontSize: 11, fontWeight: 'bold', color: '#1E40AF' }}>
+                {formatCurrency(result.ufmip || result.vaFundingFee || 0)}
+              </Text>
+            </View>
+          </View>
+        )}
 
         {/* Footer */}
         <PdfFooter config={config} />
