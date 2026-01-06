@@ -39,23 +39,23 @@ const formSchema = z.object({
   depositAmount: z.number().min(0),
   closingCostsTotal: z.number().min(0),
   // Fee Overrides with defaults
-  processingFee: z.number().min(0).optional(),
-  underwritingFee: z.number().min(0).optional(),
-  docPrepFee: z.number().min(0).optional(),
-  appraisalFee: z.number().min(0).optional(),
-  creditReportFee: z.number().min(0).optional(),
-  floodCertFee: z.number().min(0).optional(),
-  taxServiceFee: z.number().min(0).optional(),
-  escrowFee: z.number().min(0).optional(),
-  notaryFee: z.number().min(0).optional(),
-  recordingFee: z.number().min(0).optional(),
-  ownerTitlePolicy: z.number().min(0).optional(),
-  lenderTitlePolicy: z.number().min(0).optional(),
-  pestInspectionFee: z.number().min(0).optional(),
-  propertyInspectionFee: z.number().min(0).optional(),
-  poolInspectionFee: z.number().min(0).optional(),
-  transferTax: z.number().min(0).optional(),
-  mortgageTax: z.number().min(0).optional(),
+  processingFee: z.number().min(0).default(995),
+  underwritingFee: z.number().min(0).default(1495),
+  docPrepFee: z.number().min(0).default(295),
+  appraisalFee: z.number().min(0).default(650),
+  creditReportFee: z.number().min(0).default(150),
+  floodCertFee: z.number().min(0).default(30),
+  taxServiceFee: z.number().min(0).default(85),
+  escrowFee: z.number().min(0).default(1115),
+  notaryFee: z.number().min(0).default(350),
+  recordingFee: z.number().min(0).default(275),
+  ownerTitlePolicy: z.number().min(0).default(1730),
+  lenderTitlePolicy: z.number().min(0).default(1515),
+  pestInspectionFee: z.number().min(0).default(150),
+  propertyInspectionFee: z.number().min(0).default(450),
+  poolInspectionFee: z.number().min(0).default(100),
+  transferTax: z.number().min(0).default(0),
+  mortgageTax: z.number().min(0).default(0),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -76,7 +76,7 @@ export function FhaForm() {
   useEffect(() => setIsMounted(true), []);
 
   const { control, handleSubmit, watch, setValue, formState: { errors } } = useForm<FormValues>({
-    resolver: zodResolver(formSchema),
+    resolver: zodResolver(formSchema) as any,
     defaultValues: {
       salesPrice: fhaInputs.salesPrice,
       downPaymentAmount: fhaInputs.downPaymentAmount,
@@ -182,24 +182,30 @@ export function FhaForm() {
 
   const onCalculate: SubmitHandler<FormValues> = useCallback((data) => {
     if (!config) return;
+
+    // Determine if should use manual override for closing costs
+    const isManualOverride = data.closingCostsTotal > 0 &&
+      data.closingCostsTotal !== fhaResult?.closingCosts.totalClosingCosts;
+
     updateFhaInputs(data);
     const result = calculateFhaPurchase(
       {
         ...data,
         propertyTaxMonthly: data.propertyTaxAnnual / 12,
         homeInsuranceMonthly: data.homeInsuranceAnnual / 12,
+        closingCostsTotal: isManualOverride ? data.closingCostsTotal : 0,
       },
       config
     );
     setFhaResult(result);
 
-    if (!data.prepaidInterestAmount) setValue('prepaidInterestAmount', result.closingCosts.prepaidInterest);
-    if (!data.prepaidTaxAmount) setValue('prepaidTaxAmount', result.closingCosts.taxReserves);
-    if (!data.prepaidInsuranceAmount) setValue('prepaidInsuranceAmount', result.closingCosts.insuranceReserves);
-    if (!data.closingCostsTotal || data.closingCostsTotal === 0) {
-      setValue('closingCostsTotal', result.closingCosts.totalClosingCosts);
-    }
-  }, [config, updateFhaInputs, setFhaResult, setValue]);
+    if (!data.prepaidInterestAmount || !isManualOverride) setValue('prepaidInterestAmount', result.closingCosts.prepaidInterest);
+    if (!data.prepaidTaxAmount || !isManualOverride) setValue('prepaidTaxAmount', result.closingCosts.taxReserves);
+    if (!data.prepaidInsuranceAmount || !isManualOverride) setValue('prepaidInsuranceAmount', result.closingCosts.insuranceReserves);
+
+    // Sync Closing Costs to input
+    setValue('closingCostsTotal', result.closingCosts.totalClosingCosts);
+  }, [config, fhaResult, updateFhaInputs, setFhaResult, setValue]);
 
   const handleReset = () => {
     resetCalculator('fha');
@@ -254,7 +260,7 @@ export function FhaForm() {
             </div>
           </CardHeader>
           <CardContent className="flex-1 overflow-y-auto pt-6">
-            <form onSubmit={handleSubmit(onCalculate)} className="space-y-6">
+            <form onSubmit={handleSubmit(onCalculate as any)} className="space-y-6">
 
               {/* Tab 1: Property & Loan */}
               <div className={activeTab === 'property' ? 'block space-y-5' : 'hidden'}>

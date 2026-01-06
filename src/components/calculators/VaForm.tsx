@@ -79,7 +79,7 @@ export function VaForm() {
   useEffect(() => setIsMounted(true), []);
 
   const { control, handleSubmit, watch, setValue, formState: { errors } } = useForm<FormValues>({
-    resolver: zodResolver(formSchema),
+    resolver: zodResolver(formSchema) as any,
     defaultValues: {
       salesPrice: vaInputs.salesPrice,
       downPaymentAmount: vaInputs.downPaymentAmount,
@@ -183,24 +183,30 @@ export function VaForm() {
 
   const onCalculate: SubmitHandler<FormValues> = useCallback((data) => {
     if (!config) return;
+
+    // Determine if should use manual override for closing costs
+    const isManualOverride = data.closingCostsTotal > 0 &&
+      data.closingCostsTotal !== vaResult?.closingCosts.totalClosingCosts;
+
     updateVaInputs(data);
     const result = calculateVaPurchase(
       {
         ...data,
         propertyTaxMonthly: data.propertyTaxAnnual / 12,
         homeInsuranceMonthly: data.homeInsuranceAnnual / 12,
+        closingCostsTotal: isManualOverride ? data.closingCostsTotal : 0,
       },
       config
     );
     setVaResult(result);
 
-    if (!data.prepaidInterestAmount) setValue('prepaidInterestAmount', result.closingCosts.prepaidInterest);
-    if (!data.prepaidTaxAmount) setValue('prepaidTaxAmount', result.closingCosts.taxReserves);
-    if (!data.prepaidInsuranceAmount) setValue('prepaidInsuranceAmount', result.closingCosts.insuranceReserves);
-    if (!data.closingCostsTotal || data.closingCostsTotal === 0) {
-      setValue('closingCostsTotal', result.closingCosts.totalClosingCosts);
-    }
-  }, [config, updateVaInputs, setVaResult, setValue]);
+    if (!data.prepaidInterestAmount || !isManualOverride) setValue('prepaidInterestAmount', result.closingCosts.prepaidInterest);
+    if (!data.prepaidTaxAmount || !isManualOverride) setValue('prepaidTaxAmount', result.closingCosts.taxReserves);
+    if (!data.prepaidInsuranceAmount || !isManualOverride) setValue('prepaidInsuranceAmount', result.closingCosts.insuranceReserves);
+
+    // Sync Closing Costs to input
+    setValue('closingCostsTotal', result.closingCosts.totalClosingCosts);
+  }, [config, vaResult, updateVaInputs, setVaResult, setValue]);
 
   const handleReset = () => {
     resetCalculator('va');
@@ -260,7 +266,7 @@ export function VaForm() {
             </div>
           </CardHeader>
           <CardContent className="flex-1 overflow-y-auto pt-6">
-            <form onSubmit={handleSubmit(onCalculate)} className="space-y-6">
+            <form onSubmit={handleSubmit(onCalculate as any)} className="space-y-6">
 
               {activeTab === 'property' && (
                 <div className="space-y-5">

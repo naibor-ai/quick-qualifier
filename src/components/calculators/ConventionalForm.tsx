@@ -183,6 +183,11 @@ export function ConventionalForm() {
       return; // Config required for calculation
     }
 
+    // Determine if should use manual override for closing costs
+    // If input is different from last calculated result, it's a manual override
+    const isManualOverride = data.closingCostsTotal > 0 &&
+      data.closingCostsTotal !== conventionalResult?.closingCosts.totalClosingCosts;
+
     // Convert form data to store format
     const storeData = {
       ...data,
@@ -219,7 +224,7 @@ export function ConventionalForm() {
         loanFeeMode: data.loanFeeMode,
         loanFeePercent: data.loanFeePercent,
         loanFee: data.loanFee,
-        closingCostsTotal: data.closingCostsTotal,
+        closingCostsTotal: isManualOverride ? data.closingCostsTotal : 0,
         // Fee Overrides
         processingFee: data.processingFee,
         underwritingFee: data.underwritingFee,
@@ -244,16 +249,14 @@ export function ConventionalForm() {
 
     setConventionalResult(result);
 
-    // Sync calculated values back to input fields if they are 0
-    if (!data.prepaidInterestAmount) setValue('prepaidInterestAmount', result.closingCosts.prepaidInterest);
-    if (!data.prepaidTaxAmount) setValue('prepaidTaxAmount', result.closingCosts.taxReserves);
-    if (!data.prepaidInsuranceAmount) setValue('prepaidInsuranceAmount', result.closingCosts.insuranceReserves);
+    // Sync calculated values back to input fields if they are 0 or changed
+    if (!data.prepaidInterestAmount || !isManualOverride) setValue('prepaidInterestAmount', result.closingCosts.prepaidInterest);
+    if (!data.prepaidTaxAmount || !isManualOverride) setValue('prepaidTaxAmount', result.closingCosts.taxReserves);
+    if (!data.prepaidInsuranceAmount || !isManualOverride) setValue('prepaidInsuranceAmount', result.closingCosts.insuranceReserves);
 
-    // Sync Closing Costs to input if 0 (auto-calc)
-    if (!data.closingCostsTotal || data.closingCostsTotal === 0) {
-      setValue('closingCostsTotal', result.closingCosts.totalClosingCosts);
-    }
-  }, [config, updateConventionalInputs, setConventionalResult, setValue]);
+    // Sync Closing Costs to input
+    setValue('closingCostsTotal', result.closingCosts.totalClosingCosts);
+  }, [config, conventionalResult, updateConventionalInputs, setConventionalResult, setValue]);
 
   const handleReset = () => {
     resetCalculator('conventional');
@@ -654,7 +657,7 @@ export function ConventionalForm() {
                     )}
                   />
                   <div className="space-y-1">
-                    <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider block">Origination Fee</label>
+                    <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider block">Orig. Fee</label>
                     <div className="grid grid-cols-2 gap-2">
                       <Controller
                         name="loanFeeMode"

@@ -70,7 +70,7 @@ export function FhaRefiForm() {
   useEffect(() => setIsMounted(true), []);
 
   const { control, handleSubmit, watch, setValue, formState: { errors } } = useForm<FormValues>({
-    resolver: zodResolver(formSchema),
+    resolver: zodResolver(formSchema) as any,
     defaultValues: {
       ...fhaRefiInputs,
       prepaidInterestDays: fhaRefiInputs.prepaidInterestDays ?? 15,
@@ -119,25 +119,43 @@ export function FhaRefiForm() {
 
   const onCalculate: SubmitHandler<FormValues> = useCallback((data) => {
     if (!config) return;
+
+    // Determine if closingCostsTotal was manually overridden
+    const isManualOverride =
+      data.closingCostsTotal > 0 &&
+      data.closingCostsTotal !== fhaRefiResult?.closingCosts.totalClosingCosts;
+
     updateFhaRefiInputs(data);
+
     const result = calculateFhaRefinance(
       {
         ...data,
         propertyTaxMonthly: data.propertyTaxAnnual / 12,
         homeInsuranceMonthly: data.homeInsuranceAnnual / 12,
         payoffDays: 30,
+        // If manual override is detected, pass the manual value
+        closingCostsTotal: isManualOverride ? data.closingCostsTotal : 0
       },
       config
     );
     setFhaRefiResult(result);
 
-    if (!data.prepaidInterestAmount) setValue('prepaidInterestAmount', result.closingCosts.prepaidInterest);
-    if (!data.prepaidTaxAmount) setValue('prepaidTaxAmount', result.closingCosts.taxReserves);
-    if (!data.prepaidInsuranceAmount) setValue('prepaidInsuranceAmount', result.closingCosts.insuranceReserves);
-    if (!data.closingCostsTotal || data.closingCostsTotal === 0) {
-      setValue('closingCostsTotal', result.closingCosts.totalClosingCosts);
+    // Sync calculated prepaid values back to form if not manually overridden
+    if (!isManualOverride) {
+      if (result.closingCosts.prepaidInterest !== data.prepaidInterestAmount) {
+        setValue('prepaidInterestAmount', result.closingCosts.prepaidInterest);
+      }
+      if (result.closingCosts.taxReserves !== data.prepaidTaxAmount) {
+        setValue('prepaidTaxAmount', result.closingCosts.taxReserves);
+      }
+      if (result.closingCosts.insuranceReserves !== data.prepaidInsuranceAmount) {
+        setValue('prepaidInsuranceAmount', result.closingCosts.insuranceReserves);
+      }
     }
-  }, [config, updateFhaRefiInputs, setFhaRefiResult, setValue]);
+
+    // Always sync the total closing costs back to the input field
+    setValue('closingCostsTotal', result.closingCosts.totalClosingCosts);
+  }, [config, fhaRefiResult, updateFhaRefiInputs, setFhaRefiResult, setValue]);
 
   const handleReset = () => {
     resetCalculator('fhaRefi');
@@ -182,7 +200,7 @@ export function FhaRefiForm() {
             </div>
           </CardHeader>
           <CardContent className="flex-1 overflow-y-auto pt-6">
-            <form onSubmit={handleSubmit(onCalculate)} className="space-y-6">
+            <form onSubmit={handleSubmit(onCalculate as any)} className="space-y-6">
 
               {activeTab === 'loan' && (
                 <div className="space-y-5">

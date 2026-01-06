@@ -37,23 +37,23 @@ const formSchema = z.object({
   loanFeeMode: z.enum(['amount', 'percent']).default('amount'),
   closingCostsTotal: z.number().min(0),
   // Fee Overrides
-  processingFee: z.number().min(0).optional(),
-  underwritingFee: z.number().min(0).optional(),
-  docPrepFee: z.number().min(0).optional(),
-  appraisalFee: z.number().min(0).optional(),
-  creditReportFee: z.number().min(0).optional(),
-  floodCertFee: z.number().min(0).optional(),
-  taxServiceFee: z.number().min(0).optional(),
-  escrowFee: z.number().min(0).optional(),
-  notaryFee: z.number().min(0).optional(),
-  recordingFee: z.number().min(0).optional(),
-  ownerTitlePolicy: z.number().min(0).optional(),
-  lenderTitlePolicy: z.number().min(0).optional(),
-  pestInspectionFee: z.number().min(0).optional(),
-  propertyInspectionFee: z.number().min(0).optional(),
-  poolInspectionFee: z.number().min(0).optional(),
-  transferTax: z.number().min(0).optional(),
-  mortgageTax: z.number().min(0).optional(),
+  processingFee: z.number().min(0).default(895),
+  underwritingFee: z.number().min(0).default(995),
+  docPrepFee: z.number().min(0).default(595),
+  appraisalFee: z.number().min(0).default(650),
+  creditReportFee: z.number().min(0).default(150),
+  floodCertFee: z.number().min(0).default(30),
+  taxServiceFee: z.number().min(0).default(59),
+  escrowFee: z.number().min(0).default(400),
+  notaryFee: z.number().min(0).default(350),
+  recordingFee: z.number().min(0).default(275),
+  ownerTitlePolicy: z.number().min(0).default(0),
+  lenderTitlePolicy: z.number().min(0).default(1015),
+  pestInspectionFee: z.number().min(0).default(0),
+  propertyInspectionFee: z.number().min(0).default(0),
+  poolInspectionFee: z.number().min(0).default(0),
+  transferTax: z.number().min(0).default(0),
+  mortgageTax: z.number().min(0).default(0),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -74,7 +74,7 @@ export function ConventionalRefiForm() {
   useEffect(() => setIsMounted(true), []);
 
   const { control, handleSubmit, watch, setValue, formState: { errors } } = useForm<FormValues>({
-    resolver: zodResolver(formSchema),
+    resolver: zodResolver(formSchema) as any,
     defaultValues: {
       ...conventionalRefiInputs,
       prepaidInterestDays: conventionalRefiInputs.prepaidInterestDays ?? 15,
@@ -123,6 +123,11 @@ export function ConventionalRefiForm() {
 
   const onCalculate: SubmitHandler<FormValues> = useCallback((data) => {
     if (!config) return;
+
+    // Determine if should use manual override for closing costs
+    const isManualOverride = data.closingCostsTotal > 0 &&
+      data.closingCostsTotal !== conventionalRefiResult?.closingCosts.totalClosingCosts;
+
     updateConventionalRefiInputs(data);
     const result = calculateConventionalRefinance(
       {
@@ -131,18 +136,19 @@ export function ConventionalRefiForm() {
         homeInsuranceMonthly: data.homeInsuranceAnnual / 12,
         payoffDays: 30,
         cashOutAmount: 0,
+        closingCostsTotal: isManualOverride ? data.closingCostsTotal : 0,
       },
       config
     );
     setConventionalRefiResult(result);
 
-    if (!data.prepaidInterestAmount) setValue('prepaidInterestAmount', result.closingCosts.prepaidInterest);
-    if (!data.prepaidTaxAmount) setValue('prepaidTaxAmount', result.closingCosts.taxReserves);
-    if (!data.prepaidInsuranceAmount) setValue('prepaidInsuranceAmount', result.closingCosts.insuranceReserves);
-    if (!data.closingCostsTotal || data.closingCostsTotal === 0) {
-      setValue('closingCostsTotal', result.closingCosts.totalClosingCosts);
-    }
-  }, [config, updateConventionalRefiInputs, setConventionalRefiResult, setValue]);
+    if (!data.prepaidInterestAmount || !isManualOverride) setValue('prepaidInterestAmount', result.closingCosts.prepaidInterest);
+    if (!data.prepaidTaxAmount || !isManualOverride) setValue('prepaidTaxAmount', result.closingCosts.taxReserves);
+    if (!data.prepaidInsuranceAmount || !isManualOverride) setValue('prepaidInsuranceAmount', result.closingCosts.insuranceReserves);
+
+    // Sync Closing Costs to input
+    setValue('closingCostsTotal', result.closingCosts.totalClosingCosts);
+  }, [config, conventionalRefiResult, updateConventionalRefiInputs, setConventionalRefiResult, setValue]);
 
   const handleReset = () => {
     resetCalculator('conventionalRefi');
@@ -199,7 +205,7 @@ export function ConventionalRefiForm() {
             </div>
           </CardHeader>
           <CardContent className="flex-1 overflow-y-auto pt-6">
-            <form onSubmit={handleSubmit(onCalculate)} className="space-y-6">
+            <form onSubmit={handleSubmit(onCalculate as any)} className="space-y-6">
 
               {activeTab === 'loan' && (
                 <div className="space-y-5">
@@ -229,7 +235,7 @@ export function ConventionalRefiForm() {
 
               {activeTab === 'credit' && (
                 <div className="space-y-6">
-                  <Controller name="creditScoreTier" control={control} render={({ field }) => <SelectToggle label={t('calculator.creditScore')} name="creditScoreTier" value={field.value} onChange={field.onChange} options={creditTierOptions} />} />
+                  <Controller name="creditScoreTier" control={control} render={({ field }) => <SelectToggle label={t('calculator.creditScore')} name="creditScoreTier" value={field.value || '740'} onChange={field.onChange} options={creditTierOptions} />} />
                 </div>
               )}
 
@@ -238,7 +244,7 @@ export function ConventionalRefiForm() {
                   <div className="space-y-1">
                     <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider block">Origination Fee</label>
                     <div className="grid grid-cols-2 gap-2">
-                      <Controller name="loanFeeMode" control={control} render={({ field }) => <SelectToggle name="loanFeeMode" value={field.value} onChange={field.onChange} options={[{ value: 'amount', label: '$' }, { value: 'percent', label: '%' }]} />} />
+                      <Controller name="loanFeeMode" control={control} render={({ field }) => <SelectToggle name="loanFeeMode" value={field.value || 'amount'} onChange={field.onChange} options={[{ value: 'amount', label: '$' }, { value: 'percent', label: '%' }]} />} />
                       {watchedValues.loanFeeMode === 'percent' ? (
                         <Controller name="loanFeePercent" control={control} render={({ field }) => <InputGroup label="Loan Fee %" name="loanFeePercent" type="number" value={field.value} onChange={(v) => field.onChange(Number(v))} suffix="%" step="0.125" />} />
                       ) : (
