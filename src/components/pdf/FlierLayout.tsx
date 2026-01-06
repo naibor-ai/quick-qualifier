@@ -164,20 +164,20 @@ export function FlierLayout({
         {/* Cash to Close Section - matching reference image */}
         {/* Cash to Close Breakdown */}
         <View style={pdfStyles.cashToCloseBox}>
-          <Text style={[pdfStyles.cashToCloseLabel, { color: '#ffffff', marginBottom: 6, fontSize: 12, borderBottomWidth: 1, borderBottomColor: '#ffffff', paddingBottom: 4 }]}>
+          <Text style={[pdfStyles.cashToCloseLabel, { color: '#1E293B', marginBottom: 6, fontSize: 12, borderBottomWidth: 1, borderBottomColor: '#CBD5E1', paddingBottom: 4, fontWeight: 'bold' }]}>
             Cash to Close Breakdown
           </Text>
 
           <View style={pdfStyles.cashToCloseRow}>
-            <Text style={[pdfStyles.cashToCloseLabel, { color: '#e2e8f0', fontSize: 10 }]}>Down Payment</Text>
-            <Text style={[pdfStyles.cashToCloseValue, { color: '#ffffff', fontSize: 10 }]}>
+            <Text style={[pdfStyles.cashToCloseLabel, { color: '#475569', fontSize: 10 }]}>Down Payment</Text>
+            <Text style={[pdfStyles.cashToCloseValue, { color: '#1E293B', fontSize: 10 }]}>
               {formatCurrency(result.downPayment)}
             </Text>
           </View>
 
           <View style={pdfStyles.cashToCloseRow}>
-            <Text style={[pdfStyles.cashToCloseLabel, { color: '#e2e8f0', fontSize: 10 }]}>+ Total Closing Costs</Text>
-            <Text style={[pdfStyles.cashToCloseValue, { color: '#ffffff', fontSize: 10 }]}>
+            <Text style={[pdfStyles.cashToCloseLabel, { color: '#475569', fontSize: 10 }]}>+ Total Closing Costs</Text>
+            <Text style={[pdfStyles.cashToCloseValue, { color: '#1E293B', fontSize: 10 }]}>
               {formatCurrency(closingCosts.totalClosingCosts)}
             </Text>
           </View>
@@ -208,8 +208,8 @@ export function FlierLayout({
             return null;
           })()}
 
-          <View style={[pdfStyles.cashToCloseRow, { marginTop: 8, paddingTop: 8, borderTopWidth: 1, borderTopColor: 'rgba(255,255,255,0.3)' }]}>
-            <Text style={[pdfStyles.cashToCloseHighlightLabel, { fontSize: 14 }]}>Estimated Cash to Close</Text>
+          <View style={[pdfStyles.cashToCloseRow, { marginTop: 8, paddingTop: 8, borderTopWidth: 1, borderTopColor: '#CBD5E1' }]}>
+            <Text style={[pdfStyles.cashToCloseHighlightLabel, { fontSize: 14, color: '#1E293B', fontWeight: 'bold' }]}>Estimated Cash to Close</Text>
             <Text style={[pdfStyles.cashToCloseHighlightValue, { fontSize: 14 }]}>
               {formatCurrency(cashToClose)}
             </Text>
