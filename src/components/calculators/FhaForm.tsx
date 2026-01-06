@@ -159,7 +159,8 @@ export function FhaForm() {
       setValue('homeInsuranceMonthly', monthlyInsurance);
 
       const baseLoan = salesPrice * (1 - (watchedValues.downPaymentPercent / 100));
-      const monthlyMip = Number((baseLoan * 0.0055 / 12).toFixed(2));
+      const mipRate = baseLoan > 720000 ? 0.0075 : 0.0055;
+      const monthlyMip = Number((baseLoan * mipRate / 12).toFixed(2));
       setValue('mortgageInsuranceMonthly', monthlyMip);
     }
   }, [salesPrice, setValue, watchedValues.downPaymentPercent]);

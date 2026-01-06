@@ -295,12 +295,11 @@ export function calculateFhaPurchase(
   const totalLoanAmount = baseLoanAmount + ufmipAmount;
 
   // Calculate monthly MIP
-  // Formula: (loanAmount * 0.55%) / 12
-  // Assuming "loanAmount" refers to Base Loan Amount as standard, but checking request. 
-  // Config has mipRate, but user requested specific formula "(loanAmount* 0.55%) / 12".
-  const mipRate = 0.55;
+  // Formula: (loanAmount * MIP %) / 12
+  // If loan amount > $720,000, rate is 0.75%, otherwise 0.55%
+  const mipRate = baseLoanAmount > 720000 ? 0.75 : 0.55;
   let monthlyMip = 0;
-  if (mortgageInsuranceMonthly !== undefined) {
+  if (mortgageInsuranceMonthly !== undefined && mortgageInsuranceMonthly > 0) {
     monthlyMip = mortgageInsuranceMonthly;
   } else {
     monthlyMip = calculateMonthlyMip(baseLoanAmount, mipRate);

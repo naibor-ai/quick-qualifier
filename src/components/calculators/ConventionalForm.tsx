@@ -75,8 +75,11 @@ export function ConventionalForm() {
     configLoading,
   } = useCalculatorStore();
 
-  const { control, handleSubmit, watch, setValue, formState: { errors } } = useForm<FormValues>({
-    resolver: zodResolver(formSchema),
+  const [isMounted, setIsMounted] = useState(false);
+  useEffect(() => setIsMounted(true), []);
+
+  const { control, handleSubmit, watch, setValue, register, formState: { errors } } = useForm<FormValues>({
+    resolver: zodResolver(formSchema) as any,
     defaultValues: {
       salesPrice: conventionalInputs.salesPrice,
       downPaymentAmount: conventionalInputs.downPaymentAmount,
@@ -305,6 +308,8 @@ export function ConventionalForm() {
     { id: 'credit', label: 'Credit & PMI' },
     { id: 'closing', label: 'Closing & Prepaids' },
   ];
+
+  if (!isMounted) return null;
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 p-4 bg-slate-50 min-h-[calc(100vh-100px)]">
