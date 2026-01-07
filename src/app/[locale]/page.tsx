@@ -19,58 +19,62 @@ export default function Home() {
 
   // Icon components for each calculator
   const HomeIcon = () => (
-    <svg className="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
-      <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" />
+    <svg width="100" height="100" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+      <rect width="100" height="100" rx="20" fill="#E8F0FE" />
+      <path d="M30 45 L50 28 L70 45 V70 H30 Z" fill="#1A73E8" />
     </svg>
   );
 
   const RefreshIcon = () => (
-    <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M21 2v6h-6" />
-      <path d="M3 12a9 9 0 0 1 15-6.7L21 8" />
-      <path d="M3 22v-6h6" />
-      <path d="M21 12a9 9 0 0 1-15 6.7L3 16" />
+    <svg className="w-full h-full" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+      <rect width="100" height="100" rx="20" fill="#E8F0FE" />
+      <path d="M70 50 A20 20 0 1 1 50 30" fill="none" stroke="#1A73E8" strokeWidth="8" strokeLinecap="round" />
+      <path d="M50 20 L50 40 L65 30 Z" fill="#1A73E8" />
+      <path d="M30 50 A20 20 0 1 1 50 70" fill="none" stroke="#1A73E8" strokeWidth="8" strokeLinecap="round" />
+      <path d="M50 80 L50 60 L35 70 Z" fill="#1A73E8" />
     </svg>
   );
 
   const FhaSaleIcon = () => (
-    <svg className="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
-      <path d="M12 2c-5.52 0-10 4.48-10 10s4.48 10 10 10 10-4.48 10-10-4.48-10-10-10zm2 13h-4v-2h4v2zm0-4h-4v-2h4v2z" opacity="0.1" />
-      <path d="M21 12.22c0 .32-.07.64-.21.94l-2.53 5.41c-.24.53-.78.83-1.36.83H6.5c-.83 0-1.5-.67-1.5-1.5v-2.11c0-.52.27-1 .7-1.29L10 11.08V7h1V5.5c0-.28.22-.5.5-.5h1c.28 0 .5.22.5.5V7h1v4.08l4.3 2.92c.43.29.7.77.7 1.29v2.11c0 .32-.07.64-.21.94" opacity="0.3" />
-      <path d="M12.5 7v-.5c0-.28-.22-.5-.5-.5s-.5.22-.5.5V7h1zm1-4h-2v1h2v-1zm-1 8h-1v4h1v-4zm5.5 2.5l-4.3-2.92V7h-1v-.5c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5V7h-1v4.08l-4.3 2.92c-.43.29-.7.77-.7 1.29v2.11c0 .83.67 1.5 1.5 1.5h10.4c.83 0 1.5-.67 1.5-1.5v-2.11c0-.52-.27-1-.7-1.29zM12 14.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z" />
-      <path d="M11.5 12.5h1v1h-1z" />
-      <text x="10.8" y="10.2" fontSize="6" fontWeight="bold" fill="currentColor">$</text>
+    <svg className="w-full h-full" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+      <rect width="100" height="100" rx="20" fill="#E8F0FE" />
+      <path d="M30 65 Q45 75 75 60 L72 55 Q45 65 30 55" fill="#1A73E8" />
+      <text x="50" y="45" fontFamily="Arial" fontSize="22" fontWeight="bold" fill="#1A73E8" textAnchor="middle">$</text>
     </svg>
   );
 
   const FhaRefiIcon = () => (
-    <svg className="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
-      <path d="M16 17.01V10h-2v7.01h-3L15 21l4-3.99h-3zM9 3L5 6.99h3V14h2V6.99h3L9 3z" />
+    <svg className="w-full h-full" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+      <rect width="100" height="100" rx="20" fill="#E8F0FE" />
+      <path d="M40 30 V70 M30 40 L40 30 L50 40" fill="none" stroke="#1A73E8" strokeWidth="8" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M60 70 V30 M50 60 L60 70 L70 60" fill="none" stroke="#1A73E8" strokeWidth="8" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   );
 
   const VaSaleIcon = () => (
-    <svg className="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
-      <path d="M17 11c.34 0 .67.04 1 .09V6.27l-5-2.27-5 2.27v4.91c0 2.25 1.44 4.33 3.51 5.2 1.27.53 2.61.63 3.84.4A4.98 4.98 0 0 1 17 11z" opacity="0.2" />
-      <path d="M12 17l-3.3 1.9.9-3.8-2.9-2.5 3.9-.3 1.4-3.7 1.4 3.7 3.9.3-2.9 2.5.9 3.8L12 17z" />
-      <path d="M18 11.5c-2.48 0-4.5 2.02-4.5 4.5s2.02 4.5 4.5 4.5 4.5-2.02 4.5-4.5-2.02-4.5-4.5-4.5zm2.43 5.4l-.86 1.46-1.57-.33-.71 1.56-.71-1.56-1.57.33.86-1.46-1-1.37h1.69l1-1.37 1 1.37h1.69l-1 1.37z" />
+    <svg className="w-full h-full" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+      <rect width="100" height="100" rx="20" fill="#E8F0FE" />
+      <path d="M35 30 L42 55 L58 55 L65 30" fill="#1A73E8" />
+      <circle cx="50" cy="65" r="12" fill="#1A73E8" />
+      <path d="M50 60 L52 64 L56 64 L53 66 L54 70 L50 68 L46 70 L47 66 L44 64 L48 64 Z" fill="white" />
     </svg>
   );
 
   const VaRefiIcon = () => (
-    <svg className="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
-      <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z" />
+    <svg className="w-full h-full" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+      <rect width="100" height="100" rx="20" fill="#E8F0FE" />
+      <path d="M30 35 V55 Q30 75 50 82 Q70 75 70 55 V35 L50 28 Z" fill="#1A73E8" />
     </svg>
   );
 
   // Loan calculators in 3 rows x 2 columns (Sale | Refi)
   const loanCalculators = [
-    { href: `/${locale}/calculators/conventional`, label: t('nav.conventional'), icon: HomeIcon, color: '#3B82F6' },
-    { href: `/${locale}/calculators/conventional-refi`, label: t('nav.conventionalRefi'), icon: RefreshIcon, color: '#3B82F6' },
-    { href: `/${locale}/calculators/fha`, label: t('nav.fha'), icon: FhaSaleIcon, color: '#3B82F6' },
-    { href: `/${locale}/calculators/fha-refi`, label: t('nav.fhaRefi'), icon: FhaRefiIcon, color: '#3B82F6' },
-    { href: `/${locale}/calculators/va`, label: t('nav.va'), icon: VaSaleIcon, color: '#3B82F6' },
-    { href: `/${locale}/calculators/va-refi`, label: t('nav.vaRefi'), icon: VaRefiIcon, color: '#3B82F6' },
+    { href: `/${locale}/calculators/conventional`, label: t('nav.conventional'), icon: HomeIcon, color: '#1A73E8' },
+    { href: `/${locale}/calculators/conventional-refi`, label: t('nav.conventionalRefi'), icon: RefreshIcon, color: '#1A73E8' },
+    { href: `/${locale}/calculators/fha`, label: t('nav.fha'), icon: FhaSaleIcon, color: '#1A73E8' },
+    { href: `/${locale}/calculators/fha-refi`, label: t('nav.fhaRefi'), icon: FhaRefiIcon, color: '#1A73E8' },
+    { href: `/${locale}/calculators/va`, label: t('nav.va'), icon: VaSaleIcon, color: '#1A73E8' },
+    { href: `/${locale}/calculators/va-refi`, label: t('nav.vaRefi'), icon: VaRefiIcon, color: '#1A73E8' },
   ];
 
   // Additional tools in 2x2 grid
@@ -123,10 +127,7 @@ export default function Home() {
                   className="group rounded-xl border border-slate-200 bg-white p-5 shadow-sm transition-all hover:shadow-lg hover:border-blue-200 hover:-translate-y-1"
                 >
                   <div className="flex items-center gap-3">
-                    <div
-                      className="flex-shrink-0 w-10 h-10 rounded-lg flex items-center justify-center transition-colors"
-                      style={{ backgroundColor: `${calc.color}15`, color: calc.color }}
-                    >
+                    <div className="flex-shrink-0 w-10 h-10 rounded-lg flex items-center justify-center overflow-hidden">
                       <IconComponent />
                     </div>
                     <span className="text-base font-semibold text-slate-800 group-hover:text-blue-600 transition-colors text-left leading-tight">

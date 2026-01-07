@@ -33,6 +33,7 @@ import {
   getLtvTier,
   isHighBalanceLoan,
   roundToCents,
+  calculateAPR,
 } from './common';
 
 /**
@@ -404,6 +405,14 @@ export function calculateConventionalPurchase(
 
   const cashToClose = roundToCents(initialCashToClose - (depositAmount || 0));
 
+  // Calculate APR
+  const apr = calculateAPR(
+    totalLoanAmount,
+    adjustedClosingCosts.totalLenderFees,
+    monthlyPayment.principalAndInterest,
+    termYears
+  );
+
   return {
     loanAmount,
     totalLoanAmount,
@@ -413,6 +422,13 @@ export function calculateConventionalPurchase(
     closingCosts: adjustedClosingCosts,
     cashToClose,
     pmiRate,
+    // Reporting fields
+    propertyValue: salesPrice || 0,
+    interestRate: interestRate || 0,
+    apr,
+    term: termYears,
+    downPaymentPercent: downPaymentPercent || calculateDownPaymentPercent(salesPrice || 0, downPayment),
+    monthlyMiRate: pmiRate,
   };
 }
 
@@ -645,6 +661,14 @@ export function calculateConventionalRefinance(
   const amountNeeded = (existingLoanBalance || 0) + closingCosts.netClosingCosts;
   const cashToClose = roundToCents(amountNeeded - (newLoanAmount || 0));
 
+  // Calculate APR
+  const apr = calculateAPR(
+    newLoanAmount || 0,
+    closingCosts.totalLenderFees,
+    monthlyPayment.principalAndInterest,
+    termYears
+  );
+
   return {
     loanAmount: newLoanAmount,
     totalLoanAmount: newLoanAmount,
@@ -654,5 +678,12 @@ export function calculateConventionalRefinance(
     closingCosts,
     cashToClose,
     pmiRate,
+    // Reporting fields
+    propertyValue: propertyValue || 0,
+    interestRate: interestRate || 0,
+    apr,
+    term: termYears,
+    downPaymentPercent: 0,
+    monthlyMiRate: pmiRate,
   };
 }

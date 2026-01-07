@@ -35,6 +35,7 @@ import {
   calculateCashToClose,
   roundToCents,
   calculateOriginationFee,
+  calculateAPR,
 } from './common';
 
 /**
@@ -362,6 +363,14 @@ export function calculateVaPurchase(
     input.depositAmount || 0
   );
 
+  // Calculate APR
+  const apr = calculateAPR(
+    totalLoanAmount,
+    closingCosts.totalLenderFees,
+    monthlyPayment.principalAndInterest,
+    termYears
+  );
+
   return {
     loanAmount: baseLoanAmount,
     totalLoanAmount,
@@ -371,6 +380,13 @@ export function calculateVaPurchase(
     closingCosts,
     cashToClose,
     vaFundingFee: fundingFeeAmount,
+    // Reporting fields
+    propertyValue: salesPrice || 0,
+    interestRate: interestRate || 0,
+    apr,
+    term: termYears,
+    downPaymentPercent: dpPercent,
+    monthlyMiRate: 0,
   };
 }
 
@@ -552,6 +568,14 @@ export function calculateVaRefinance(
   const amountNeeded = existingLoanBalance + netClosingCosts + fundingFeeAmount;
   const cashToClose = roundToCents(amountNeeded - totalLoanAmount);
 
+  // Calculate APR
+  const apr = calculateAPR(
+    totalLoanAmount,
+    closingCosts.totalLenderFees,
+    monthlyPayment.principalAndInterest,
+    termYears
+  );
+
   return {
     loanAmount: newLoanAmount,
     totalLoanAmount,
@@ -561,5 +585,12 @@ export function calculateVaRefinance(
     closingCosts,
     cashToClose,
     vaFundingFee: fundingFeeAmount,
+    // Reporting fields
+    propertyValue: propertyValue || 0,
+    interestRate: interestRate || 0,
+    apr,
+    term: termYears,
+    downPaymentPercent: 0,
+    monthlyMiRate: 0,
   };
 }
