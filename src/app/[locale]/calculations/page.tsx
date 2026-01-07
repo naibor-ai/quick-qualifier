@@ -159,6 +159,7 @@ export default function CalculationsPage() {
   }, [content]);
 
   return (
+    <div className="min-h-screen">
     <div className="min-h-screen bg-[#cbe5f2]">
       <header className="border-b border-slate-200 bg-white">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4">
