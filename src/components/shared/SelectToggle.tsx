@@ -41,7 +41,7 @@ export const SelectToggle: React.FC<SelectToggleProps> = ({
               px-3 py-1.5 text-sm font-medium rounded-full transition-colors border focus:outline-none focus:ring-0
               ${value === option.value
                                 ? 'bg-blue-600 text-white border-transparent'
-                                : 'bg-white text-slate-600 border-slate-300 hover:bg-slate-50 hover:border-slate-400'
+                                : 'bg-white text-slate-600 border-slate-300 hover:bg-[#cbe5f2] hover:border-slate-400'
                             }
               ${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
             `}

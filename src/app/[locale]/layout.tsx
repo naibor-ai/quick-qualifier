@@ -17,6 +17,9 @@ export const metadata: Metadata = {
   description: 'Professional mortgage qualification calculator',
 };
 
+const backgroundImageUrl =
+  'https://media.discordapp.net/attachments/584194752774144020/1458250744313544746/1254.jpg?ex=695ef556&is=695da3d6&hm=ea5c63113bfe4ef7d8137cc48e4789981f2d81fd65b7b3262bae0a69c80526d3&=&format=webp&width=1885&height=1320';
+
 type Props = {
   children: React.ReactNode;
   params: Promise<{ locale: string }>;
@@ -35,6 +38,14 @@ export default async function LocaleLayout({ children, params }: Props) {
     <html lang={locale}>
       <body
         className={`${poppins.variable} min-h-screen antialiased`}
+        style={{
+          backgroundImage: `url('${backgroundImageUrl}')`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundRepeat: 'no-repeat',
+          backgroundAttachment: 'fixed',
+          backgroundColor: '#f9fafc',
+        }}
       >
         <NextIntlClientProvider messages={messages}>
           {children}

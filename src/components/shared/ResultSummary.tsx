@@ -39,7 +39,7 @@ function ResultSection({ title, children }: ResultSectionProps) {
       <h4 className="text-sm font-semibold text-slate-700 uppercase tracking-wide">
         {title}
       </h4>
-      <div className="bg-slate-50/50 rounded-lg p-3">
+      <div className="bg-[#cbe5f2]/50 rounded-lg p-3">
         {children}
       </div>
     </div>
@@ -108,7 +108,7 @@ export function ResultSummary({
               onClick={() => setActiveTab(tab.id)}
               className={`flex-1 min-w-max px-3 py-2 text-sm font-medium rounded-md transition-all whitespace-nowrap cursor-pointer ${activeTab === tab.id
                 ? 'bg-blue-600 text-white shadow-sm'
-                : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
+                : 'text-slate-600 hover:text-slate-900 hover:bg-[#cbe5f2]'
                 }`}
             >
               {tab.label}
@@ -219,7 +219,7 @@ export function ResultSummary({
       {/* Tab 3: Closing Costs */}
       {activeTab === 'closing' && showClosingCosts && (
         <div className="bg-white rounded-xl border border-slate-200 overflow-hidden animate-in fade-in duration-300">
-          <div className="p-4 border-b border-slate-100 bg-slate-50">
+          <div className="p-4 border-b border-slate-100 bg-[#cbe5f2]">
             <div className="flex gap-2 text-sm">
               {closingTabs.map((tab) => (
                 <button
@@ -402,7 +402,7 @@ export function ResultSummary({
               </div>
             )}
 
-            <div className="border-t border-slate-200 pt-4 mt-4 bg-slate-50/50 -mx-6 -mb-6 p-6">
+            <div className="border-t border-slate-200 pt-4 mt-4 bg-[#cbe5f2]/50 -mx-6 -mb-6 p-6">
               <ResultItem
                 label={t('results.totalClosingCosts')}
                 value={formatCurrency(result.closingCosts.totalClosingCosts)}
