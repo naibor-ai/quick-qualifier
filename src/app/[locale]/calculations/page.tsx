@@ -159,8 +159,11 @@ export default function CalculationsPage() {
   }, [content]);
 
   return (
-    <div className="min-h-screen bg-[#cbe5f2]">
-      <header className="border-b border-slate-200 bg-white">
+    <div
+      className="min-h-screen bg-fixed bg-cover bg-center bg-no-repeat"
+      style={{ backgroundImage: 'url("/bg-dashboard.jpeg")' }}
+    >
+      <header className="border-b border-slate-200 bg-white/80 backdrop-blur-md sticky top-0 z-50">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4">
           <Link
             href={`/${locale}`}
@@ -180,7 +183,7 @@ export default function CalculationsPage() {
         </div>
       </header>
 
-      <main className="mx-auto max-w-6xl px-4 py-10 space-y-6" style={{ background: '#F5F7FA' }}>
+      <main className="mx-auto max-w-6xl px-4 py-10 space-y-6 rounded-b-3xl bg-white/60 backdrop-blur-sm shadow-xl mt-6 mb-12 border border-white/40">
         <div className="text-center space-y-2">
           <p className="text-sm uppercase tracking-[0.2em] text-slate-500">{t('calculations')}</p>
           <h1 className="text-3xl font-semibold text-slate-800">Lender Settings</h1>

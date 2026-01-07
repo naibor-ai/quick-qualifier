@@ -19,12 +19,12 @@ export default function Home() {
 
   // Loan calculators in 3 rows x 2 columns (Sale | Refi)
   const loanCalculators = [
-    { href: `/${locale}/calculators/conventional`, label: t('nav.conventional') },
-    { href: `/${locale}/calculators/conventional-refi`, label: t('nav.conventionalRefi') },
-    { href: `/${locale}/calculators/fha`, label: t('nav.fha') },
-    { href: `/${locale}/calculators/fha-refi`, label: t('nav.fhaRefi') },
-    { href: `/${locale}/calculators/va`, label: t('nav.va') },
-    { href: `/${locale}/calculators/va-refi`, label: t('nav.vaRefi') },
+    { href: `/${locale}/calculators/conventional`, label: t('nav.conventional'), iconPath: '/conventional-sale-icon.svg' },
+    { href: `/${locale}/calculators/conventional-refi`, label: t('nav.conventionalRefi'), iconPath: '/conventional-refi-icon.svg' },
+    { href: `/${locale}/calculators/fha`, label: t('nav.fha'), iconPath: '/fha-sale-icon.svg' },
+    { href: `/${locale}/calculators/fha-refi`, label: t('nav.fhaRefi'), iconPath: '/fha-refi-icon.svg' },
+    { href: `/${locale}/calculators/va`, label: t('nav.va'), iconPath: '/va-sale-icon.svg' },
+    { href: `/${locale}/calculators/va-refi`, label: t('nav.vaRefi'), iconPath: '/va-refi-icon.svg' },
   ];
 
   // Additional tools in 2x2 grid
@@ -34,8 +34,11 @@ export default function Home() {
   ];
 
   return (
-    <div className="min-h-screen bg-[#cbe5f2]">
-      <header className="border-b border-slate-200 bg-white">
+    <div
+      className="min-h-screen bg-fixed bg-cover bg-center bg-no-repeat"
+      style={{ backgroundImage: 'url("/bg-dashboard.jpeg")' }}
+    >
+      <header className="border-b border-slate-200 bg-white/80 backdrop-blur-md sticky top-0 z-50">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4">
           <Link href={`/${locale}`} className="flex items-center h-10">
             <Image
@@ -65,17 +68,30 @@ export default function Home() {
             {t('home.loanCalculators')}
           </h3>
           <div className="grid gap-4 grid-cols-2 max-w-2xl mx-auto">
-            {loanCalculators.map((calc) => (
-              <Link
-                key={calc.href}
-                href={calc.href}
-                className="group rounded-xl border border-slate-200 bg-white p-5 shadow-sm transition-all hover:shadow-lg hover:border-blue-200 hover:-translate-y-1 text-center"
-              >
-                <span className="text-lg font-medium text-slate-800 group-hover:text-blue-600 transition-colors">
-                  {calc.label}
-                </span>
-              </Link>
-            ))}
+            {loanCalculators.map((calc) => {
+              return (
+                <Link
+                  key={calc.href}
+                  href={calc.href}
+                  className="group rounded-xl border border-slate-200 bg-white p-5 shadow-sm transition-all hover:shadow-lg hover:border-blue-200 hover:-translate-y-1"
+                >
+                  <div className="flex items-center justify-center gap-3">
+                    <div className="w-7 h-7 flex items-center justify-center flex-shrink-0">
+                      <Image
+                        src={calc.iconPath}
+                        alt={calc.label}
+                        width={30}
+                        height={30}
+                        className="w-full h-full"
+                      />
+                    </div>
+                    <span className="text-base font-semibold text-slate-800 group-hover:text-blue-600 transition-colors leading-tight">
+                      {calc.label}
+                    </span>
+                  </div>
+                </Link>
+              );
+            })}
           </div>
         </div>
 
@@ -101,7 +117,7 @@ export default function Home() {
         </div>
       </main>
 
-      <footer className="border-t border-slate-200 bg-white mt-12">
+      <footer className="border-t border-slate-200 bg-white/80 backdrop-blur-md mt-12">
         <div className="mx-auto max-w-7xl px-4 py-8 text-center">
           {config?.blurbs && (config.blurbs.home1 || config.blurbs.home2 || config.blurbs.home3) && (
             <div className="mb-6 text-slate-600 space-y-1">

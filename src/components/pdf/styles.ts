@@ -6,77 +6,114 @@ import { StyleSheet } from '@react-pdf/renderer';
 export const pdfStyles = StyleSheet.create({
   // Page layout
   page: {
-    flexDirection: 'column',
-    backgroundColor: '#FFFFFF',
-    padding: 40,
-    fontFamily: 'Helvetica',
+    padding: '30 40',
+  },
+
+  // Flier border/frame
+  pageFrame: {
+    position: 'absolute',
+    top: 20,
+    left: 20,
+    right: 20,
+    bottom: 20,
+    borderWidth: 1,
+    borderColor: '#0066CC',
+    borderStyle: 'solid',
   },
 
   // Header section
   header: {
     marginBottom: 10,
     paddingBottom: 10,
-    borderBottomWidth: 2,
-    borderBottomColor: '#2563EB',
-    borderBottomStyle: 'solid',
+    position: 'relative',
   },
-  headerRow: {
+  topDisclaimer: {
+    fontSize: 10,
+    textAlign: 'center',
+    color: '#000',
+    marginBottom: 10,
+  },
+  headerMain: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'flex-start',
+    justifyContent: 'flex-start',
+    alignItems: 'center',
+    marginBottom: 10,
   },
-  companyInfo: {
-    flex: 1,
+  logo: {
+    width: 140,
+    height: 'auto',
   },
-  companyName: {
-    fontSize: 18,
+
+  // Titles
+  titleContainer: {
+    alignItems: 'center',
+    marginBottom: 20,
+    marginTop: 10,
+  },
+  mainTitle: {
+    fontSize: 16,
     fontWeight: 'bold',
-    color: '#1E40AF',
-    marginBottom: 4,
+    color: '#0066CC',
+    fontStyle: 'italic',
+    marginBottom: 15,
   },
-  companyDetails: {
-    fontSize: 9,
-    color: '#64748B',
-    lineHeight: 1.4,
+  subTitle: {
+    fontSize: 11,
+    color: '#A50000',
+    fontStyle: 'italic',
   },
-  loanOfficerInfo: {
-    flex: 1,
-    alignItems: 'flex-end',
-  },
-  loName: {
-    fontSize: 12,
+  sectionTitleBlue: {
+    fontSize: 14,
     fontWeight: 'bold',
-    color: '#1E293B',
-    marginBottom: 2,
+    color: '#0066CC',
+    marginBottom: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: '#DBEAFE',
+    paddingBottom: 4,
   },
-  loContact: {
-    fontSize: 9,
-    color: '#64748B',
+  sectionTitleRed: {
+    fontSize: 14,
+    fontWeight: 'bold',
+    color: '#A50000',
+    marginBottom: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: '#FEE2E2',
+    paddingBottom: 4,
   },
 
   // Section styles
   section: {
-    marginBottom: 15,
+    marginBottom: 20,
+    paddingHorizontal: 60,
   },
-  sectionTitle: {
-    fontSize: 14,
-    fontWeight: 'bold',
-    color: '#1E40AF',
-    marginBottom: 10,
-    marginTop: 15,
-    paddingBottom: 4,
-    borderBottomWidth: 1.5,
-    borderBottomColor: '#BFDBFE',
-    borderBottomStyle: 'solid',
-  },
-  sectionTitleBlue: {
-    backgroundColor: '#EFF6FF',
-    color: '#1E40AF',
-    padding: '6 12',
-    borderRadius: 4,
+  sectionHeaderRed: {
     fontSize: 12,
     fontWeight: 'bold',
+    color: '#A50000',
+    fontStyle: 'italic',
     marginBottom: 10,
+  },
+  sectionHeaderBlueBar: {
+    backgroundColor: '#EFF6FF',
+    padding: '4 8',
+    borderRadius: 4,
+    marginBottom: 8,
+  },
+  sectionHeaderBlueText: {
+    fontSize: 11,
+    fontWeight: 'bold',
+    color: '#0066CC',
+  },
+  sectionHeaderRedBar: {
+    backgroundColor: '#FFF1F2',
+    padding: '4 8',
+    borderRadius: 4,
+    marginBottom: 8,
+  },
+  sectionHeaderRedText: {
+    fontSize: 11,
+    fontWeight: 'bold',
+    color: '#A50000',
   },
 
   // Table styles
@@ -85,156 +122,93 @@ export const pdfStyles = StyleSheet.create({
   },
   tableRow: {
     flexDirection: 'row',
-    borderBottomWidth: 1,
-    borderBottomColor: '#F1F5F9',
-    borderBottomStyle: 'solid',
-    paddingVertical: 4,
-  },
-  tableRowAlt: {
-    backgroundColor: '#F8FAFC',
-  },
-  tableRowTotal: {
-    borderTopWidth: 2,
-    borderTopColor: '#CBD5E1',
-    borderTopStyle: 'solid',
-    backgroundColor: '#F1F5F9',
-    fontWeight: 'bold',
-  },
-  tableCell: {
-    flex: 1,
-    fontSize: 8.5,
-    color: '#475569',
+    justifyContent: 'space-between',
+    paddingVertical: 3,
   },
   tableCellLabel: {
-    flex: 2,
-    fontWeight: 'normal',
+    fontSize: 11,
+    color: '#000',
   },
   tableCellValue: {
-    flex: 1,
+    fontSize: 11,
+    color: '#000',
     textAlign: 'right',
-    color: '#1E293B',
-    fontWeight: 'medium',
-    fontSize: 8.5,
   },
-  tableCellBold: {
+  tableRowSubtotal: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingVertical: 5,
+    marginTop: 4,
+    borderTopWidth: 1,
+    borderTopColor: '#E2E8F0',
+  },
+  subtotalLabel: {
+    fontSize: 11,
     fontWeight: 'bold',
-    fontSize: 10,
-    color: '#1E3A8A',
+    color: '#0066CC',
   },
-  card: {
-    backgroundColor: '#FFFFFF',
-    padding: 10,
+  subtotalValue: {
+    fontSize: 11,
+    fontWeight: 'bold',
+    color: '#0066CC',
+    textAlign: 'right',
+  },
+
+  // Totals
+  totalContainer: {
+    alignItems: 'center',
+    marginVertical: 15,
+  },
+  totalText: {
+    fontSize: 14,
+    color: '#0066CC',
+    fontWeight: 'bold',
+  },
+  creditBox: {
+    backgroundColor: '#F8FAFC',
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
     borderRadius: 8,
-    borderWidth: 1,
-    borderColor: '#E2E8F0',
-    marginBottom: 12,
-  },
-  accentCard: {
-    backgroundColor: '#F0F9FF',
-    borderColor: '#BAE6FD',
-  },
-
-  // Summary box
-  summaryBox: {
-    backgroundColor: '#F8FAFC',
-    padding: 12,
-    borderRadius: 6,
-    marginBottom: 15,
-    borderWidth: 1,
-    borderColor: '#E2E8F0',
-    borderStyle: 'solid',
-  },
-  summaryTitle: {
-    fontSize: 14,
-    fontWeight: 'bold',
-    color: '#1E40AF',
-    marginBottom: 10,
-  },
-  summaryRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: 4,
-  },
-  summaryLabel: {
-    fontSize: 11,
-    color: '#475569',
-  },
-  summaryValue: {
-    fontSize: 11,
-    fontWeight: 'bold',
-    color: '#1E293B',
-  },
-  summaryValueLarge: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#1E40AF',
-  },
-
-  // Cash to Close highlight styles - matching reference image with blue-600 theme
-  cashToCloseBox: {
-    backgroundColor: '#F0F9FF',
-    padding: 20,
-    borderRadius: 12,
-    marginBottom: 20,
-    marginTop: 15,
-    borderWidth: 2,
-    borderColor: '#2563EB', // Updated to blue-600 for consistency
-  },
-  cashToCloseRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    padding: 15,
+    minHeight: 100,
+    justifyContent: 'center',
     alignItems: 'center',
-    paddingVertical: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: '#DBEAFE', // Updated to match blue-600 theme
-    borderBottomStyle: 'solid',
   },
-  cashToCloseRowLast: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingVertical: 10,
-    borderBottomWidth: 0,
-  },
-  cashToCloseLabel: {
-    fontSize: 12,
-    color: '#475569',
-    fontWeight: 'normal',
-  },
-  cashToCloseValue: {
-    fontSize: 12,
-    color: '#1E293B',
-    fontWeight: 'medium',
-  },
-  cashToCloseHighlightLabel: {
-    fontSize: 14,
-    color: '#1E3A8A',
-    fontWeight: 'bold',
-  },
-  cashToCloseHighlightValue: {
-    fontSize: 16,
-    color: '#2563EB',
-    fontWeight: 'bold',
-  },
-  paymentCard: {
-    backgroundColor: '#F8FAFC',
-    borderLeftWidth: 4,
-    borderLeftColor: '#3B82F6',
-    padding: 12,
-    borderRadius: 6,
-    marginBottom: 12,
-  },
-  paymentMainValue: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#1E40AF',
-    textAlign: 'center',
-    marginVertical: 4,
-  },
-  paymentSubLabel: {
-    fontSize: 9,
+  creditBoxText: {
+    fontSize: 10,
     color: '#64748B',
     textAlign: 'center',
+  },
+  loanDetailsContainer: {
+    backgroundColor: '#F8FAFC',
+    borderRadius: 8,
+    padding: 12,
+    marginBottom: 20,
+  },
+
+  // Detailed Disclaimers
+  detailedDisclaimer: {
+    fontSize: 8.5,
+    color: '#000',
+    lineHeight: 1.3,
+    marginTop: 10,
+    paddingHorizontal: 20,
+  },
+
+  // Contact Section
+  contactSection: {
+    marginTop: 20,
+    paddingHorizontal: 20,
+    gap: 4,
+  },
+  contactName: {
+    fontSize: 11,
+    fontWeight: 'bold',
+    color: '#0066CC',
+  },
+  contactText: {
+    fontSize: 10,
+    color: '#000',
   },
 
   // Two-column layout
@@ -249,26 +223,35 @@ export const pdfStyles = StyleSheet.create({
   // Footer
   footer: {
     position: 'absolute',
-    bottom: 30,
+    bottom: 25,
     left: 40,
     right: 40,
-    paddingTop: 10,
-    borderTopWidth: 1,
-    borderTopColor: '#E2E8F0',
-    borderTopStyle: 'solid',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-end',
+  },
+  footerLogoLeft: {
+    width: 60,
+    height: 'auto',
+  },
+  footerLogoRight: {
+    width: 25,
+    height: 'auto',
+  },
+  footerContent: {
+    flex: 1,
+    alignItems: 'center',
   },
   footerText: {
-    fontSize: 8,
-    color: '#94A3B8',
-    textAlign: 'center',
-    marginBottom: 2,
+    fontSize: 9,
+    color: '#000',
+    marginBottom: 4,
   },
   disclaimer: {
-    fontSize: 7,
-    color: '#94A3B8',
+    fontSize: 7.5,
+    color: '#666',
     textAlign: 'center',
-    fontStyle: 'italic',
-    marginTop: 4,
+    marginBottom: 2,
   },
 
   // Text utilities

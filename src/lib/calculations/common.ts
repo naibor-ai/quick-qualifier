@@ -159,10 +159,38 @@ export function isHighBalanceLoan(
 }
 
 /**
- * Round to cents (2 decimal places).
+ * Calculate APR (Annual Percentage Rate) using an iterative approach.
+ * APR is the rate where the present value of monthly payments equals (Loan Amount - Prepaid Finance Charges).
  */
-export function roundToCents(value: number): number {
-  return Math.round(value * 100) / 100;
+export function calculateAPR(
+  loanAmount: number,
+  lenderFees: number,
+  monthlyPI: number,
+  termYears: number
+): number {
+  const financeAmount = loanAmount - lenderFees;
+  const n = termYears * 12;
+  const P = monthlyPI;
+
+  if (financeAmount <= 0 || n <= 0 || P <= 0) return 0;
+
+  // Initial guess for monthly rate
+  let r = (P * n / financeAmount - 1) / n;
+
+  // Newton's method to find the root of: f(r) = P * (1 - (1+r)^-n) / r - financeAmount
+  for (let i = 0; i < 20; i++) {
+    const compound = Math.pow(1 + r, -n);
+    const f = P * (1 - compound) / r - financeAmount;
+    const df = P * (n * compound / (r * (1 + r)) - (1 - compound) / (r * r));
+    const nextR = r - f / df;
+    if (Math.abs(nextR - r) < 0.000001) {
+      r = nextR;
+      break;
+    }
+    r = nextR;
+  }
+
+  return roundToDecimals(r * 12 * 100, 3);
 }
 
 /**
@@ -171,6 +199,13 @@ export function roundToCents(value: number): number {
 export function roundToDecimals(value: number, decimals: number): number {
   const factor = Math.pow(10, decimals);
   return Math.round(value * factor) / factor;
+}
+
+/**
+ * Round to cents (2 decimal places).
+ */
+export function roundToCents(value: number): number {
+  return Math.round(value * 100) / 100;
 }
 
 /**
@@ -186,11 +221,11 @@ export function calculateTotalMonthlyPayment(components: {
 }): number {
   return roundToCents(
     components.principalAndInterest +
-      components.mortgageInsurance +
-      components.propertyTax +
-      components.homeInsurance +
-      components.hoaDues +
-      (components.floodInsurance || 0)
+    components.mortgageInsurance +
+    components.propertyTax +
+    components.homeInsurance +
+    components.hoaDues +
+    (components.floodInsurance || 0)
   );
 }
 

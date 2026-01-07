@@ -306,6 +306,13 @@ export const LoanCalculationResultSchema = z.object({
   monthlyPayment: MonthlyPaymentBreakdownSchema,
   closingCosts: ClosingCostsBreakdownSchema,
   cashToClose: z.number(),
+  // Reporting fields
+  propertyValue: z.number().default(0),
+  interestRate: z.number().default(0),
+  apr: z.number().default(0),
+  term: z.number().default(30),
+  downPaymentPercent: z.number().optional(),
+  monthlyMiRate: z.number().optional(),
   // Program-specific fields
   pmiRate: z.number().optional(),
   ufmip: z.number().optional(), // FHA upfront MIP
@@ -435,6 +442,7 @@ export const GhlConfigSchema = z.object({
     loName: z.string(),
     loEmail: z.string(),
     loPhone: z.string(),
+    loNmlsId: z.string().optional(),
     address: z.string(),
   }),
 

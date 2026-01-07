@@ -34,6 +34,7 @@ import {
   isHighBalanceLoan,
   roundToCents,
   calculateOriginationFee,
+  calculateAPR,
 } from './common';
 
 /**
@@ -365,6 +366,14 @@ export function calculateFhaPurchase(
     input.depositAmount || 0
   );
 
+  // Calculate APR
+  const apr = calculateAPR(
+    totalLoanAmount,
+    closingCosts.totalLenderFees,
+    monthlyPayment.principalAndInterest,
+    termYears
+  );
+
   return {
     loanAmount: baseLoanAmount,
     totalLoanAmount,
@@ -374,6 +383,13 @@ export function calculateFhaPurchase(
     closingCosts,
     cashToClose,
     ufmip: ufmipAmount,
+    // Reporting fields
+    propertyValue: salesPrice || 0,
+    interestRate: interestRate || 0,
+    apr,
+    term: termYears,
+    downPaymentPercent: downPaymentPercent || 3.5,
+    monthlyMiRate: mipRate,
   };
 }
 
@@ -571,6 +587,14 @@ export function calculateFhaRefinance(
   const amountNeeded = existingLoanBalance + netClosingCosts + ufmipAmount;
   const cashToClose = roundToCents(amountNeeded - totalLoanAmount);
 
+  // Calculate APR
+  const apr = calculateAPR(
+    totalLoanAmount,
+    closingCosts.totalLenderFees,
+    monthlyPayment.principalAndInterest,
+    termYears
+  );
+
   return {
     loanAmount: newLoanAmount,
     totalLoanAmount,
@@ -580,5 +604,12 @@ export function calculateFhaRefinance(
     closingCosts,
     cashToClose,
     ufmip: ufmipAmount,
+    // Reporting fields
+    propertyValue: propertyValue || 0,
+    interestRate: interestRate || 0,
+    apr,
+    term: termYears,
+    downPaymentPercent: 0,
+    monthlyMiRate: mipRate,
   };
 }
