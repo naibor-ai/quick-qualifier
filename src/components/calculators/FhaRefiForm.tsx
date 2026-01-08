@@ -134,7 +134,10 @@ export function FhaRefiForm() {
         homeInsuranceMonthly: data.homeInsuranceAnnual / 12,
         payoffDays: 30,
         // If manual override is detected, pass the manual value
-        closingCostsTotal: isManualOverride ? data.closingCostsTotal : 0
+        closingCostsTotal: isManualOverride ? data.closingCostsTotal : 0,
+        prepaidInterestAmount: 0,
+        prepaidTaxAmount: 0,
+        prepaidInsuranceAmount: 0,
       },
       config
     );
@@ -221,22 +224,20 @@ export function FhaRefiForm() {
                         <button
                           type="button"
                           onClick={() => setValue('loanFeeMode', 'amount')}
-                          className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-medium transition-all ${
-                            watchedValues.loanFeeMode === 'amount'
+                          className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-medium transition-all ${watchedValues.loanFeeMode === 'amount'
                               ? 'bg-blue-600 text-white shadow-sm'
                               : 'text-slate-600 hover:text-slate-900'
-                          }`}
+                            }`}
                         >
                           $
                         </button>
                         <button
                           type="button"
                           onClick={() => setValue('loanFeeMode', 'percent')}
-                          className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-medium transition-all ${
-                            watchedValues.loanFeeMode === 'percent'
+                          className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-medium transition-all ${watchedValues.loanFeeMode === 'percent'
                               ? 'bg-blue-600 text-white shadow-sm'
                               : 'text-slate-600 hover:text-slate-900'
-                          }`}
+                            }`}
                         >
                           %
                         </button>
