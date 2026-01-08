@@ -281,31 +281,6 @@ export function VaForm() {
                     <Controller name="interestRate" control={control} render={({ field }) => <InputGroup label={t('calculator.interestRate')} name="interestRate" type="number" value={field.value} onChange={(v) => field.onChange(Number(v))} suffix="%" step="0.125" required />} />
                     <Controller name="termYears" control={control} render={({ field }) => <SelectToggle label={t('calculator.term')} name="termYears" value={String(field.value)} onChange={(v) => field.onChange(Number(v))} options={termOptions} />} />
                   </div>
-                </div>
-              )}
-
-              {activeTab === 'costs' && (
-                <div className="space-y-5">
-                  <div className="grid grid-cols-2 gap-4">
-                    <Controller name="propertyTaxAnnual" control={control} render={({ field }) => <InputGroup label={t('calculator.propertyTax')} name="propertyTaxAnnual" type="number" value={field.value} onChange={(v) => { const a = Number(v); field.onChange(a); setValue('propertyTaxMonthly', a / 12); }} prefix="$" helperText="Annual" />} />
-                    <Controller name="homeInsuranceAnnual" control={control} render={({ field }) => <InputGroup label={t('calculator.homeInsurance')} name="homeInsuranceAnnual" type="number" value={field.value} onChange={(v) => { const a = Number(v); field.onChange(a); setValue('homeInsuranceMonthly', a / 12); }} prefix="$" helperText="Annual" />} />
-                  </div>
-                  <div className="grid grid-cols-2 gap-4">
-                    <Controller name="hoaDuesMonthly" control={control} render={({ field }) => <InputGroup label={t('calculator.hoaDues')} name="hoaDuesMonthly" type="number" value={field.value} onChange={(v) => field.onChange(Number(v))} prefix="$" />} />
-                    <Controller name="floodInsuranceMonthly" control={control} render={({ field }) => <InputGroup label={t('calculator.floodInsurance')} name="floodInsuranceMonthly" type="number" value={field.value} onChange={(v) => field.onChange(Number(v))} prefix="$" />} />
-                  </div>
-                </div>
-              )}
-
-              {activeTab === 'details' && (
-                <div className="space-y-5">
-                  <div className="bg-blue-50 p-4 rounded-lg space-y-4">
-                    <Controller name="vaUsage" control={control} render={({ field }) => <SelectToggle label={t('calculator.vaUsage')} name="vaUsage" value={field.value ?? 'first'} onChange={field.onChange} options={vaUsageOptions} />} />
-                    <div className="grid grid-cols-2 gap-4">
-                      <Controller name="isDisabledVeteran" control={control} render={({ field }) => <CheckboxGroup label={t('calculator.isDisabledVeteran')} name="isDisabledVeteran" checked={field.value ?? false} onChange={field.onChange} />} />
-                      <Controller name="isReservist" control={control} render={({ field }) => <CheckboxGroup label={t('calculator.isReservist')} name="isReservist" checked={field.value ?? false} onChange={field.onChange} disabled={watchedValues.isDisabledVeteran} />} />
-                    </div>
-                  </div>
 
                   <div className="space-y-1">
                     <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider block">Loan Fee</label>
@@ -341,6 +316,31 @@ export function VaForm() {
                           <Controller name="loanFee" control={control} render={({ field }) => <InputGroup label="" name="loanFee" type="number" value={field.value} onChange={(v) => field.onChange(Number(v))} prefix="$" />} />
                         )}
                       </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {activeTab === 'costs' && (
+                <div className="space-y-5">
+                  <div className="grid grid-cols-2 gap-4">
+                    <Controller name="propertyTaxAnnual" control={control} render={({ field }) => <InputGroup label={t('calculator.propertyTax')} name="propertyTaxAnnual" type="number" value={field.value} onChange={(v) => { const a = Number(v); field.onChange(a); setValue('propertyTaxMonthly', a / 12); }} prefix="$" helperText="Annual" />} />
+                    <Controller name="homeInsuranceAnnual" control={control} render={({ field }) => <InputGroup label={t('calculator.homeInsurance')} name="homeInsuranceAnnual" type="number" value={field.value} onChange={(v) => { const a = Number(v); field.onChange(a); setValue('homeInsuranceMonthly', a / 12); }} prefix="$" helperText="Annual" />} />
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <Controller name="hoaDuesMonthly" control={control} render={({ field }) => <InputGroup label={t('calculator.hoaDues')} name="hoaDuesMonthly" type="number" value={field.value} onChange={(v) => field.onChange(Number(v))} prefix="$" />} />
+                    <Controller name="floodInsuranceMonthly" control={control} render={({ field }) => <InputGroup label={t('calculator.floodInsurance')} name="floodInsuranceMonthly" type="number" value={field.value} onChange={(v) => field.onChange(Number(v))} prefix="$" />} />
+                  </div>
+                </div>
+              )}
+
+              {activeTab === 'details' && (
+                <div className="space-y-5">
+                  <div className="bg-blue-50 p-4 rounded-lg space-y-4">
+                    <Controller name="vaUsage" control={control} render={({ field }) => <SelectToggle label={t('calculator.vaUsage')} name="vaUsage" value={field.value ?? 'first'} onChange={field.onChange} options={vaUsageOptions} />} />
+                    <div className="grid grid-cols-2 gap-4">
+                      <Controller name="isDisabledVeteran" control={control} render={({ field }) => <CheckboxGroup label={t('calculator.isDisabledVeteran')} name="isDisabledVeteran" checked={field.value ?? false} onChange={field.onChange} />} />
+                      <Controller name="isReservist" control={control} render={({ field }) => <CheckboxGroup label={t('calculator.isReservist')} name="isReservist" checked={field.value ?? false} onChange={field.onChange} disabled={watchedValues.isDisabledVeteran} />} />
                     </div>
                   </div>
 

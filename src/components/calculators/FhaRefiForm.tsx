@@ -213,23 +213,6 @@ export function FhaRefiForm() {
                     <Controller name="interestRate" control={control} render={({ field }) => <InputGroup label={t('calculator.interestRate')} name="interestRate" type="number" value={field.value} onChange={(v) => field.onChange(Number(v))} suffix="%" step="0.125" required />} />
                     <Controller name="termYears" control={control} render={({ field }) => <SelectToggle label={t('calculator.term')} name="termYears" value={String(field.value)} onChange={(v) => field.onChange(Number(v))} options={[{ value: '30', label: '30 Years' }, { value: '15', label: '15 Years' }]} />} />
                   </div>
-                </div>
-              )}
-
-              {activeTab === 'costs' && (
-                <div className="space-y-5">
-                  <div className="grid grid-cols-2 gap-4">
-                    <Controller name="propertyTaxAnnual" control={control} render={({ field }) => <InputGroup label={t('calculator.propertyTax')} name="propertyTaxAnnual" type="number" value={field.value} onChange={(v) => field.onChange(Number(v))} prefix="$" helperText="Annual" />} />
-                    <Controller name="homeInsuranceAnnual" control={control} render={({ field }) => <InputGroup label={t('calculator.homeInsurance')} name="homeInsuranceAnnual" type="number" value={field.value} onChange={(v) => field.onChange(Number(v))} prefix="$" helperText="Annual" />} />
-                  </div>
-                  <Controller name="hoaDuesMonthly" control={control} render={({ field }) => <InputGroup label={t('calculator.hoaDues')} name="hoaDuesMonthly" type="number" value={field.value} onChange={(v) => field.onChange(Number(v))} prefix="$" />} />
-                  <Controller name="mortgageInsuranceMonthly" control={control} render={({ field }) => <InputGroup label="Monthly Mtg Insurance (Override)" name="mortgageInsuranceMonthly" type="number" value={field.value ?? 0} onChange={(v) => field.onChange(Number(v))} prefix="$" helperText="Leave 0 for auto-calc" />} />
-                </div>
-              )}
-
-              {activeTab === 'closing' && (
-                <div className="space-y-5">
-                  <Controller name="isStreamline" control={control} render={({ field }) => <SelectToggle label={t('refinance.fhaRefiType')} name="isStreamline" value={String(field.value ?? false)} onChange={(v) => field.onChange(v === 'true')} options={[{ value: 'false', label: t('refinance.standardRefi') }, { value: 'true', label: t('refinance.streamline') }]} />} />
 
                   <div className="space-y-1">
                     <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider block">Loan Fee</label>
@@ -267,6 +250,23 @@ export function FhaRefiForm() {
                       </div>
                     </div>
                   </div>
+                </div>
+              )}
+
+              {activeTab === 'costs' && (
+                <div className="space-y-5">
+                  <div className="grid grid-cols-2 gap-4">
+                    <Controller name="propertyTaxAnnual" control={control} render={({ field }) => <InputGroup label={t('calculator.propertyTax')} name="propertyTaxAnnual" type="number" value={field.value} onChange={(v) => field.onChange(Number(v))} prefix="$" helperText="Annual" />} />
+                    <Controller name="homeInsuranceAnnual" control={control} render={({ field }) => <InputGroup label={t('calculator.homeInsurance')} name="homeInsuranceAnnual" type="number" value={field.value} onChange={(v) => field.onChange(Number(v))} prefix="$" helperText="Annual" />} />
+                  </div>
+                  <Controller name="hoaDuesMonthly" control={control} render={({ field }) => <InputGroup label={t('calculator.hoaDues')} name="hoaDuesMonthly" type="number" value={field.value} onChange={(v) => field.onChange(Number(v))} prefix="$" />} />
+                  <Controller name="mortgageInsuranceMonthly" control={control} render={({ field }) => <InputGroup label="Monthly Mtg Insurance (Override)" name="mortgageInsuranceMonthly" type="number" value={field.value ?? 0} onChange={(v) => field.onChange(Number(v))} prefix="$" helperText="Leave 0 for auto-calc" />} />
+                </div>
+              )}
+
+              {activeTab === 'closing' && (
+                <div className="space-y-5">
+                  <Controller name="isStreamline" control={control} render={({ field }) => <SelectToggle label={t('refinance.fhaRefiType')} name="isStreamline" value={String(field.value ?? false)} onChange={(v) => field.onChange(v === 'true')} options={[{ value: 'false', label: t('refinance.standardRefi') }, { value: 'true', label: t('refinance.streamline') }]} />} />
 
                   <div className="border-t border-slate-200 pt-4 mt-4">
                     <div className="flex p-1 bg-slate-100 rounded-lg mb-4">

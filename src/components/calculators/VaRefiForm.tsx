@@ -208,29 +208,6 @@ export function VaRefiForm() {
                     <Controller name="interestRate" control={control} render={({ field }) => <InputGroup label={t('calculator.interestRate')} name="interestRate" type="number" value={field.value} onChange={(v) => field.onChange(Number(v))} suffix="%" step="0.125" required />} />
                     <Controller name="termYears" control={control} render={({ field }) => <SelectToggle label={t('calculator.term')} name="termYears" value={String(field.value ?? 30)} onChange={(v) => field.onChange(Number(v))} options={[{ value: '30', label: '30 Years' }, { value: '15', label: '15 Years' }]} />} />
                   </div>
-                </div>
-              )}
-
-              {activeTab === 'costs' && (
-                <div className="space-y-5">
-                  <div className="grid grid-cols-2 gap-4">
-                    <Controller name="propertyTaxAnnual" control={control} render={({ field }) => <InputGroup label={t('calculator.propertyTax')} name="propertyTaxAnnual" type="number" value={field.value} onChange={(v) => field.onChange(Number(v))} prefix="$" helperText="Annual" />} />
-                    <Controller name="homeInsuranceAnnual" control={control} render={({ field }) => <InputGroup label={t('calculator.homeInsurance')} name="homeInsuranceAnnual" type="number" value={field.value} onChange={(v) => field.onChange(Number(v))} prefix="$" helperText="Annual" />} />
-                  </div>
-                  <Controller name="hoaDuesMonthly" control={control} render={({ field }) => <InputGroup label={t('calculator.hoaDues')} name="hoaDuesMonthly" type="number" value={field.value} onChange={(v) => field.onChange(Number(v))} prefix="$" />} />
-                  <Controller name="mortgageInsuranceMonthly" control={control} render={({ field }) => <InputGroup label="Monthly Mtg Insurance (Override)" name="mortgageInsuranceMonthly" type="number" value={field.value ?? 0} onChange={(v) => field.onChange(Number(v))} prefix="$" helperText="Leave 0 for auto-calc" />} />
-                </div>
-              )}
-
-              {activeTab === 'closing' && (
-                <div className="space-y-5">
-                  <div className="bg-blue-50 p-4 rounded-lg space-y-4">
-                    <Controller name="isIrrrl" control={control} render={({ field }) => <SelectToggle label={t('refinance.vaRefiType')} name="isIrrrl" value={String(field.value ?? false)} onChange={(v) => field.onChange(v === 'true')} options={[{ value: 'false', label: t('refinance.cashOutRefi') }, { value: 'true', label: t('refinance.irrrl') }]} />} />
-                    <div className="grid grid-cols-2 gap-4">
-                      <Controller name="vaUsage" control={control} render={({ field }) => <SelectToggle label={t('calculator.vaUsage')} name="vaUsage" value={field.value ?? 'first'} onChange={field.onChange} options={[{ value: 'first', label: t('va.usage.first') }, { value: 'subsequent', label: t('va.usage.subsequent') }]} />} />
-                      <Controller name="isDisabledVeteran" control={control} render={({ field }) => <SelectToggle label={t('calculator.isDisabledVeteran')} name="isDisabledVeteran" value={String(field.value ?? false)} onChange={(v) => field.onChange(v === 'true')} options={[{ value: 'false', label: t('common.no') }, { value: 'true', label: t('common.yes') }]} />} />
-                    </div>
-                  </div>
 
                   <div className="space-y-1">
                     <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider block">Loan Fee</label>
@@ -266,6 +243,29 @@ export function VaRefiForm() {
                           <Controller name="loanFee" control={control} render={({ field }) => <InputGroup label="" name="loanFee" type="number" value={field.value} onChange={(v) => field.onChange(Number(v))} prefix="$" />} />
                         )}
                       </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {activeTab === 'costs' && (
+                <div className="space-y-5">
+                  <div className="grid grid-cols-2 gap-4">
+                    <Controller name="propertyTaxAnnual" control={control} render={({ field }) => <InputGroup label={t('calculator.propertyTax')} name="propertyTaxAnnual" type="number" value={field.value} onChange={(v) => field.onChange(Number(v))} prefix="$" helperText="Annual" />} />
+                    <Controller name="homeInsuranceAnnual" control={control} render={({ field }) => <InputGroup label={t('calculator.homeInsurance')} name="homeInsuranceAnnual" type="number" value={field.value} onChange={(v) => field.onChange(Number(v))} prefix="$" helperText="Annual" />} />
+                  </div>
+                  <Controller name="hoaDuesMonthly" control={control} render={({ field }) => <InputGroup label={t('calculator.hoaDues')} name="hoaDuesMonthly" type="number" value={field.value} onChange={(v) => field.onChange(Number(v))} prefix="$" />} />
+                  <Controller name="mortgageInsuranceMonthly" control={control} render={({ field }) => <InputGroup label="Monthly Mtg Insurance (Override)" name="mortgageInsuranceMonthly" type="number" value={field.value ?? 0} onChange={(v) => field.onChange(Number(v))} prefix="$" helperText="Leave 0 for auto-calc" />} />
+                </div>
+              )}
+
+              {activeTab === 'closing' && (
+                <div className="space-y-5">
+                  <div className="bg-blue-50 p-4 rounded-lg space-y-4">
+                    <Controller name="isIrrrl" control={control} render={({ field }) => <SelectToggle label={t('refinance.vaRefiType')} name="isIrrrl" value={String(field.value ?? false)} onChange={(v) => field.onChange(v === 'true')} options={[{ value: 'false', label: t('refinance.cashOutRefi') }, { value: 'true', label: t('refinance.irrrl') }]} />} />
+                    <div className="grid grid-cols-2 gap-4">
+                      <Controller name="vaUsage" control={control} render={({ field }) => <SelectToggle label={t('calculator.vaUsage')} name="vaUsage" value={field.value ?? 'first'} onChange={field.onChange} options={[{ value: 'first', label: t('va.usage.first') }, { value: 'subsequent', label: t('va.usage.subsequent') }]} />} />
+                      <Controller name="isDisabledVeteran" control={control} render={({ field }) => <SelectToggle label={t('calculator.isDisabledVeteran')} name="isDisabledVeteran" value={String(field.value ?? false)} onChange={(v) => field.onChange(v === 'true')} options={[{ value: 'false', label: t('common.no') }, { value: 'true', label: t('common.yes') }]} />} />
                     </div>
                   </div>
 
