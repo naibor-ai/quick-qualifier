@@ -1,4 +1,22 @@
-import { StyleSheet } from '@react-pdf/renderer';
+import { StyleSheet, Font } from '@react-pdf/renderer';
+
+// Register Poppins font (Using TTF from CDN to avoid format issues with WOFF2)
+Font.register({
+  family: 'Poppins',
+  fonts: [
+    { src: 'https://cdn.jsdelivr.net/fontsource/fonts/poppins@latest/latin-400-normal.ttf', fontWeight: 400 }, // Regular
+    { src: 'https://cdn.jsdelivr.net/fontsource/fonts/poppins@latest/latin-700-normal.ttf', fontWeight: 700 }, // Bold
+    { src: 'https://cdn.jsdelivr.net/fontsource/fonts/poppins@latest/latin-400-italic.ttf', fontStyle: 'italic' }, // Italic
+    { src: 'https://cdn.jsdelivr.net/fontsource/fonts/poppins@latest/latin-700-italic.ttf', fontWeight: 700, fontStyle: 'italic' }, // Bold Italic
+  ],
+});
+
+const NAIBOR_BLUE = '#2a8bb3';
+const NAIBOR_BLUE_LIGHT = '#eef7fa'; // Lighter version for backgrounds
+const NAIBOR_BLUE_BORDER = '#bde0eb'; // Light version for borders
+const RED_ACCENT = '#A50000';
+const RED_BG = '#FFF1F2';
+const RED_BORDER = '#FEE2E2';
 
 /**
  * Shared styles for PDF documents.
@@ -6,36 +24,41 @@ import { StyleSheet } from '@react-pdf/renderer';
 export const pdfStyles = StyleSheet.create({
   // Page layout
   page: {
-    padding: '30 40',
+    padding: '20 40',
+    fontFamily: 'Poppins',
+    fontSize: 10,
+    color: '#334155', // slate-700 for better readability
   },
 
   // Flier border/frame
   pageFrame: {
     position: 'absolute',
-    top: 20,
-    left: 20,
-    right: 20,
-    bottom: 20,
-    borderWidth: 1,
-    borderColor: '#0066CC',
+    top: 15,
+    left: 15,
+    right: 15,
+    bottom: 15,
+    borderWidth: 1.5,
+    borderColor: NAIBOR_BLUE,
     borderStyle: 'solid',
+    opacity: 0.8,
   },
 
   // Header section
   header: {
     marginBottom: 10,
-    paddingBottom: 10,
+    paddingBottom: 5,
     position: 'relative',
   },
   topDisclaimer: {
-    fontSize: 10,
+    fontSize: 9,
     textAlign: 'center',
-    color: '#000',
-    marginBottom: 10,
+    color: '#64748B',
+    marginBottom: 8,
+    letterSpacing: 0.5,
   },
   headerMain: {
     flexDirection: 'row',
-    justifyContent: 'flex-start',
+    justifyContent: 'space-between',
     alignItems: 'center',
     marginBottom: 10,
   },
@@ -47,73 +70,74 @@ export const pdfStyles = StyleSheet.create({
   // Titles
   titleContainer: {
     alignItems: 'center',
-    marginBottom: 20,
-    marginTop: 10,
+    marginBottom: 15, // Reduced from 25
+    marginTop: 0,
   },
   mainTitle: {
-    fontSize: 16,
+    fontSize: 18,
     fontWeight: 'bold',
-    color: '#0066CC',
-    fontStyle: 'italic',
-    marginBottom: 15,
+    color: NAIBOR_BLUE,
+    marginBottom: 5,
+    letterSpacing: 0.5,
   },
   subTitle: {
     fontSize: 11,
-    color: '#A50000',
+    color: RED_ACCENT,
     fontStyle: 'italic',
   },
   sectionTitleBlue: {
     fontSize: 14,
     fontWeight: 'bold',
-    color: '#0066CC',
-    marginBottom: 10,
+    color: NAIBOR_BLUE,
+    marginBottom: 8,
     borderBottomWidth: 1,
-    borderBottomColor: '#DBEAFE',
+    borderBottomColor: NAIBOR_BLUE_BORDER,
     paddingBottom: 4,
   },
   sectionTitleRed: {
     fontSize: 14,
     fontWeight: 'bold',
-    color: '#A50000',
-    marginBottom: 10,
+    color: RED_ACCENT,
+    marginBottom: 8,
     borderBottomWidth: 1,
-    borderBottomColor: '#FEE2E2',
+    borderBottomColor: RED_BORDER,
     paddingBottom: 4,
   },
 
   // Section styles
   section: {
-    marginBottom: 20,
-    paddingHorizontal: 60,
+    marginBottom: 15, // Reduced from 20
+    paddingHorizontal: 40,
   },
   sectionHeaderRed: {
     fontSize: 12,
     fontWeight: 'bold',
-    color: '#A50000',
-    fontStyle: 'italic',
-    marginBottom: 10,
+    color: RED_ACCENT,
+    marginBottom: 8,
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
   },
   sectionHeaderBlueBar: {
-    backgroundColor: '#EFF6FF',
+    backgroundColor: NAIBOR_BLUE_LIGHT,
     padding: '4 8',
-    borderRadius: 4,
-    marginBottom: 8,
+    borderRadius: 6,
+    marginBottom: 6,
   },
   sectionHeaderBlueText: {
     fontSize: 11,
     fontWeight: 'bold',
-    color: '#0066CC',
+    color: NAIBOR_BLUE,
   },
   sectionHeaderRedBar: {
-    backgroundColor: '#FFF1F2',
+    backgroundColor: RED_BG,
     padding: '4 8',
-    borderRadius: 4,
-    marginBottom: 8,
+    borderRadius: 6,
+    marginBottom: 6,
   },
   sectionHeaderRedText: {
     fontSize: 11,
     fontWeight: 'bold',
-    color: '#A50000',
+    color: RED_ACCENT,
   },
 
   // Table styles
@@ -123,45 +147,52 @@ export const pdfStyles = StyleSheet.create({
   tableRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    paddingVertical: 3,
+    paddingVertical: 4, // Reduced from 5
+    borderBottomWidth: 0.5,
+    borderBottomColor: '#F1F5F9',
   },
   tableCellLabel: {
-    fontSize: 11,
-    color: '#000',
+    fontSize: 10,
+    color: '#334155',
+    fontWeight: 500, // Medium
   },
   tableCellValue: {
-    fontSize: 11,
-    color: '#000',
+    fontSize: 10,
+    color: '#0F172A',
+    fontWeight: 'bold',
     textAlign: 'right',
   },
   tableRowSubtotal: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     paddingVertical: 5,
-    marginTop: 4,
+    marginTop: 5,
     borderTopWidth: 1,
     borderTopColor: '#E2E8F0',
   },
   subtotalLabel: {
     fontSize: 11,
     fontWeight: 'bold',
-    color: '#0066CC',
+    color: NAIBOR_BLUE,
   },
   subtotalValue: {
     fontSize: 11,
     fontWeight: 'bold',
-    color: '#0066CC',
+    color: NAIBOR_BLUE,
     textAlign: 'right',
   },
 
   // Totals
   totalContainer: {
     alignItems: 'center',
-    marginVertical: 15,
+    marginTop: 8,
+    paddingTop: 8,
+    borderTopWidth: 2,
+    borderTopColor: NAIBOR_BLUE_BORDER,
   },
   totalText: {
     fontSize: 14,
-    color: '#0066CC',
+    color: NAIBOR_BLUE,
     fontWeight: 'bold',
   },
   creditBox: {
@@ -169,8 +200,8 @@ export const pdfStyles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#E2E8F0',
     borderRadius: 8,
-    padding: 15,
-    minHeight: 100,
+    padding: 10,
+    minHeight: 80,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -182,33 +213,36 @@ export const pdfStyles = StyleSheet.create({
   loanDetailsContainer: {
     backgroundColor: '#F8FAFC',
     borderRadius: 8,
-    padding: 12,
-    marginBottom: 20,
+    padding: 10,
+    marginBottom: 15,
   },
 
   // Detailed Disclaimers
   detailedDisclaimer: {
-    fontSize: 8.5,
-    color: '#000',
-    lineHeight: 1.3,
-    marginTop: 10,
-    paddingHorizontal: 20,
+    fontSize: 8,
+    color: '#64748B',
+    lineHeight: 1.4,
+    marginTop: 10, // Reduced from 20
+    paddingHorizontal: 40,
+    textAlign: 'justify',
   },
 
   // Contact Section
   contactSection: {
-    marginTop: 20,
-    paddingHorizontal: 20,
-    gap: 4,
+    marginTop: 15, // Reduced from 25
+    paddingHorizontal: 40,
+    alignItems: 'flex-start',
+    gap: 2,
   },
   contactName: {
-    fontSize: 11,
+    fontSize: 12,
     fontWeight: 'bold',
-    color: '#0066CC',
+    color: NAIBOR_BLUE,
+    marginBottom: 2,
   },
   contactText: {
     fontSize: 10,
-    color: '#000',
+    color: '#334155',
   },
 
   // Two-column layout
@@ -223,15 +257,18 @@ export const pdfStyles = StyleSheet.create({
   // Footer
   footer: {
     position: 'absolute',
-    bottom: 25,
+    bottom: 20, // Adjusted
     left: 40,
     right: 40,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'flex-end',
+    borderTopWidth: 1,
+    borderTopColor: '#E2E8F0',
+    paddingTop: 8,
   },
   footerLogoLeft: {
-    width: 60,
+    width: 70,
     height: 'auto',
   },
   footerLogoRight: {
@@ -244,12 +281,12 @@ export const pdfStyles = StyleSheet.create({
   },
   footerText: {
     fontSize: 9,
-    color: '#000',
+    color: '#64748B',
     marginBottom: 4,
   },
   disclaimer: {
-    fontSize: 7.5,
-    color: '#666',
+    fontSize: 7,
+    color: '#94A3B8',
     textAlign: 'center',
     marginBottom: 2,
   },
@@ -274,7 +311,7 @@ export const pdfStyles = StyleSheet.create({
     color: '#64748B',
   },
   textPrimary: {
-    color: '#1E40AF',
+    color: NAIBOR_BLUE,
   },
   textSuccess: {
     color: '#059669',
@@ -292,27 +329,32 @@ export const pdfStyles = StyleSheet.create({
   agentSection: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    padding: 10,
-    backgroundColor: '#F8FAFC',
-    borderRadius: 4,
-    marginTop: 15,
+    padding: 12,
+    backgroundColor: NAIBOR_BLUE_LIGHT,
+    borderRadius: 8,
+    marginTop: 20,
+    borderWidth: 1,
+    borderColor: NAIBOR_BLUE_BORDER,
   },
   agentInfo: {
     flex: 1,
   },
   agentLabel: {
-    fontSize: 8,
-    color: '#94A3B8',
-    marginBottom: 2,
+    fontSize: 9,
+    fontWeight: 'bold',
+    color: NAIBOR_BLUE,
+    marginBottom: 4,
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
   },
   agentName: {
-    fontSize: 10,
+    fontSize: 11,
     fontWeight: 'bold',
     color: '#1E293B',
   },
   agentContact: {
-    fontSize: 9,
-    color: '#64748B',
+    fontSize: 10,
+    color: '#475569',
   },
 });
 

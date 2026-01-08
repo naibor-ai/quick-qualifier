@@ -167,19 +167,31 @@ export function FhaForm() {
 
   // Sync Loan Fee / Origination Fee
   useEffect(() => {
-    const loanAmount = salesPrice - (watchedValues.downPaymentAmount || 0);
-    if (loanAmount > 0) {
+    const baseLoanAmount = salesPrice - (watchedValues.downPaymentAmount || 0);
+    const ufmipRate = config?.fha?.ufmipPurchase ?? 1.75;
+    const ufmipAmount = baseLoanAmount * (ufmipRate / 100);
+    const totalLoanAmount = baseLoanAmount + ufmipAmount;
+
+    if (totalLoanAmount > 0) {
       if (watchedValues.loanFeeMode === 'percent') {
         const percent = watchedValues.loanFeePercent;
-        const feeAmount = (loanAmount * percent) / 100;
+        const feeAmount = (totalLoanAmount * percent) / 100;
         setValue('loanFee', Math.round(feeAmount * 100) / 100);
       } else {
         const feeAmount = watchedValues.loanFee;
-        const percent = (feeAmount / loanAmount) * 100;
+        const percent = (feeAmount / totalLoanAmount) * 100;
         setValue('loanFeePercent', Math.round(percent * 1000) / 1000);
       }
     }
-  }, [salesPrice, watchedValues.downPaymentAmount, watchedValues.loanFeeMode, watchedValues.loanFeePercent, watchedValues.loanFee, setValue]);
+  }, [
+    watchedValues.downPaymentAmount,
+    salesPrice,
+    watchedValues.loanFeeMode,
+    watchedValues.loanFeePercent,
+    watchedValues.loanFee,
+    config,
+    setValue
+  ]);
 
   const onCalculate: SubmitHandler<FormValues> = useCallback((data) => {
     if (!config) return;
@@ -195,6 +207,10 @@ export function FhaForm() {
         propertyTaxMonthly: data.propertyTaxAnnual / 12,
         homeInsuranceMonthly: data.homeInsuranceAnnual / 12,
         closingCostsTotal: isManualOverride ? data.closingCostsTotal : 0,
+        // Override prepaids to force recalculation based on days/months
+        prepaidInterestAmount: 0,
+        prepaidTaxAmount: 0,
+        prepaidInsuranceAmount: 0,
       },
       config
     );
@@ -367,6 +383,68 @@ export function FhaForm() {
                     )}
                   />
                 </div>
+
+                <div className="space-y-1">
+                  <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider block">Loan Fee</label>
+                  <div className="flex gap-2 items-start">
+                    <div className="flex bg-slate-100 rounded-full p-1">
+                      <button
+                        type="button"
+                        onClick={() => setValue('loanFeeMode', 'amount')}
+                        className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-medium transition-all ${watchedValues.loanFeeMode === 'amount'
+                          ? 'bg-blue-600 text-white shadow-sm'
+                          : 'text-slate-600 hover:text-slate-900'
+                          }`}
+                      >
+                        $
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setValue('loanFeeMode', 'percent')}
+                        className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-medium transition-all ${watchedValues.loanFeeMode === 'percent'
+                          ? 'bg-blue-600 text-white shadow-sm'
+                          : 'text-slate-600 hover:text-slate-900'
+                          }`}
+                      >
+                        %
+                      </button>
+                    </div>
+                    <div className="flex-1">
+                      {watchedValues.loanFeeMode === 'percent' ? (
+                        <Controller
+                          name="loanFeePercent"
+                          control={control}
+                          render={({ field }) => (
+                            <InputGroup
+                              label=""
+                              name="loanFeePercent"
+                              type="number"
+                              value={field.value}
+                              onChange={(val) => field.onChange(Number(val) || 0)}
+                              suffix="%"
+                              step="0.125"
+                            />
+                          )}
+                        />
+                      ) : (
+                        <Controller
+                          name="loanFee"
+                          control={control}
+                          render={({ field }) => (
+                            <InputGroup
+                              label=""
+                              name="loanFee"
+                              type="number"
+                              value={field.value}
+                              onChange={(val) => field.onChange(Number(val) || 0)}
+                              prefix="$"
+                            />
+                          )}
+                        />
+                      )}
+                    </div>
+                  </div>
+                </div>
               </div>
 
               {/* Tab 2: Monthly Costs */}
@@ -518,70 +596,6 @@ export function FhaForm() {
                       />
                     )}
                   />
-                </div>
-
-                <div className="space-y-1">
-                  <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider block">Loan Fee</label>
-                  <div className="flex gap-2 items-start">
-                    <div className="flex bg-slate-100 rounded-full p-1">
-                      <button
-                        type="button"
-                        onClick={() => setValue('loanFeeMode', 'amount')}
-                        className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-medium transition-all ${
-                          watchedValues.loanFeeMode === 'amount'
-                            ? 'bg-blue-600 text-white shadow-sm'
-                            : 'text-slate-600 hover:text-slate-900'
-                        }`}
-                      >
-                        $
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => setValue('loanFeeMode', 'percent')}
-                        className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-medium transition-all ${
-                          watchedValues.loanFeeMode === 'percent'
-                            ? 'bg-blue-600 text-white shadow-sm'
-                            : 'text-slate-600 hover:text-slate-900'
-                        }`}
-                      >
-                        %
-                      </button>
-                    </div>
-                    <div className="flex-1">
-                      {watchedValues.loanFeeMode === 'percent' ? (
-                        <Controller
-                          name="loanFeePercent"
-                          control={control}
-                          render={({ field }) => (
-                            <InputGroup
-                              label=""
-                              name="loanFeePercent"
-                              type="number"
-                              value={field.value}
-                              onChange={(val) => field.onChange(Number(val) || 0)}
-                              suffix="%"
-                              step="0.125"
-                            />
-                          )}
-                        />
-                      ) : (
-                        <Controller
-                          name="loanFee"
-                          control={control}
-                          render={({ field }) => (
-                            <InputGroup
-                              label=""
-                              name="loanFee"
-                              type="number"
-                              value={field.value}
-                              onChange={(val) => field.onChange(Number(val) || 0)}
-                              prefix="$"
-                            />
-                          )}
-                        />
-                      )}
-                    </div>
-                  </div>
                 </div>
 
                 <div className="border-t border-slate-200 pt-4 mt-4">

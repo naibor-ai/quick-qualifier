@@ -137,6 +137,9 @@ export function ConventionalRefiForm() {
         payoffDays: 30,
         cashOutAmount: 0,
         closingCostsTotal: isManualOverride ? data.closingCostsTotal : 0,
+        prepaidInterestAmount: 0,
+        prepaidTaxAmount: 0,
+        prepaidInsuranceAmount: 0,
       },
       config
     );
@@ -219,6 +222,41 @@ export function ConventionalRefiForm() {
                     <Controller name="interestRate" control={control} render={({ field }) => <InputGroup label={t('calculator.interestRate')} name="interestRate" type="number" value={field.value} onChange={(v) => field.onChange(Number(v))} suffix="%" step="0.125" required />} />
                     <Controller name="termYears" control={control} render={({ field }) => <SelectToggle label={t('calculator.term')} name="termYears" value={String(field.value ?? 30)} onChange={(v) => field.onChange(Number(v))} options={[{ value: '30', label: '30 Years' }, { value: '15', label: '15 Years' }]} />} />
                   </div>
+
+                  <div className="space-y-1">
+                    <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider block">Loan Fee</label>
+                    <div className="flex gap-2 items-start">
+                      <div className="flex bg-slate-100 rounded-full p-1">
+                        <button
+                          type="button"
+                          onClick={() => setValue('loanFeeMode', 'amount')}
+                          className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-medium transition-all ${watchedValues.loanFeeMode === 'amount'
+                              ? 'bg-blue-600 text-white shadow-sm'
+                              : 'text-slate-600 hover:text-slate-900'
+                            }`}
+                        >
+                          $
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setValue('loanFeeMode', 'percent')}
+                          className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-medium transition-all ${watchedValues.loanFeeMode === 'percent'
+                              ? 'bg-blue-600 text-white shadow-sm'
+                              : 'text-slate-600 hover:text-slate-900'
+                            }`}
+                        >
+                          %
+                        </button>
+                      </div>
+                      <div className="flex-1">
+                        {watchedValues.loanFeeMode === 'percent' ? (
+                          <Controller name="loanFeePercent" control={control} render={({ field }) => <InputGroup label="" name="loanFeePercent" type="number" value={field.value} onChange={(v) => field.onChange(Number(v))} suffix="%" step="0.125" />} />
+                        ) : (
+                          <Controller name="loanFee" control={control} render={({ field }) => <InputGroup label="" name="loanFee" type="number" value={field.value} onChange={(v) => field.onChange(Number(v))} prefix="$" />} />
+                        )}
+                      </div>
+                    </div>
+                  </div>
                 </div>
               )}
 
@@ -241,43 +279,6 @@ export function ConventionalRefiForm() {
 
               {activeTab === 'closing' && (
                 <div className="space-y-5">
-                  <div className="space-y-1">
-                    <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider block">Loan Fee</label>
-                    <div className="flex gap-2 items-start">
-                      <div className="flex bg-slate-100 rounded-full p-1">
-                        <button
-                          type="button"
-                          onClick={() => setValue('loanFeeMode', 'amount')}
-                          className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-medium transition-all ${
-                            watchedValues.loanFeeMode === 'amount'
-                              ? 'bg-blue-600 text-white shadow-sm'
-                              : 'text-slate-600 hover:text-slate-900'
-                          }`}
-                        >
-                          $
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => setValue('loanFeeMode', 'percent')}
-                          className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-medium transition-all ${
-                            watchedValues.loanFeeMode === 'percent'
-                              ? 'bg-blue-600 text-white shadow-sm'
-                              : 'text-slate-600 hover:text-slate-900'
-                          }`}
-                        >
-                          %
-                        </button>
-                      </div>
-                      <div className="flex-1">
-                        {watchedValues.loanFeeMode === 'percent' ? (
-                          <Controller name="loanFeePercent" control={control} render={({ field }) => <InputGroup label="" name="loanFeePercent" type="number" value={field.value} onChange={(v) => field.onChange(Number(v))} suffix="%" step="0.125" />} />
-                        ) : (
-                          <Controller name="loanFee" control={control} render={({ field }) => <InputGroup label="" name="loanFee" type="number" value={field.value} onChange={(v) => field.onChange(Number(v))} prefix="$" />} />
-                        )}
-                      </div>
-                    </div>
-                  </div>
-
                   <div className="border-t border-slate-200 pt-4 mt-4">
                     <div className="flex p-1 bg-slate-100 rounded-lg mb-4">
                       {(['general', 'lender', 'title'] as const).map((tab) => (

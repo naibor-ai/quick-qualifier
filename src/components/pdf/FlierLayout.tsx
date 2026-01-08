@@ -95,6 +95,13 @@ export function FlierLayout({
             <Text style={pdfStyles.tableCellValue}>{formatCurrency(closingCosts.totalPrepaids)}</Text>
           </View>
 
+          {closingCosts.sellerCredit > 0 && (
+            <View style={pdfStyles.tableRow}>
+              <Text style={pdfStyles.tableCellLabel}>Seller credit</Text>
+              <Text style={pdfStyles.tableCellValue}>-{formatCurrency(closingCosts.sellerCredit)}</Text>
+            </View>
+          )}
+
           <View style={pdfStyles.totalContainer}>
             <Text style={pdfStyles.totalText}>Total cash required is {formatCurrency(cashToClose)}</Text>
           </View>
