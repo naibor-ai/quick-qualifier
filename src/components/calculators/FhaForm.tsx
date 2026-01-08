@@ -167,19 +167,31 @@ export function FhaForm() {
 
   // Sync Loan Fee / Origination Fee
   useEffect(() => {
-    const loanAmount = salesPrice - (watchedValues.downPaymentAmount || 0);
-    if (loanAmount > 0) {
+    const baseLoanAmount = salesPrice - (watchedValues.downPaymentAmount || 0);
+    const ufmipRate = config?.fha?.ufmipPurchase ?? 1.75;
+    const ufmipAmount = baseLoanAmount * (ufmipRate / 100);
+    const totalLoanAmount = baseLoanAmount + ufmipAmount;
+
+    if (totalLoanAmount > 0) {
       if (watchedValues.loanFeeMode === 'percent') {
         const percent = watchedValues.loanFeePercent;
-        const feeAmount = (loanAmount * percent) / 100;
+        const feeAmount = (totalLoanAmount * percent) / 100;
         setValue('loanFee', Math.round(feeAmount * 100) / 100);
       } else {
         const feeAmount = watchedValues.loanFee;
-        const percent = (feeAmount / loanAmount) * 100;
+        const percent = (feeAmount / totalLoanAmount) * 100;
         setValue('loanFeePercent', Math.round(percent * 1000) / 1000);
       }
     }
-  }, [salesPrice, watchedValues.downPaymentAmount, watchedValues.loanFeeMode, watchedValues.loanFeePercent, watchedValues.loanFee, setValue]);
+  }, [
+    watchedValues.downPaymentAmount,
+    salesPrice,
+    watchedValues.loanFeeMode,
+    watchedValues.loanFeePercent,
+    watchedValues.loanFee,
+    config,
+    setValue
+  ]);
 
   const onCalculate: SubmitHandler<FormValues> = useCallback((data) => {
     if (!config) return;
@@ -380,8 +392,8 @@ export function FhaForm() {
                         type="button"
                         onClick={() => setValue('loanFeeMode', 'amount')}
                         className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-medium transition-all ${watchedValues.loanFeeMode === 'amount'
-                            ? 'bg-blue-600 text-white shadow-sm'
-                            : 'text-slate-600 hover:text-slate-900'
+                          ? 'bg-blue-600 text-white shadow-sm'
+                          : 'text-slate-600 hover:text-slate-900'
                           }`}
                       >
                         $
@@ -390,8 +402,8 @@ export function FhaForm() {
                         type="button"
                         onClick={() => setValue('loanFeeMode', 'percent')}
                         className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-medium transition-all ${watchedValues.loanFeeMode === 'percent'
-                            ? 'bg-blue-600 text-white shadow-sm'
-                            : 'text-slate-600 hover:text-slate-900'
+                          ? 'bg-blue-600 text-white shadow-sm'
+                          : 'text-slate-600 hover:text-slate-900'
                           }`}
                       >
                         %
