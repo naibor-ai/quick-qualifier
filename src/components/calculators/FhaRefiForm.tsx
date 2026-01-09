@@ -353,7 +353,7 @@ export function FhaRefiForm() {
         <div className="h-full sticky top-4">
           {fhaRefiResult ? (
             <ResultSummary
-              activeTab={activeTab === 'closing' ? 'closing' : undefined}
+              activeTab={activeTab === 'closing' ? 'closing' : (activeTab === 'loan' ? 'pitia' : undefined)}
               result={fhaRefiResult}
               config={config}
               loanType={t('fhaRefi.title')}

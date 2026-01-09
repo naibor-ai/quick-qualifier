@@ -68,7 +68,7 @@ export function ResultSummary({
   formId,
 }: ResultSummaryProps) {
   const t = useTranslations('calculator');
-  const [activeTab, setActiveTab] = useState('summary');
+  const [activeTab, setActiveTab] = useState('pitia');
   const [closingTab, setClosingTab] = useState('prepaid');
 
   useEffect(() => {
@@ -93,8 +93,7 @@ export function ResultSummary({
   };
 
   const mainTabs = [
-    { id: 'summary', label: 'Loan Summary' },
-    { id: 'payment', label: 'Monthly Payment' },
+    { id: 'pitia', label: 'PITIA' },
     { id: 'closing', label: 'Closing Costs' },
     { id: 'cash', label: 'Cash to Close' },
   ];
@@ -125,102 +124,103 @@ export function ResultSummary({
         </div>
       </div>
 
-      {/* Tab 1: Loan Summary */}
-      {activeTab === 'summary' && (
-        <div className="bg-white rounded-xl border border-slate-200 p-6 animate-in fade-in duration-300">
-          <h3 className="text-lg font-semibold text-slate-800 mb-4">
-            {t('results.title')}
-          </h3>
+      {/* Tab 1: PITIA (Combined Loan Summary & Monthly Payment) */}
+      {activeTab === 'pitia' && (
+        <div className="space-y-4 animate-in fade-in duration-300">
+          <div className="bg-white rounded-xl border border-slate-200 p-6">
+            <h3 className="text-lg font-semibold text-slate-800 mb-4">
+              {t('results.title')}
+            </h3>
 
-          <div className="space-y-2">
-            <ResultItem
-              label={t('results.loanAmount')}
-              value={formatCurrency(result.loanAmount)}
-            />
-            <ResultItem
-              label={t('results.downPayment')}
-              value={formatCurrency(result.downPayment)}
-              subtext={formatPercent(100 - result.ltv)}
-            />
-            <ResultItem
-              label={t('results.ltv')}
-              value={formatPercent(result.ltv)}
-            />
-            {formId === 'fha' && result.totalLoanAmount !== result.loanAmount && (
+            <div className="space-y-2">
               <ResultItem
-                label="Loan with MIP"
-                value={formatCurrency(result.totalLoanAmount)}
+                label={t('results.loanAmount')}
+                value={formatCurrency(result.loanAmount)}
               />
-            )}
-            {!['conventional', 'conventional-refi', 'fha', 'va', 'fha-refi', 'va-refi'].includes(formId || '') && (
               <ResultItem
-                label={t('results.monthlyPayment')}
-                value={formatCurrency(result.monthlyPayment.totalMonthly)}
-                highlight
+                label={t('results.downPayment')}
+                value={formatCurrency(result.downPayment)}
+                subtext={formatPercent(100 - result.ltv)}
               />
-            )}
-            <ResultItem
-              label="Prepaids"
-              value={formatCurrency(result.closingCosts.totalPrepaids)}
-            />
-            <ResultItem
-              label="Closing Costs (Fees Only)"
-              value={formatCurrency(result.closingCosts.totalLenderFees + result.closingCosts.totalThirdPartyFees)}
-            />
-          </div>
-        </div>
-      )}
-
-      {/* Tab 2: Monthly Payment */}
-      {activeTab === 'payment' && showMonthlyBreakdown && (
-        <div className="bg-white rounded-xl border border-slate-200 p-6 animate-in fade-in duration-300">
-          <h3 className="text-lg font-semibold text-slate-800 mb-4">
-            {t('results.monthlyBreakdown')}
-          </h3>
-
-          <div className="space-y-2">
-            <ResultItem
-              label={(formId === 'fha' || formId === 'fha-refi' || formId === 'va-refi') ? ((formId === 'fha-refi' || formId === 'va-refi') ? "P & I (new loan)" : "P & I") : t('results.principalInterest')}
-              value={formatCurrency(result.monthlyPayment.principalAndInterest)}
-            />
-            {!['fha-refi', 'va-refi', 'conventional-refi'].includes(formId || '') && result.monthlyPayment.propertyTax > 0 && (
               <ResultItem
-                label={formId === 'fha' || formId === 'fha-refi' ? "Tax per month" : "Property Tax (per month)"}
-                value={formatCurrency(result.monthlyPayment.propertyTax)}
+                label={t('results.ltv')}
+                value={formatPercent(result.ltv)}
               />
-            )}
-            {!['fha-refi', 'va-refi', 'conventional-refi'].includes(formId || '') && result.monthlyPayment.homeInsurance > 0 && (
+              {formId === 'fha' && result.totalLoanAmount !== result.loanAmount && (
+                <ResultItem
+                  label="Loan with MIP"
+                  value={formatCurrency(result.totalLoanAmount)}
+                />
+              )}
+              {!['conventional', 'conventional-refi', 'fha', 'va', 'fha-refi', 'va-refi'].includes(formId || '') && (
+                <ResultItem
+                  label={t('results.monthlyPayment')}
+                  value={formatCurrency(result.monthlyPayment.totalMonthly)}
+                  highlight
+                />
+              )}
               <ResultItem
-                label={formId === 'fha' || formId === 'fha-refi' ? "Insurance per month" : "Home Insurance (per month)"}
-                value={formatCurrency(result.monthlyPayment.homeInsurance)}
+                label="Prepaids"
+                value={formatCurrency(result.closingCosts.totalPrepaids)}
               />
-            )}
-            {result.monthlyPayment.mortgageInsurance > 0 && (
               <ResultItem
-                label={(formId === 'fha' || formId === 'fha-refi') ? (formId === 'fha-refi' ? "MI/mo (new loan)" : "Monthly Mtg Insurance") : t('results.mortgageInsurance')}
-                value={formatCurrency(result.monthlyPayment.mortgageInsurance)}
-              />
-            )}
-            {formId !== 'va-refi' && result.monthlyPayment.hoaDues > 0 && (
-              <ResultItem
-                label={t('results.hoa')}
-                value={formatCurrency(result.monthlyPayment.hoaDues)}
-              />
-            )}
-            {formId !== 'va-refi' && result.monthlyPayment.floodInsurance > 0 && (
-              <ResultItem
-                label={t('results.floodInsurance')}
-                value={formatCurrency(result.monthlyPayment.floodInsurance)}
-              />
-            )}
-            <div className="border-t border-slate-200 pt-2 mt-2">
-              <ResultItem
-                label={t('results.totalPiti')}
-                value={formatCurrency(result.monthlyPayment.totalMonthly)}
-                highlight
+                label="Closing Costs (Fees Only)"
+                value={formatCurrency(result.closingCosts.totalLenderFees + result.closingCosts.totalThirdPartyFees)}
               />
             </div>
           </div>
+
+          {showMonthlyBreakdown && (
+            <div className="bg-white rounded-xl border border-slate-200 p-6">
+              <h3 className="text-lg font-semibold text-slate-800 mb-4">
+                {t('results.monthlyBreakdown')}
+              </h3>
+
+              <div className="space-y-2">
+                <ResultItem
+                  label={(formId === 'fha' || formId === 'fha-refi' || formId === 'va-refi') ? ((formId === 'fha-refi' || formId === 'va-refi') ? "P & I (new loan)" : "P & I") : t('results.principalInterest')}
+                  value={formatCurrency(result.monthlyPayment.principalAndInterest)}
+                />
+                {!['fha-refi', 'va-refi', 'conventional-refi'].includes(formId || '') && result.monthlyPayment.propertyTax > 0 && (
+                  <ResultItem
+                    label={formId === 'fha' || formId === 'fha-refi' ? "Tax per month" : "Property Tax (per month)"}
+                    value={formatCurrency(result.monthlyPayment.propertyTax)}
+                  />
+                )}
+                {!['fha-refi', 'va-refi', 'conventional-refi'].includes(formId || '') && result.monthlyPayment.homeInsurance > 0 && (
+                  <ResultItem
+                    label={formId === 'fha' || formId === 'fha-refi' ? "Insurance per month" : "Home Insurance (per month)"}
+                    value={formatCurrency(result.monthlyPayment.homeInsurance)}
+                  />
+                )}
+                {result.monthlyPayment.mortgageInsurance > 0 && (
+                  <ResultItem
+                    label={(formId === 'fha' || formId === 'fha-refi') ? (formId === 'fha-refi' ? "MI/mo (new loan)" : "Monthly Mtg Insurance") : t('results.mortgageInsurance')}
+                    value={formatCurrency(result.monthlyPayment.mortgageInsurance)}
+                  />
+                )}
+                {formId !== 'va-refi' && result.monthlyPayment.hoaDues > 0 && (
+                  <ResultItem
+                    label={t('results.hoa')}
+                    value={formatCurrency(result.monthlyPayment.hoaDues)}
+                  />
+                )}
+                {formId !== 'va-refi' && result.monthlyPayment.floodInsurance > 0 && (
+                  <ResultItem
+                    label={t('results.floodInsurance')}
+                    value={formatCurrency(result.monthlyPayment.floodInsurance)}
+                  />
+                )}
+                <div className="border-t border-slate-200 pt-2 mt-2">
+                  <ResultItem
+                    label={t('results.totalPiti')}
+                    value={formatCurrency(result.monthlyPayment.totalMonthly)}
+                    highlight
+                  />
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       )}
 

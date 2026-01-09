@@ -422,7 +422,7 @@ export function VaForm() {
         <div className="h-full sticky top-4">
           {vaResult ? (
             <ResultSummary
-              activeTab={activeTab === 'details' ? 'closing' : undefined}
+              activeTab={activeTab === 'details' ? 'closing' : (activeTab === 'property' ? 'pitia' : undefined)}
               result={vaResult}
               config={config}
               loanType={t('va.title')}

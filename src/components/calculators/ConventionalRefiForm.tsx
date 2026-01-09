@@ -348,7 +348,7 @@ export function ConventionalRefiForm() {
         <div className="h-full sticky top-4">
           {conventionalRefiResult ? (
             <ResultSummary
-              activeTab={activeTab === 'closing' ? 'closing' : undefined}
+              activeTab={activeTab === 'closing' ? 'closing' : (activeTab === 'loan' ? 'pitia' : undefined)}
               result={conventionalRefiResult}
               config={config}
               loanType={t('conventionalRefi.title')}

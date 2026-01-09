@@ -339,7 +339,7 @@ export function VaRefiForm() {
         <div className="h-full sticky top-4">
           {vaRefiResult ? (
             <ResultSummary
-              activeTab={activeTab === 'closing' ? 'closing' : undefined}
+              activeTab={activeTab === 'closing' ? 'closing' : (activeTab === 'loan' ? 'pitia' : undefined)}
               result={vaRefiResult}
               config={config}
               loanType={t('vaRefi.title')}

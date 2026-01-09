@@ -697,7 +697,7 @@ export function FhaForm() {
         <div className="h-full sticky top-4">
           {fhaResult ? (
             <ResultSummary
-              activeTab={activeTab === 'closing' ? 'closing' : undefined}
+              activeTab={activeTab === 'closing' ? 'closing' : (activeTab === 'property' ? 'pitia' : undefined)}
               result={fhaResult}
               config={config}
               loanType={t('fha.title')}
