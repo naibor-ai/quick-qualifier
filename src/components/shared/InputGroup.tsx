@@ -1,6 +1,6 @@
 'use client';
 
-import { useId } from 'react';
+import { useId, useState, useEffect } from 'react';
 
 interface InputGroupProps {
   label: string;
@@ -41,6 +41,28 @@ export function InputGroup({
   inputClassName = '',
 }: InputGroupProps & { className?: string }) {
   const id = useId();
+  const [localValue, setLocalValue] = useState<string | number | undefined>(value);
+
+  // Sync with external value if it's different from our numeric representation
+  useEffect(() => {
+    const numericLocal = localValue === '' ? 0 : Number(localValue);
+    if (value !== numericLocal && !isNaN(numericLocal)) {
+      setLocalValue(value);
+    }
+  }, [value, localValue]);
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    let val = e.target.value;
+
+    // Remove leading zeros for number type, but allow "0." and keep "0" if it's the only digit
+    if (type === 'number' && val.length > 1 && val.startsWith('0') && val[1] !== '.') {
+      val = val.replace(/^0+/, '');
+      if (val === '') val = '0';
+    }
+
+    setLocalValue(val);
+    onChange(val);
+  };
 
   return (
     <div className={`space-y-1 ${className}`}>
@@ -63,8 +85,13 @@ export function InputGroup({
           id={id}
           name={name}
           type={type}
-          value={value ?? ''}
-          onChange={(e) => onChange(e.target.value)}
+          value={localValue ?? ''}
+          onChange={handleInputChange}
+          onFocus={(e) => {
+            if (type === 'number' && Number(e.target.value) === 0) {
+              e.target.select();
+            }
+          }}
           placeholder={placeholder}
           disabled={disabled}
           min={min}
