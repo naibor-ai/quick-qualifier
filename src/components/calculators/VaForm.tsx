@@ -231,19 +231,20 @@ export function VaForm() {
     { value: 'subsequent', label: t('va.usage.subsequent') },
   ];
 
-  const [activeTab, setActiveTab] = useState('loan-payment');
+  const [activeTab, setActiveTab] = useState<'loan-payment' | 'closing'>('loan-payment');
+  const [loanSubTab, setLoanSubTab] = useState<'details' | 'expenses'>('details');
   const isDisabled = configLoading || !config;
 
   const tabs = [
     { id: 'loan-payment', label: t('calculator.sections.loanPayment') },
-    { id: 'details', label: 'VA Details & Closing' },
+    { id: 'closing', label: t('calculator.sections.vaOptionsClosing') },
   ];
 
   if (!isMounted) return null;
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 p-4 bg-[#cbe5f266] min-h-[calc(100vh-100px)] backdrop-blur-md rounded-xl">
-      <div className="lg:col-span-5 flex flex-col gap-4">
+      <div className="lg:col-span-12 xl:col-span-5 flex flex-col gap-4">
         <Card className={`${vaResult ? 'h-fit' : 'flex-1 flex flex-col'} overflow-hidden`}>
           <CardHeader className="pb-0">
             <div className="flex justify-center mb-6">
@@ -251,13 +252,13 @@ export function VaForm() {
                 {t('va.title')}
               </CardTitle>
             </div>
-            <div className="flex p-1 bg-slate-100 rounded-lg">
+            <div className="flex p-1 bg-slate-100 rounded-lg w-fit mx-auto">
               {tabs.map((tab) => (
                 <button
                   key={tab.id}
-                  onClick={() => setActiveTab(tab.id)}
+                  onClick={() => setActiveTab(tab.id as any)}
                   type="button"
-                  className={`flex-1 px-3 py-2 text-sm font-medium rounded-md transition-all cursor-pointer ${activeTab === tab.id
+                  className={`px-6 py-2 text-sm font-medium rounded-md transition-all cursor-pointer ${activeTab === tab.id
                     ? 'bg-blue-600 text-white shadow-sm'
                     : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200'
                     }`}
@@ -272,73 +273,97 @@ export function VaForm() {
 
               {activeTab === 'loan-payment' && (
                 <div className="space-y-6">
-                  {/* Property & Loan Details */}
-                  <div className="space-y-5">
-                    <h4 className="font-semibold text-slate-700 border-b border-slate-200 pb-2">{t('calculator.sections.propertyLoanDetails')}</h4>
-                    <Controller name="salesPrice" control={control} render={({ field }) => <InputGroup label={t('calculator.salesPrice')} name="salesPrice" type="number" value={field.value} onChange={(v) => field.onChange(Number(v))} prefix="$" required />} />
-                    <Controller name="downPaymentMode" control={control} render={({ field }) => <SelectToggle label={t('calculator.downPaymentMode')} name="downPaymentMode" value={field.value ?? 'percent'} onChange={field.onChange} options={downPaymentModeOptions} />} />
-                    {downPaymentMode === 'percent' ? (
-                      <Controller name="downPaymentPercent" control={control} render={({ field }) => <InputGroup label={t('calculator.downPaymentPercent')} name="downPaymentPercent" type="number" value={field.value} onChange={(v) => field.onChange(Number(v))} suffix="%" step="0.1" required />} />
-                    ) : (
-                      <Controller name="downPaymentAmount" control={control} render={({ field }) => <InputGroup label={t('calculator.downPaymentAmount')} name="downPaymentAmount" type="number" value={field.value} onChange={(v) => field.onChange(Number(v))} prefix="$" required />} />
-                    )}
-                    <div className="grid grid-cols-2 gap-4">
-                      <Controller name="interestRate" control={control} render={({ field }) => <InputGroup label={t('calculator.interestRate')} name="interestRate" type="number" value={field.value} onChange={(v) => field.onChange(Number(v))} suffix="%" step="0.125" required />} />
-                      <Controller name="termYears" control={control} render={({ field }) => <SelectToggle label={t('calculator.term')} name="termYears" value={String(field.value)} onChange={(v) => field.onChange(Number(v))} options={termOptions} />} />
-                    </div>
+                  {/* Sub-tabs for Loan Payment */}
+                  <div className="flex p-1 bg-slate-100 rounded-lg w-fit">
+                    <button
+                      type="button"
+                      onClick={() => setLoanSubTab('details')}
+                      className={`px-4 py-2 text-sm font-medium rounded-md transition-all ${loanSubTab === 'details'
+                        ? 'bg-white text-blue-600 shadow-sm'
+                        : 'text-slate-600 hover:text-slate-900'
+                        }`}
+                    >
+                      {t('calculator.sections.propertyLoanDetails')}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setLoanSubTab('expenses')}
+                      className={`px-4 py-2 text-sm font-medium rounded-md transition-all ${loanSubTab === 'expenses'
+                        ? 'bg-white text-blue-600 shadow-sm'
+                        : 'text-slate-600 hover:text-slate-900'
+                        }`}
+                    >
+                      {t('calculator.sections.monthlyExpenses')}
+                    </button>
+                  </div>
 
-                    <div className="space-y-1">
-                      <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider block">Loan Fee</label>
-                      <div className="flex gap-2 items-start">
-                        <div className="flex bg-slate-100 rounded-full p-1">
-                          <button
-                            type="button"
-                            onClick={() => setValue('loanFeeMode', 'amount')}
-                            className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-medium transition-all ${watchedValues.loanFeeMode === 'amount'
-                              ? 'bg-blue-600 text-white shadow-sm'
-                              : 'text-slate-600 hover:text-slate-900'
-                              }`}
-                          >
-                            $
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() => setValue('loanFeeMode', 'percent')}
-                            className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-medium transition-all ${watchedValues.loanFeeMode === 'percent'
-                              ? 'bg-blue-600 text-white shadow-sm'
-                              : 'text-slate-600 hover:text-slate-900'
-                              }`}
-                          >
-                            %
-                          </button>
-                        </div>
-                        <div className="flex-1">
-                          {watchedValues.loanFeeMode === 'percent' ? (
-                            <Controller name="loanFeePercent" control={control} render={({ field }) => <InputGroup label="" name="loanFeePercent" type="number" value={field.value} onChange={(v) => field.onChange(Number(v))} suffix="%" step="0.125" />} />
-                          ) : (
-                            <Controller name="loanFee" control={control} render={({ field }) => <InputGroup label="" name="loanFee" type="number" value={field.value} onChange={(v) => field.onChange(Number(v))} prefix="$" />} />
-                          )}
+                  {loanSubTab === 'details' && (
+                    <div className="space-y-5 animate-in fade-in zoom-in-95 duration-200">
+                      <Controller name="salesPrice" control={control} render={({ field }) => <InputGroup label={t('calculator.salesPrice')} name="salesPrice" type="number" value={field.value} onChange={(v) => field.onChange(Number(v))} prefix="$" required />} />
+                      <Controller name="downPaymentMode" control={control} render={({ field }) => <SelectToggle label={t('calculator.downPaymentMode')} name="downPaymentMode" value={field.value ?? 'percent'} onChange={field.onChange} options={downPaymentModeOptions} />} />
+                      {downPaymentMode === 'percent' ? (
+                        <Controller name="downPaymentPercent" control={control} render={({ field }) => <InputGroup label={t('calculator.downPaymentPercent')} name="downPaymentPercent" type="number" value={field.value} onChange={(v) => field.onChange(Number(v))} suffix="%" step="0.1" required />} />
+                      ) : (
+                        <Controller name="downPaymentAmount" control={control} render={({ field }) => <InputGroup label={t('calculator.downPaymentAmount')} name="downPaymentAmount" type="number" value={field.value} onChange={(v) => field.onChange(Number(v))} prefix="$" required />} />
+                      )}
+                      <div className="grid grid-cols-2 gap-4">
+                        <Controller name="interestRate" control={control} render={({ field }) => <InputGroup label={t('calculator.interestRate')} name="interestRate" type="number" value={field.value} onChange={(v) => field.onChange(Number(v))} suffix="%" step="0.125" required />} />
+                        <Controller name="termYears" control={control} render={({ field }) => <SelectToggle label={t('calculator.term')} name="termYears" value={String(field.value)} onChange={(v) => field.onChange(Number(v))} options={termOptions} />} />
+                      </div>
+
+                      <div className="space-y-1">
+                        <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider block">Loan Fee</label>
+                        <div className="flex gap-2 items-start">
+                          <div className="flex bg-slate-100 rounded-full p-1">
+                            <button
+                              type="button"
+                              onClick={() => setValue('loanFeeMode', 'amount')}
+                              className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-medium transition-all ${watchedValues.loanFeeMode === 'amount'
+                                ? 'bg-blue-600 text-white shadow-sm'
+                                : 'text-slate-600 hover:text-slate-900'
+                                }`}
+                            >
+                              $
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => setValue('loanFeeMode', 'percent')}
+                              className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-medium transition-all ${watchedValues.loanFeeMode === 'percent'
+                                ? 'bg-blue-600 text-white shadow-sm'
+                                : 'text-slate-600 hover:text-slate-900'
+                                }`}
+                            >
+                              %
+                            </button>
+                          </div>
+                          <div className="flex-1">
+                            {watchedValues.loanFeeMode === 'percent' ? (
+                              <Controller name="loanFeePercent" control={control} render={({ field }) => <InputGroup label="" name="loanFeePercent" type="number" value={field.value} onChange={(v) => field.onChange(Number(v))} suffix="%" step="0.125" />} />
+                            ) : (
+                              <Controller name="loanFee" control={control} render={({ field }) => <InputGroup label="" name="loanFee" type="number" value={field.value} onChange={(v) => field.onChange(Number(v))} prefix="$" />} />
+                            )}
+                          </div>
                         </div>
                       </div>
                     </div>
-                  </div>
+                  )}
 
-                  {/* Monthly Expenses */}
-                  <div className="space-y-5">
-                    <h4 className="font-semibold text-slate-700 border-b border-slate-200 pb-2 pt-4">{t('calculator.sections.monthlyExpenses')}</h4>
-                    <div className="grid grid-cols-2 gap-4">
-                      <Controller name="propertyTaxAnnual" control={control} render={({ field }) => <InputGroup label={t('calculator.propertyTax')} name="propertyTaxAnnual" type="number" value={field.value} onChange={(v) => { const a = Number(v); field.onChange(a); setValue('propertyTaxMonthly', a / 12); }} prefix="$" helperText="Annual" />} />
-                      <Controller name="homeInsuranceAnnual" control={control} render={({ field }) => <InputGroup label={t('calculator.homeInsurance')} name="homeInsuranceAnnual" type="number" value={field.value} onChange={(v) => { const a = Number(v); field.onChange(a); setValue('homeInsuranceMonthly', a / 12); }} prefix="$" helperText="Annual" />} />
+                  {loanSubTab === 'expenses' && (
+                    <div className="space-y-5 animate-in fade-in zoom-in-95 duration-200">
+                      <div className="grid grid-cols-2 gap-4">
+                        <Controller name="propertyTaxAnnual" control={control} render={({ field }) => <InputGroup label={t('calculator.propertyTax')} name="propertyTaxAnnual" type="number" value={field.value} onChange={(v) => { const a = Number(v); field.onChange(a); setValue('propertyTaxMonthly', a / 12); }} prefix="$" helperText="Annual" />} />
+                        <Controller name="homeInsuranceAnnual" control={control} render={({ field }) => <InputGroup label={t('calculator.homeInsurance')} name="homeInsuranceAnnual" type="number" value={field.value} onChange={(v) => { const a = Number(v); field.onChange(a); setValue('homeInsuranceMonthly', a / 12); }} prefix="$" helperText="Annual" />} />
+                      </div>
+                      <div className="grid grid-cols-2 gap-4">
+                        <Controller name="hoaDuesMonthly" control={control} render={({ field }) => <InputGroup label={t('calculator.hoaDues')} name="hoaDuesMonthly" type="number" value={field.value} onChange={(v) => field.onChange(Number(v))} prefix="$" />} />
+                        <Controller name="floodInsuranceMonthly" control={control} render={({ field }) => <InputGroup label={t('calculator.floodInsurance')} name="floodInsuranceMonthly" type="number" value={field.value} onChange={(v) => field.onChange(Number(v))} prefix="$" />} />
+                      </div>
                     </div>
-                    <div className="grid grid-cols-2 gap-4">
-                      <Controller name="hoaDuesMonthly" control={control} render={({ field }) => <InputGroup label={t('calculator.hoaDues')} name="hoaDuesMonthly" type="number" value={field.value} onChange={(v) => field.onChange(Number(v))} prefix="$" />} />
-                      <Controller name="floodInsuranceMonthly" control={control} render={({ field }) => <InputGroup label={t('calculator.floodInsurance')} name="floodInsuranceMonthly" type="number" value={field.value} onChange={(v) => field.onChange(Number(v))} prefix="$" />} />
-                    </div>
-                  </div>
+                  )}
                 </div>
               )}
 
-              {activeTab === 'details' && (
+              {activeTab === 'closing' && (
                 <div className="space-y-5">
                   <div className="bg-blue-50 p-4 rounded-lg space-y-4">
                     <Controller name="vaUsage" control={control} render={({ field }) => <SelectToggle label={t('calculator.vaUsage')} name="vaUsage" value={field.value ?? 'first'} onChange={field.onChange} options={vaUsageOptions} />} />
@@ -421,11 +446,11 @@ export function VaForm() {
         </Card>
       </div>
 
-      <div className="lg:col-span-7">
+      <div className="lg:col-span-12 xl:col-span-7">
         <div className="h-full sticky top-4">
           {vaResult ? (
             <ResultSummary
-              activeTab={activeTab === 'details' ? 'closing-cash' : (activeTab === 'loan-payment' ? 'pitia' : undefined)}
+              activeTab={activeTab === 'closing' ? 'closing-cash' : (activeTab === 'loan-payment' ? 'pitia' : undefined)}
               result={vaResult}
               config={config}
               loanType={t('va.title')}

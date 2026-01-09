@@ -16,6 +16,8 @@
     "annual": "Annual",
     "yes": "Yes",
     "no": "No",
+    "years": "Years",
+    "months": "Months",
     "preparing": "Preparing..."
   },
   "nav": {
@@ -96,6 +98,9 @@
       "credit": "Credit",
       "vaEligibility": "VA Eligibility",
       "prepaids": "Prepaid Items",
+      "closingPrepaids": "Closing & Prepaids",
+      "fhaClosing": "FHA & Closing",
+      "vaOptionsClosing": "VA Options & Closing",
       "general": "General",
       "lender": "Lender Fees",
       "title": "Title Fees"

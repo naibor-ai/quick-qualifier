@@ -49,8 +49,8 @@ export default function CalculatorsLayout({ children }: CalculatorsLayoutProps) 
                 />
               </Link>
 
-              {/* Desktop Main Navigation */}
-              <div className="hidden md:flex items-center space-x-2 flex-1 overflow-x-auto no-scrollbar">
+              {/* Desktop Main Navigation - Centered */}
+              <div className="hidden md:flex items-center justify-center space-x-2 flex-1 overflow-x-auto no-scrollbar">
                 {[
                   { id: 'conventional', label: t('conventionalMain'), href: `/${locale}/calculators/conventional`, isActive: pathname.includes('/conventional') },
                   { id: 'fha', label: t('fhaMain'), href: `/${locale}/calculators/fha`, isActive: pathname.includes('/fha') },
@@ -62,7 +62,7 @@ export default function CalculatorsLayout({ children }: CalculatorsLayoutProps) 
                     key={item.id}
                     href={item.href}
                     className={`px-4 py-2 rounded-full text-sm font-semibold transition-all whitespace-nowrap ${item.isActive
-                      ? 'bg-slate-900 text-white shadow-md'
+                      ? 'bg-blue-600 text-white shadow-md'
                       : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
                       }`}
                   >
@@ -70,51 +70,8 @@ export default function CalculatorsLayout({ children }: CalculatorsLayoutProps) 
                   </Link>
                 ))}
               </div>
+              <div className="w-[140px] hidden md:block"></div> {/* Spacer to balance logo width */}
             </div>
-
-            {/* Sub-Navigation (Purchase vs Refinance) */}
-            {(pathname.includes('/conventional') || pathname.includes('/fha') || pathname.includes('/va')) && !pathname.includes('seller-net') && (
-              <div className="flex pb-3 md:pl-[172px]">
-                <div className="flex bg-slate-100 p-1 rounded-lg">
-                  {[
-                    { type: 'purchase', label: t('purchase'), href: pathname.includes('refi') ? pathname.replace('-refi', '') : pathname },
-                    { type: 'refinance', label: t('refinance'), href: pathname.includes('refi') ? pathname : `${pathname}-refi` },
-                  ].map((subItem) => {
-                    // Logic to determine correct HREF based on current main tab
-                    let href = subItem.href;
-                    const isRefi = pathname.includes('-refi');
-
-                    // If we are currently on standard purchase URL and want refi: append -refi
-                    // If we are currently on refi URL and want purchase: remove -refi
-
-                    // Simplifying the href logic:
-                    // Determine base path (purchase path)
-                    const basePath = pathname.replace('-refi', '');
-
-                    if (subItem.type === 'purchase') {
-                      href = basePath;
-                    } else {
-                      href = `${basePath}-refi`;
-                    }
-
-                    const isActive = subItem.type === 'purchase' ? !isRefi : isRefi;
-
-                    return (
-                      <Link
-                        key={subItem.type}
-                        href={href}
-                        className={`px-4 py-1.5 rounded-md text-xs font-semibold transition-all ${isActive
-                          ? 'bg-white text-blue-600 shadow-sm'
-                          : 'text-slate-500 hover:text-slate-900'
-                          }`}
-                      >
-                        {subItem.label}
-                      </Link>
-                    );
-                  })}
-                </div>
-              </div>
-            )}
 
             {/* Mobile Main Navigation */}
             <div className="md:hidden pb-3 flex overflow-x-auto gap-2 no-scrollbar">
@@ -129,7 +86,7 @@ export default function CalculatorsLayout({ children }: CalculatorsLayoutProps) 
                   key={item.id}
                   href={item.href}
                   className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors whitespace-nowrap ${item.isActive
-                    ? 'bg-slate-900 text-white'
+                    ? 'bg-blue-600 text-white'
                     : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
                     }`}
                 >
@@ -162,8 +119,45 @@ export default function CalculatorsLayout({ children }: CalculatorsLayoutProps) 
         </div>
       )}
 
+      {/* Sub-Navigation (Purchase vs Refinance) - Outside Header */}
+      {(pathname.includes('/conventional') || pathname.includes('/fha') || pathname.includes('/va')) && !pathname.includes('seller-net') && (
+        <div className="flex justify-center pt-6 pb-2">
+          <div className="flex bg-white/80 backdrop-blur-md p-1 rounded-full shadow-sm border border-slate-200/60">
+            {[
+              { type: 'purchase', label: t('purchase'), href: pathname.includes('refi') ? pathname.replace('-refi', '') : pathname },
+              { type: 'refinance', label: t('refinance'), href: pathname.includes('refi') ? pathname : `${pathname}-refi` },
+            ].map((subItem) => {
+              let href = subItem.href;
+              const isRefi = pathname.includes('-refi');
+              const basePath = pathname.replace('-refi', '');
+
+              if (subItem.type === 'purchase') {
+                href = basePath;
+              } else {
+                href = `${basePath}-refi`;
+              }
+
+              const isActive = subItem.type === 'purchase' ? !isRefi : isRefi;
+
+              return (
+                <Link
+                  key={subItem.type}
+                  href={href}
+                  className={`px-6 py-1.5 rounded-full text-sm font-semibold transition-all ${isActive
+                    ? 'bg-blue-600 text-white shadow-sm'
+                    : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100/50'
+                    }`}
+                >
+                  {subItem.label}
+                </Link>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
       {/* Main content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         {children}
       </main>
     </div>
