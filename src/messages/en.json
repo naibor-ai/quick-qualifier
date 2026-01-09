@@ -27,7 +27,12 @@
     "va": "VA Purchase",
     "vaRefi": "VA Refinance",
     "sellerNet": "Seller Net Sheet",
-    "compare": "Compare"
+    "compare": "Compare",
+    "purchase": "Purchase",
+    "refinance": "Refinance",
+    "conventionalMain": "Conventional",
+    "fhaMain": "FHA",
+    "vaMain": "VA"
   },
   "home": {
     "selectCalculator": "Select a calculator to get started",
@@ -82,6 +87,10 @@
     "sections": {
       "propertyLoan": "Property & Loan",
       "monthlyCosts": "Monthly Costs",
+      "loanPayment": "Loan & Payment",
+      "loanDetails": "Loan Details",
+      "propertyLoanDetails": "Property & Loan Details",
+      "monthlyExpenses": "Monthly Expenses",
       "pmiCredit": "PMI & Credit",
       "creditsPoints": "Credits & Points",
       "credit": "Credit",
