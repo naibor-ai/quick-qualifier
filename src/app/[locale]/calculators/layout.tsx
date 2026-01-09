@@ -22,18 +22,7 @@ export default function CalculatorsLayout({ children }: CalculatorsLayoutProps) 
     loadConfig();
   }, [loadConfig]);
 
-  const navItems = [
-    { href: `/${locale}/calculators/conventional`, label: t('conventional') },
-    { href: `/${locale}/calculators/conventional-refi`, label: t('conventionalRefi') },
-    { href: `/${locale}/calculators/fha`, label: t('fha') },
-    { href: `/${locale}/calculators/fha-refi`, label: t('fhaRefi') },
-    { href: `/${locale}/calculators/va`, label: t('va') },
-    { href: `/${locale}/calculators/va-refi`, label: t('vaRefi') },
-    { href: `/${locale}/calculators/seller-net`, label: t('sellerNet') },
-    { href: `/${locale}/calculators/comparison`, label: t('compare') },
-  ];
 
-  const isActive = (href: string) => pathname === href;
 
   return (
     <div
@@ -41,53 +30,70 @@ export default function CalculatorsLayout({ children }: CalculatorsLayoutProps) 
       style={{ backgroundImage: 'url("/bg-dashboard.jpeg")' }}
     >
       {/* Navigation */}
+      {/* Navigation */}
       <nav className="sticky top-0 z-50 bg-white/95 backdrop-blur-sm border-b border-slate-200 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
-            <Link
-              href={`/${locale}`}
-              className="flex items-center h-10"
-            >
-              <Image
-                src="/Naibor_Logo_Black_High_Quality_No_BG.png"
-                alt="Naibor"
-                width={160}
-                height={40}
-                className="h-10 w-auto"
-                priority
-              />
-            </Link>
+          <div className="flex flex-col">
+            <div className="flex items-center justify-between h-16">
+              <Link
+                href={`/${locale}`}
+                className="flex items-center h-10 mr-8"
+              >
+                <Image
+                  src="/Naibor_Logo_Black_High_Quality_No_BG.png"
+                  alt="Naibor"
+                  width={140}
+                  height={35}
+                  className="h-9 w-auto"
+                  priority
+                />
+              </Link>
 
-            <div className="hidden md:flex items-center space-x-1">
-              {navItems.map((item) => (
+              {/* Desktop Main Navigation - Centered */}
+              <div className="hidden md:flex items-center justify-center space-x-2 flex-1 overflow-x-auto no-scrollbar">
+                {[
+                  { id: 'conventional', label: t('conventionalMain'), href: `/${locale}/calculators/conventional`, isActive: pathname.includes('/conventional') },
+                  { id: 'fha', label: t('fhaMain'), href: `/${locale}/calculators/fha`, isActive: pathname.includes('/fha') },
+                  { id: 'va', label: t('vaMain'), href: `/${locale}/calculators/va`, isActive: pathname.includes('/va') },
+                  { id: 'seller-net', label: t('sellerNet'), href: `/${locale}/calculators/seller-net`, isActive: pathname.includes('/seller-net') },
+                  { id: 'compare', label: t('compare'), href: `/${locale}/calculators/comparison`, isActive: pathname.includes('/comparison') },
+                ].map((item) => (
+                  <Link
+                    key={item.id}
+                    href={item.href}
+                    className={`px-4 py-2 rounded-full text-sm font-semibold transition-all whitespace-nowrap ${item.isActive
+                      ? 'bg-blue-600 text-white shadow-md'
+                      : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+                      }`}
+                  >
+                    {item.label}
+                  </Link>
+                ))}
+              </div>
+              <div className="w-[140px] hidden md:block"></div> {/* Spacer to balance logo width */}
+            </div>
+
+            {/* Mobile Main Navigation */}
+            <div className="md:hidden pb-3 flex overflow-x-auto gap-2 no-scrollbar">
+              {[
+                { id: 'conventional', label: t('conventionalMain'), href: `/${locale}/calculators/conventional`, isActive: pathname.includes('/conventional') },
+                { id: 'fha', label: t('fhaMain'), href: `/${locale}/calculators/fha`, isActive: pathname.includes('/fha') },
+                { id: 'va', label: t('vaMain'), href: `/${locale}/calculators/va`, isActive: pathname.includes('/va') },
+                { id: 'seller-net', label: t('sellerNet'), href: `/${locale}/calculators/seller-net`, isActive: pathname.includes('/seller-net') },
+                { id: 'compare', label: t('compare'), href: `/${locale}/calculators/comparison`, isActive: pathname.includes('/comparison') },
+              ].map((item) => (
                 <Link
-                  key={item.href}
+                  key={item.id}
                   href={item.href}
-                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${isActive(item.href)
-                    ? 'bg-blue-600 text-white shadow-sm'
-                    : 'text-slate-600 hover:text-blue-600 hover:bg-blue-50'
+                  className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors whitespace-nowrap ${item.isActive
+                    ? 'bg-blue-600 text-white'
+                    : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
                     }`}
                 >
                   {item.label}
                 </Link>
               ))}
             </div>
-          </div>
-
-          {/* Mobile navigation */}
-          <div className="md:hidden pb-3 flex flex-wrap gap-2">
-            {navItems.map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${isActive(item.href)
-                  ? 'bg-blue-600 text-white'
-                  : 'text-slate-600 hover:text-blue-600 hover:bg-blue-50'
-                  }`}
-              >
-                {item.label}
-              </Link>
-            ))}
           </div>
         </div>
       </nav>
@@ -113,8 +119,45 @@ export default function CalculatorsLayout({ children }: CalculatorsLayoutProps) 
         </div>
       )}
 
+      {/* Sub-Navigation (Purchase vs Refinance) - Outside Header */}
+      {(pathname.includes('/conventional') || pathname.includes('/fha') || pathname.includes('/va')) && !pathname.includes('seller-net') && (
+        <div className="flex justify-center pt-6 pb-2">
+          <div className="flex bg-white/80 backdrop-blur-md p-1 rounded-full shadow-sm border border-slate-200/60">
+            {[
+              { type: 'purchase', label: t('purchase'), href: pathname.includes('refi') ? pathname.replace('-refi', '') : pathname },
+              { type: 'refinance', label: t('refinance'), href: pathname.includes('refi') ? pathname : `${pathname}-refi` },
+            ].map((subItem) => {
+              let href = subItem.href;
+              const isRefi = pathname.includes('-refi');
+              const basePath = pathname.replace('-refi', '');
+
+              if (subItem.type === 'purchase') {
+                href = basePath;
+              } else {
+                href = `${basePath}-refi`;
+              }
+
+              const isActive = subItem.type === 'purchase' ? !isRefi : isRefi;
+
+              return (
+                <Link
+                  key={subItem.type}
+                  href={href}
+                  className={`px-6 py-1.5 rounded-full text-sm font-semibold transition-all ${isActive
+                    ? 'bg-blue-600 text-white shadow-sm'
+                    : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100/50'
+                    }`}
+                >
+                  {subItem.label}
+                </Link>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
       {/* Main content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         {children}
       </main>
     </div>

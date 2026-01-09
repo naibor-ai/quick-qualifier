@@ -16,18 +16,25 @@
     "annual": "Annual",
     "yes": "Yes",
     "no": "No",
+    "years": "Years",
+    "months": "Months",
     "preparing": "Preparing..."
   },
   "nav": {
     "home": "Home",
-    "conventional": "Conventional Sale",
+    "conventional": "Conventional Purchase",
     "conventionalRefi": "Conventional Refi",
-    "fha": "FHA Sale",
+    "fha": "FHA Purchase",
     "fhaRefi": "FHA Refinance",
-    "va": "VA Sale",
+    "va": "VA Purchase",
     "vaRefi": "VA Refinance",
     "sellerNet": "Seller Net Sheet",
-    "compare": "Compare"
+    "compare": "Compare",
+    "purchase": "Purchase",
+    "refinance": "Refinance",
+    "conventionalMain": "Conventional",
+    "fhaMain": "FHA",
+    "vaMain": "VA"
   },
   "home": {
     "selectCalculator": "Select a calculator to get started",
@@ -82,11 +89,18 @@
     "sections": {
       "propertyLoan": "Property & Loan",
       "monthlyCosts": "Monthly Costs",
+      "loanPayment": "Loan & Payment",
+      "loanDetails": "Loan Details",
+      "propertyLoanDetails": "Property & Loan Details",
+      "monthlyExpenses": "Monthly Expenses",
       "pmiCredit": "PMI & Credit",
       "creditsPoints": "Credits & Points",
       "credit": "Credit",
       "vaEligibility": "VA Eligibility",
       "prepaids": "Prepaid Items",
+      "closingPrepaids": "Closing & Prepaids",
+      "fhaClosing": "FHA & Closing",
+      "vaOptionsClosing": "VA Options & Closing",
       "general": "General",
       "lender": "Lender Fees",
       "title": "Title Fees"
