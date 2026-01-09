@@ -293,8 +293,8 @@ export function VaForm() {
                           type="button"
                           onClick={() => setValue('loanFeeMode', 'amount')}
                           className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-medium transition-all ${watchedValues.loanFeeMode === 'amount'
-                              ? 'bg-blue-600 text-white shadow-sm'
-                              : 'text-slate-600 hover:text-slate-900'
+                            ? 'bg-blue-600 text-white shadow-sm'
+                            : 'text-slate-600 hover:text-slate-900'
                             }`}
                         >
                           $
@@ -303,8 +303,8 @@ export function VaForm() {
                           type="button"
                           onClick={() => setValue('loanFeeMode', 'percent')}
                           className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-medium transition-all ${watchedValues.loanFeeMode === 'percent'
-                              ? 'bg-blue-600 text-white shadow-sm'
-                              : 'text-slate-600 hover:text-slate-900'
+                            ? 'bg-blue-600 text-white shadow-sm'
+                            : 'text-slate-600 hover:text-slate-900'
                             }`}
                         >
                           %
@@ -421,7 +421,13 @@ export function VaForm() {
       <div className="lg:col-span-7">
         <div className="h-full sticky top-4">
           {vaResult ? (
-            <ResultSummary result={vaResult} config={config} loanType={t('va.title')} formId="va" />
+            <ResultSummary
+              activeTab={activeTab === 'details' ? 'closing' : undefined}
+              result={vaResult}
+              config={config}
+              loanType={t('va.title')}
+              formId="va"
+            />
           ) : (
             <Card className="h-full min-h-[500px] flex items-center justify-center bg-white shadow-md border-slate-200">
               <CardContent>

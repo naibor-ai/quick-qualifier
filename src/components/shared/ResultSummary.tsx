@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useTranslations } from 'next-intl';
 import type { LoanCalculationResult, GhlConfig } from '@/lib/schemas';
 import { PdfDownloadButtons } from './PdfDownloadButtons';
@@ -47,6 +47,7 @@ function ResultSection({ title, children }: ResultSectionProps) {
 }
 
 interface ResultSummaryProps {
+  activeTab?: string;
   result: LoanCalculationResult;
   showClosingCosts?: boolean;
   showMonthlyBreakdown?: boolean;
@@ -57,6 +58,7 @@ interface ResultSummaryProps {
 }
 
 export function ResultSummary({
+  activeTab: externalActiveTab,
   result,
   showClosingCosts = true,
   showMonthlyBreakdown = true,
@@ -68,6 +70,12 @@ export function ResultSummary({
   const t = useTranslations('calculator');
   const [activeTab, setActiveTab] = useState('summary');
   const [closingTab, setClosingTab] = useState('prepaid');
+
+  useEffect(() => {
+    if (externalActiveTab) {
+      setActiveTab(externalActiveTab);
+    }
+  }, [externalActiveTab]);
 
   const isRefi = formId?.includes('refi');
 

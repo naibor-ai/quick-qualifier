@@ -988,6 +988,7 @@ export function ConventionalForm() {
         <div className="h-full sticky top-4">
           {conventionalResult ? (
             <ResultSummary
+              activeTab={activeTab === 'closing' ? 'closing' : undefined}
               result={conventionalResult}
               config={config}
               loanType={t('conventional.title')}

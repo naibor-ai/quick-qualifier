@@ -231,8 +231,8 @@ export function ConventionalRefiForm() {
                           type="button"
                           onClick={() => setValue('loanFeeMode', 'amount')}
                           className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-medium transition-all ${watchedValues.loanFeeMode === 'amount'
-                              ? 'bg-blue-600 text-white shadow-sm'
-                              : 'text-slate-600 hover:text-slate-900'
+                            ? 'bg-blue-600 text-white shadow-sm'
+                            : 'text-slate-600 hover:text-slate-900'
                             }`}
                         >
                           $
@@ -241,8 +241,8 @@ export function ConventionalRefiForm() {
                           type="button"
                           onClick={() => setValue('loanFeeMode', 'percent')}
                           className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-medium transition-all ${watchedValues.loanFeeMode === 'percent'
-                              ? 'bg-blue-600 text-white shadow-sm'
-                              : 'text-slate-600 hover:text-slate-900'
+                            ? 'bg-blue-600 text-white shadow-sm'
+                            : 'text-slate-600 hover:text-slate-900'
                             }`}
                         >
                           %
@@ -347,7 +347,13 @@ export function ConventionalRefiForm() {
       <div className="lg:col-span-7">
         <div className="h-full sticky top-4">
           {conventionalRefiResult ? (
-            <ResultSummary result={conventionalRefiResult} config={config} loanType={t('conventionalRefi.title')} formId="conventional-refi" />
+            <ResultSummary
+              activeTab={activeTab === 'closing' ? 'closing' : undefined}
+              result={conventionalRefiResult}
+              config={config}
+              loanType={t('conventionalRefi.title')}
+              formId="conventional-refi"
+            />
           ) : (
             <Card className="h-full min-h-[500px] flex items-center justify-center bg-white shadow-md border-slate-200">
               <CardContent>
