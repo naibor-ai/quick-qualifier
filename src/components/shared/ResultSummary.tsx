@@ -106,9 +106,9 @@ export function ResultSummary({
   ];
 
   const closingTabs = [
-    { id: 'prepaid', label: 'Prepaid Items' },
+    { id: 'prepaid', label: 'Pre-paids' },
     { id: 'lender', label: 'Lender Fees' },
-    { id: 'title', label: 'Title Fees' },
+    { id: 'title', label: 'Third Party Fees' },
   ];
 
   return (
