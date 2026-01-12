@@ -968,6 +968,22 @@ export const useCalculatorStore = create<CalculatorState>()(
         vaRefiInputs: state.vaRefiInputs,
         selectedAgent: state.selectedAgent,
       }),
+      merge: (persistedState, currentState) => {
+        const state = (persistedState as Partial<CalculatorState>) || {};
+        return {
+          ...currentState,
+          ...state,
+          conventionalInputs: { ...currentState.conventionalInputs, ...state.conventionalInputs },
+          fhaInputs: { ...currentState.fhaInputs, ...state.fhaInputs },
+          vaInputs: { ...currentState.vaInputs, ...state.vaInputs },
+          sellerNetInputs: { ...currentState.sellerNetInputs, ...state.sellerNetInputs },
+          comparisonScenarios: state.comparisonScenarios ?? currentState.comparisonScenarios,
+          conventionalRefiInputs: { ...currentState.conventionalRefiInputs, ...state.conventionalRefiInputs },
+          fhaRefiInputs: { ...currentState.fhaRefiInputs, ...state.fhaRefiInputs },
+          vaRefiInputs: { ...currentState.vaRefiInputs, ...state.vaRefiInputs },
+          selectedAgent: state.selectedAgent ?? currentState.selectedAgent,
+        };
+      },
     }
   )
 );
