@@ -9,6 +9,7 @@ import { useCalculatorStore } from '@/lib/store';
 import { calculateConventionalRefinance } from '@/lib/calculations/conventional';
 import { InputGroup, SelectToggle, Button, Card, CardHeader, CardTitle, CardContent } from '@/components/shared';
 import { ResultSummary } from '@/components/shared/ResultSummary';
+import { DtiSection } from './DtiSection';
 import { CreditScoreTier } from '@/lib/schemas';
 
 const ConventionalRefinanceType = z.enum(['rate_term', 'cash_out']);
@@ -36,6 +37,7 @@ const formSchema = z.object({
   loanFeePercent: z.number().min(0).max(10).default(0),
   loanFeeMode: z.enum(['amount', 'percent']).default('amount'),
   closingCostsTotal: z.number().min(0),
+  miscFee: z.number().min(0),
   // Fee Overrides
   processingFee: z.number().min(0).default(895),
   underwritingFee: z.number().min(0).default(995),
@@ -68,7 +70,11 @@ export function ConventionalRefiForm() {
     resetCalculator,
     config,
     configLoading,
+    showDtiSections,
+    setShowDtiSection
   } = useCalculatorStore();
+
+  const showDtiSection = showDtiSections.conventionalRefi;
 
   const [isMounted, setIsMounted] = useState(false);
   useEffect(() => setIsMounted(true), []);
@@ -99,6 +105,7 @@ export function ConventionalRefiForm() {
       poolInspectionFee: conventionalRefiInputs.poolInspectionFee ?? 0,
       transferTax: conventionalRefiInputs.transferTax ?? 0,
       mortgageTax: conventionalRefiInputs.mortgageTax ?? 0,
+      miscFee: conventionalRefiInputs.miscFee || 0,
     },
   });
 
@@ -138,6 +145,7 @@ export function ConventionalRefiForm() {
         payoffDays: 30,
         cashOutAmount: 0,
         closingCostsTotal: isManualOverride ? data.closingCostsTotal : 0,
+        miscFee: data.miscFee,
         prepaidInterestAmount: 0,
         prepaidTaxAmount: 0,
         prepaidInsuranceAmount: 0,
@@ -325,7 +333,22 @@ export function ConventionalRefiForm() {
                           <Controller name="prepaidTaxMonths" control={control} render={({ field }) => <InputGroup label="Tax Mo." name="prepaidTaxMonths" type="number" value={field.value} onChange={(v) => field.onChange(Number(v))} suffix="m" />} />
                           <Controller name="prepaidInsuranceMonths" control={control} render={({ field }) => <InputGroup label="Ins. Mo." name="prepaidInsuranceMonths" type="number" value={field.value} onChange={(v) => field.onChange(Number(v))} suffix="m" />} />
                         </div>
-                        <div className="pt-2 border-t border-slate-100">
+                        <div className="pt-2 border-t border-slate-100 space-y-4">
+                          <Controller
+                            name="miscFee"
+                            control={control}
+                            render={({ field }) => (
+                              <InputGroup
+                                label="Miscellaneous"
+                                name="miscFee"
+                                type="number"
+                                value={field.value}
+                                onChange={(val) => field.onChange(Number(val) || 0)}
+                                prefix="$"
+                                helperText="Additional miscellaneous fees"
+                              />
+                            )}
+                          />
                           <Controller name="closingCostsTotal" control={control} render={({ field }) => <InputGroup label="Closing Costs" name="closingCostsTotal" type="number" value={field.value} onChange={(v) => field.onChange(Number(v))} prefix="$" className="text-lg font-semibold" />} />
                         </div>
                       </div>
@@ -336,7 +359,6 @@ export function ConventionalRefiForm() {
                         <Controller name="processingFee" control={control} render={({ field }) => <InputGroup label="Processing" name="processingFee" type="number" value={field.value} onChange={(v) => field.onChange(Number(v))} prefix="$" />} />
                         <Controller name="underwritingFee" control={control} render={({ field }) => <InputGroup label="Underwriting" name="underwritingFee" type="number" value={field.value} onChange={(v) => field.onChange(Number(v))} prefix="$" />} />
                         <Controller name="docPrepFee" control={control} render={({ field }) => <InputGroup label="Doc Prep" name="docPrepFee" type="number" value={field.value} onChange={(v) => field.onChange(Number(v))} prefix="$" />} />
-                        <Controller name="appraisalFee" control={control} render={({ field }) => <InputGroup label="Appraisal" name="appraisalFee" type="number" value={field.value} onChange={(v) => field.onChange(Number(v))} prefix="$" />} />
                         <Controller name="creditReportFee" control={control} render={({ field }) => <InputGroup label="Credit Report" name="creditReportFee" type="number" value={field.value} onChange={(v) => field.onChange(Number(v))} prefix="$" />} />
                         <Controller name="floodCertFee" control={control} render={({ field }) => <InputGroup label="Flood Cert" name="floodCertFee" type="number" value={field.value} onChange={(v) => field.onChange(Number(v))} prefix="$" />} />
                         <Controller name="taxServiceFee" control={control} render={({ field }) => <InputGroup label="Tax Service" name="taxServiceFee" type="number" value={field.value} onChange={(v) => field.onChange(Number(v))} prefix="$" />} />
@@ -346,6 +368,7 @@ export function ConventionalRefiForm() {
                     {closingSubTab === 'title' && (
                       <div className="grid grid-cols-2 gap-3">
                         <Controller name="escrowFee" control={control} render={({ field }) => <InputGroup label="Escrow Fee" name="escrowFee" type="number" value={field.value} onChange={(v) => field.onChange(Number(v))} prefix="$" />} />
+                        <Controller name="appraisalFee" control={control} render={({ field }) => <InputGroup label="Appraisal" name="appraisalFee" type="number" value={field.value} onChange={(v) => field.onChange(Number(v))} prefix="$" />} />
                         <Controller name="notaryFee" control={control} render={({ field }) => <InputGroup label="Notary Fee" name="notaryFee" type="number" value={field.value} onChange={(v) => field.onChange(Number(v))} prefix="$" />} />
                         <Controller name="recordingFee" control={control} render={({ field }) => <InputGroup label="Recording Fee" name="recordingFee" type="number" value={field.value} onChange={(v) => field.onChange(Number(v))} prefix="$" />} />
                         <Controller name="ownerTitlePolicy" control={control} render={({ field }) => <InputGroup label="Owner Title" name="ownerTitlePolicy" type="number" value={field.value} onChange={(v) => field.onChange(Number(v))} prefix="$" />} />
@@ -372,6 +395,16 @@ export function ConventionalRefiForm() {
             </form>
           </CardContent>
         </Card>
+
+        {/* Toggle DTI Button - Only show after calculation */}
+        {conventionalRefiResult && (
+          <Button
+            onClick={() => setShowDtiSection(!showDtiSection, 'conventionalRefi')}
+            className="bg-white hover:bg-slate-50 text-[#2a8bb3] font-black border-none shadow-sm w-fit mx-auto mt-2 transition-transform hover:scale-105"
+          >
+            {showDtiSection ? 'Hide DTI Section' : 'Show DTI Section'}
+          </Button>
+        )}
       </div>
 
       <div className="lg:col-span-7">
@@ -379,6 +412,7 @@ export function ConventionalRefiForm() {
           {conventionalRefiResult ? (
             <ResultSummary
               activeTab={activeTab === 'closing' ? 'closing-cash' : (activeTab === 'loan-payment' ? 'pitia' : undefined)}
+              closingTab={activeTab === 'closing' ? (closingSubTab === 'general' ? 'prepaid' : closingSubTab) : undefined}
               result={conventionalRefiResult}
               config={config}
               loanType={t('conventionalRefi.title')}
@@ -399,12 +433,14 @@ export function ConventionalRefiForm() {
                   <h3 className="text-2xl font-bold text-slate-800 mb-3">{t('calculator.readyToCalculate')}</h3>
                   <p className="text-slate-500 text-lg mb-8">{t('calculator.readyDescription')}</p>
                   <Button variant="outline" onClick={() => setActiveTab('loan-payment')} className="border-blue-200 text-blue-600 hover:bg-blue-50">
-                    Start with Loan Details
+                    Start with Property Details
                   </Button>
                 </div>
               </CardContent>
             </Card>
           )}
+
+          {showDtiSection && <DtiSection />}
         </div>
       </div>
     </div>

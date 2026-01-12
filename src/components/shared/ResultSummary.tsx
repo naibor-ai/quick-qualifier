@@ -48,6 +48,7 @@ function ResultSection({ title, children }: ResultSectionProps) {
 
 interface ResultSummaryProps {
   activeTab?: string;
+  closingTab?: string;
   result: LoanCalculationResult;
   showClosingCosts?: boolean;
   showMonthlyBreakdown?: boolean;
@@ -59,6 +60,7 @@ interface ResultSummaryProps {
 
 export function ResultSummary({
   activeTab: externalActiveTab,
+  closingTab: externalClosingTab,
   result,
   showClosingCosts = true,
   showMonthlyBreakdown = true,
@@ -76,6 +78,12 @@ export function ResultSummary({
       setActiveTab(externalActiveTab);
     }
   }, [externalActiveTab]);
+
+  useEffect(() => {
+    if (externalClosingTab) {
+      setClosingTab(externalClosingTab);
+    }
+  }, [externalClosingTab]);
 
   const isRefi = formId?.includes('refi');
 
@@ -98,9 +106,9 @@ export function ResultSummary({
   ];
 
   const closingTabs = [
-    { id: 'prepaid', label: 'Prepaid Items' },
+    { id: 'prepaid', label: 'Pre-paids' },
     { id: 'lender', label: 'Lender Fees' },
-    { id: 'title', label: 'Title Fees' },
+    { id: 'title', label: 'Third Party Fees' },
   ];
 
   return (
@@ -263,6 +271,12 @@ export function ResultSummary({
                       label={`Prepaid hazard ins (${result.closingCosts.prepaidInsuranceMonths ?? 0} months)`}
                       value={formatCurrency(result.closingCosts.insuranceReserves)}
                     />
+                    {result.closingCosts.miscFee > 0 && (
+                      <ResultItem
+                        label="Miscellaneous Fees"
+                        value={formatCurrency(result.closingCosts.miscFee)}
+                      />
+                    )}
                   </ResultSection>
                   <div className="pt-2 border-t border-slate-100">
                     <ResultItem

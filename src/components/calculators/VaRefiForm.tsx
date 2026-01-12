@@ -9,7 +9,7 @@ import { useCalculatorStore } from '@/lib/store';
 import { calculateVaRefinance } from '@/lib/calculations/va';
 import { InputGroup, SelectToggle, Button, Card, CardHeader, CardTitle, CardContent } from '@/components/shared';
 import { ResultSummary } from '@/components/shared/ResultSummary';
-import { VaUsage } from '@/lib/schemas';
+import { DtiSection } from './DtiSection';
 
 const formSchema = z.object({
   propertyValue: z.number().min(10000).max(100000000),
@@ -19,15 +19,15 @@ const formSchema = z.object({
   termYears: z.number().min(1).max(40),
   propertyTaxAnnual: z.number().min(0),
   homeInsuranceAnnual: z.number().min(0),
-  mortgageInsuranceMonthly: z.number().min(0),
   hoaDuesMonthly: z.number().min(0),
-  isIrrrl: z.boolean(),
-  vaUsage: z.enum(['first', 'subsequent']),
-  isDisabledVeteran: z.boolean(),
+  vaUsage: z.enum(['first', 'subsequent']).default('first'),
+  disabilityPercentage: z.number().min(0).max(100).default(0),
   loanFee: z.number().min(0),
   loanFeePercent: z.number().min(0).max(10).default(0),
   loanFeeMode: z.enum(['amount', 'percent']).default('amount'),
   cashOutAmount: z.number().min(0),
+  isIrrrl: z.boolean().default(false),
+  isDisabledVeteran: z.boolean().default(false),
   // Prepaid Items
   prepaidInterestDays: z.number().min(0).max(365),
   prepaidTaxMonths: z.number().min(0).max(60),
@@ -36,6 +36,7 @@ const formSchema = z.object({
   prepaidTaxAmount: z.number().min(0),
   prepaidInsuranceAmount: z.number().min(0),
   closingCostsTotal: z.number().min(0),
+  miscFee: z.number().min(0).default(0),
   // Fee Overrides with defaults
   processingFee: z.number().min(0).default(895),
   underwritingFee: z.number().min(0).default(995),
@@ -68,7 +69,11 @@ export function VaRefiForm() {
     resetCalculator,
     config,
     configLoading,
+    showDtiSections,
+    setShowDtiSection
   } = useCalculatorStore();
+
+  const showDtiSection = showDtiSections.vaRefi;
 
   const [isMounted, setIsMounted] = useState(false);
   useEffect(() => setIsMounted(true), []);
@@ -99,6 +104,10 @@ export function VaRefiForm() {
       poolInspectionFee: vaRefiInputs.poolInspectionFee ?? 0,
       transferTax: vaRefiInputs.transferTax ?? 0,
       mortgageTax: vaRefiInputs.mortgageTax ?? 0,
+      miscFee: vaRefiInputs.miscFee || 0,
+      isIrrrl: vaRefiInputs.isIrrrl ?? false,
+      isDisabledVeteran: vaRefiInputs.isDisabledVeteran ?? false,
+      vaUsage: vaRefiInputs.vaUsage ?? 'first',
     },
   });
 
@@ -108,48 +117,69 @@ export function VaRefiForm() {
 
   // Sync Loan Fee / Origination Fee
   useEffect(() => {
-    const loanAmount = watchedValues.newLoanAmount;
-    if (loanAmount > 0) {
+    const baseLoanAmount = watchedValues.newLoanAmount;
+    if (baseLoanAmount > 0) {
       if (watchedValues.loanFeeMode === 'percent') {
         const percent = watchedValues.loanFeePercent;
-        const feeAmount = (loanAmount * percent) / 100;
+        const feeAmount = (baseLoanAmount * percent) / 100;
         setValue('loanFee', Math.round(feeAmount * 100) / 100);
       } else {
         const feeAmount = watchedValues.loanFee;
-        const percent = (feeAmount / loanAmount) * 100;
+        const percent = (feeAmount / baseLoanAmount) * 100;
         setValue('loanFeePercent', Math.round(percent * 1000) / 1000);
       }
     }
-  }, [watchedValues.newLoanAmount, watchedValues.loanFeeMode, watchedValues.loanFeePercent, watchedValues.loanFee, setValue]);
+  }, [
+    watchedValues.newLoanAmount,
+    watchedValues.loanFeeMode,
+    watchedValues.loanFeePercent,
+    watchedValues.loanFee,
+    setValue
+  ]);
 
   const onCalculate: SubmitHandler<FormValues> = useCallback((data) => {
     if (!config) return;
 
-    // Determine if should use manual override for closing costs
-    const isManualOverride = data.closingCostsTotal > 0 &&
+    // Determine if closingCostsTotal was manually overridden
+    const isManualOverride =
+      data.closingCostsTotal > 0 &&
       data.closingCostsTotal !== vaRefiResult?.closingCosts.totalClosingCosts;
 
     updateVaRefiInputs(data);
+
     const result = calculateVaRefinance(
       {
         ...data,
         propertyTaxMonthly: data.propertyTaxAnnual / 12,
         homeInsuranceMonthly: data.homeInsuranceAnnual / 12,
+        mortgageInsuranceMonthly: 0, // VA has no monthly MI
         payoffDays: 30,
+        isDisabledVeteran: data.isDisabledVeteran || data.disabilityPercentage > 0,
+        // If manual override is detected, pass the manual value
         closingCostsTotal: isManualOverride ? data.closingCostsTotal : 0,
-        prepaidInterestAmount: 0,
-        prepaidTaxAmount: 0,
-        prepaidInsuranceAmount: 0,
+        miscFee: data.miscFee,
+        prepaidInterestAmount: data.prepaidInterestAmount || 0,
+        prepaidTaxAmount: data.prepaidTaxAmount || 0,
+        prepaidInsuranceAmount: data.prepaidInsuranceAmount || 0,
       },
       config
     );
     setVaRefiResult(result);
 
-    if (!data.prepaidInterestAmount || !isManualOverride) setValue('prepaidInterestAmount', result.closingCosts.prepaidInterest);
-    if (!data.prepaidTaxAmount || !isManualOverride) setValue('prepaidTaxAmount', result.closingCosts.taxReserves);
-    if (!data.prepaidInsuranceAmount || !isManualOverride) setValue('prepaidInsuranceAmount', result.closingCosts.insuranceReserves);
+    // Sync calculated prepaid values back to form if not manually overridden
+    if (!isManualOverride) {
+      if (result.closingCosts.prepaidInterest !== data.prepaidInterestAmount) {
+        setValue('prepaidInterestAmount', result.closingCosts.prepaidInterest);
+      }
+      if (result.closingCosts.taxReserves !== data.prepaidTaxAmount) {
+        setValue('prepaidTaxAmount', result.closingCosts.taxReserves);
+      }
+      if (result.closingCosts.insuranceReserves !== data.prepaidInsuranceAmount) {
+        setValue('prepaidInsuranceAmount', result.closingCosts.insuranceReserves);
+      }
+    }
 
-    // Sync Closing Costs to input
+    // Always sync the total closing costs back to the input field
     setValue('closingCostsTotal', result.closingCosts.totalClosingCosts);
   }, [config, vaRefiResult, updateVaRefiInputs, setVaRefiResult, setValue]);
 
@@ -163,14 +193,14 @@ export function VaRefiForm() {
 
   const tabs = [
     { id: 'loan-payment', label: t('calculator.sections.loanPayment') },
-    { id: 'closing', label: t('calculator.sections.vaOptionsClosing') },
+    { id: 'closing', label: t('calculator.sections.vaClosing') },
   ];
 
   if (!isMounted) return null;
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 p-4 bg-[#cbe5f266] min-h-[calc(100vh-100px)] backdrop-blur-md rounded-xl">
-      <div className="lg:col-span-5 flex flex-col gap-4">
+      <div className="lg:col-span-12 xl:col-span-5 flex flex-col gap-4">
         <Card className={`${vaRefiResult ? 'h-fit' : 'flex-1 flex flex-col'} overflow-hidden`}>
           <CardHeader className="pb-0">
             <div className="flex justify-center mb-6">
@@ -195,7 +225,7 @@ export function VaRefiForm() {
             </div>
           </CardHeader>
           <CardContent className="flex-1 overflow-y-auto pt-6">
-            <form onSubmit={handleSubmit(onCalculate as any)} className="space-y-6">
+            <form onSubmit={handleSubmit(onCalculate)} className="space-y-6">
 
               {activeTab === 'loan-payment' && (
                 <div className="space-y-6">
@@ -230,12 +260,21 @@ export function VaRefiForm() {
                         <Controller name="existingLoanBalance" control={control} render={({ field }) => <InputGroup label={t('refinance.existingBalance')} name="existingLoanBalance" type="number" value={field.value} onChange={(v) => field.onChange(Number(v))} prefix="$" required />} />
                         <Controller name="newLoanAmount" control={control} render={({ field }) => <InputGroup label={t('refinance.newLoanAmount')} name="newLoanAmount" type="number" value={field.value} onChange={(v) => field.onChange(Number(v))} prefix="$" required />} />
                       </div>
-                      {!watchedValues.isIrrrl && (
-                        <Controller name="cashOutAmount" control={control} render={({ field }) => <InputGroup label={t('refinance.cashOutAmount')} name="cashOutAmount" type="number" value={field.value} onChange={(v) => field.onChange(Number(v))} prefix="$" />} />
-                      )}
                       <div className="grid grid-cols-2 gap-4">
                         <Controller name="interestRate" control={control} render={({ field }) => <InputGroup label={t('calculator.interestRate')} name="interestRate" type="number" value={field.value} onChange={(v) => field.onChange(Number(v))} suffix="%" step="0.125" required />} />
                         <Controller name="termYears" control={control} render={({ field }) => <InputGroup label={t('calculator.term')} name="termYears" type="number" value={field.value} onChange={(v) => field.onChange(Number(v))} suffix={t('common.years')} required />} />
+                      </div>
+                      <div className="grid grid-cols-2 gap-4">
+                        <Controller name="cashOutAmount" control={control} render={({ field }) => <InputGroup label={t('refinance.cashOutAmount')} name="cashOutAmount" type="number" value={field.value} onChange={(v) => field.onChange(Number(v))} prefix="$" />} />
+                        <Controller name="isIrrrl" control={control} render={({ field }) => (
+                          <div className="flex flex-col gap-1">
+                            <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider block">IRRRL (Streamline)</label>
+                            <div className="flex p-1 bg-slate-100 rounded-lg w-fit">
+                              <button type="button" onClick={() => field.onChange(false)} className={`px-4 py-1 text-xs font-medium rounded-md transition-all ${!field.value ? 'bg-white text-blue-600 shadow-sm' : 'text-slate-600'}`}>No</button>
+                              <button type="button" onClick={() => field.onChange(true)} className={`px-4 py-1 text-xs font-medium rounded-md transition-all ${field.value ? 'bg-white text-blue-600 shadow-sm' : 'text-slate-600'}`}>Yes</button>
+                            </div>
+                          </div>
+                        )} />
                       </div>
 
                       <div className="space-y-1">
@@ -282,7 +321,6 @@ export function VaRefiForm() {
                         <Controller name="homeInsuranceAnnual" control={control} render={({ field }) => <InputGroup label={t('calculator.homeInsurance')} name="homeInsuranceAnnual" type="number" value={field.value} onChange={(v) => field.onChange(Number(v))} prefix="$" helperText="Annual" />} />
                       </div>
                       <Controller name="hoaDuesMonthly" control={control} render={({ field }) => <InputGroup label={t('calculator.hoaDues')} name="hoaDuesMonthly" type="number" value={field.value} onChange={(v) => field.onChange(Number(v))} prefix="$" />} />
-                      <Controller name="mortgageInsuranceMonthly" control={control} render={({ field }) => <InputGroup label="Monthly Mtg Insurance (Override)" name="mortgageInsuranceMonthly" type="number" value={field.value ?? 0} onChange={(v) => field.onChange(Number(v))} prefix="$" helperText="Leave 0 for auto-calc" />} />
                     </div>
                   )}
                 </div>
@@ -290,12 +328,17 @@ export function VaRefiForm() {
 
               {activeTab === 'closing' && (
                 <div className="space-y-5">
-                  <div className="bg-blue-50 p-4 rounded-lg space-y-4">
-                    <Controller name="isIrrrl" control={control} render={({ field }) => <SelectToggle label={t('refinance.vaRefiType')} name="isIrrrl" value={String(field.value ?? false)} onChange={(v) => field.onChange(v === 'true')} options={[{ value: 'false', label: t('refinance.cashOutRefi') }, { value: 'true', label: t('refinance.irrrl') }]} />} />
-                    <div className="grid grid-cols-2 gap-4">
-                      <Controller name="vaUsage" control={control} render={({ field }) => <SelectToggle label={t('calculator.vaUsage')} name="vaUsage" value={field.value ?? 'first'} onChange={field.onChange} options={[{ value: 'first', label: t('va.usage.first') }, { value: 'subsequent', label: t('va.usage.subsequent') }]} />} />
-                      <Controller name="isDisabledVeteran" control={control} render={({ field }) => <SelectToggle label={t('calculator.isDisabledVeteran')} name="isDisabledVeteran" value={String(field.value ?? false)} onChange={(v) => field.onChange(v === 'true')} options={[{ value: 'false', label: t('common.no') }, { value: 'true', label: t('common.yes') }]} />} />
-                    </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <Controller name="vaUsage" control={control} render={({ field }) => <SelectToggle label={t('va.usage')} name="vaUsage" value={field.value as string} onChange={field.onChange} options={[{ value: 'first', label: t('va.usageFirstTime') }, { value: 'subsequent', label: t('va.usageSubsequent') }]} />} />
+                    <Controller name="isDisabledVeteran" control={control} render={({ field }) => (
+                      <div className="flex flex-col gap-1">
+                        <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider block">Disabled Veteran</label>
+                        <div className="flex p-1 bg-slate-100 rounded-lg w-fit">
+                          <button type="button" onClick={() => field.onChange(false)} className={`px-4 py-1 text-xs font-medium rounded-md transition-all ${!field.value ? 'bg-white text-blue-600 shadow-sm' : 'text-slate-600'}`}>No</button>
+                          <button type="button" onClick={() => field.onChange(true)} className={`px-4 py-1 text-xs font-medium rounded-md transition-all ${field.value ? 'bg-white text-blue-600 shadow-sm' : 'text-slate-600'}`}>Yes</button>
+                        </div>
+                      </div>
+                    )} />
                   </div>
 
                   <div className="border-t border-slate-200 pt-4 mt-4">
@@ -314,7 +357,22 @@ export function VaRefiForm() {
                           <Controller name="prepaidTaxMonths" control={control} render={({ field }) => <InputGroup label="Tax Mo." name="prepaidTaxMonths" type="number" value={field.value} onChange={(v) => field.onChange(Number(v))} suffix="m" />} />
                           <Controller name="prepaidInsuranceMonths" control={control} render={({ field }) => <InputGroup label="Ins. Mo." name="prepaidInsuranceMonths" type="number" value={field.value} onChange={(v) => field.onChange(Number(v))} suffix="m" />} />
                         </div>
-                        <div className="pt-2 border-t border-slate-100">
+                        <div className="pt-2 border-t border-slate-100 space-y-4">
+                          <Controller
+                            name="miscFee"
+                            control={control}
+                            render={({ field }) => (
+                              <InputGroup
+                                label="Miscellaneous"
+                                name="miscFee"
+                                type="number"
+                                value={field.value}
+                                onChange={(val) => field.onChange(Number(val) || 0)}
+                                prefix="$"
+                                helperText="Additional miscellaneous fees"
+                              />
+                            )}
+                          />
                           <Controller name="closingCostsTotal" control={control} render={({ field }) => <InputGroup label="Closing Costs" name="closingCostsTotal" type="number" value={field.value} onChange={(v) => field.onChange(Number(v))} prefix="$" className="text-lg font-semibold" />} />
                         </div>
                       </div>
@@ -325,7 +383,6 @@ export function VaRefiForm() {
                         <Controller name="processingFee" control={control} render={({ field }) => <InputGroup label="Processing" name="processingFee" type="number" value={field.value} onChange={(v) => field.onChange(Number(v))} prefix="$" />} />
                         <Controller name="underwritingFee" control={control} render={({ field }) => <InputGroup label="Underwriting" name="underwritingFee" type="number" value={field.value} onChange={(v) => field.onChange(Number(v))} prefix="$" />} />
                         <Controller name="docPrepFee" control={control} render={({ field }) => <InputGroup label="Doc Prep" name="docPrepFee" type="number" value={field.value} onChange={(v) => field.onChange(Number(v))} prefix="$" />} />
-                        <Controller name="appraisalFee" control={control} render={({ field }) => <InputGroup label="Appraisal" name="appraisalFee" type="number" value={field.value} onChange={(v) => field.onChange(Number(v))} prefix="$" />} />
                         <Controller name="creditReportFee" control={control} render={({ field }) => <InputGroup label="Credit Report" name="creditReportFee" type="number" value={field.value} onChange={(v) => field.onChange(Number(v))} prefix="$" />} />
                         <Controller name="floodCertFee" control={control} render={({ field }) => <InputGroup label="Flood Cert" name="floodCertFee" type="number" value={field.value} onChange={(v) => field.onChange(Number(v))} prefix="$" />} />
                         <Controller name="taxServiceFee" control={control} render={({ field }) => <InputGroup label="Tax Service" name="taxServiceFee" type="number" value={field.value} onChange={(v) => field.onChange(Number(v))} prefix="$" />} />
@@ -335,6 +392,7 @@ export function VaRefiForm() {
                     {closingSubTab === 'title' && (
                       <div className="grid grid-cols-2 gap-3">
                         <Controller name="escrowFee" control={control} render={({ field }) => <InputGroup label="Escrow Fee" name="escrowFee" type="number" value={field.value} onChange={(v) => field.onChange(Number(v))} prefix="$" />} />
+                        <Controller name="appraisalFee" control={control} render={({ field }) => <InputGroup label="Appraisal" name="appraisalFee" type="number" value={field.value} onChange={(v) => field.onChange(Number(v))} prefix="$" />} />
                         <Controller name="notaryFee" control={control} render={({ field }) => <InputGroup label="Notary Fee" name="notaryFee" type="number" value={field.value} onChange={(v) => field.onChange(Number(v))} prefix="$" />} />
                         <Controller name="recordingFee" control={control} render={({ field }) => <InputGroup label="Recording Fee" name="recordingFee" type="number" value={field.value} onChange={(v) => field.onChange(Number(v))} prefix="$" />} />
                         <Controller name="ownerTitlePolicy" control={control} render={({ field }) => <InputGroup label="Owner Title" name="ownerTitlePolicy" type="number" value={field.value} onChange={(v) => field.onChange(Number(v))} prefix="$" />} />
@@ -361,13 +419,24 @@ export function VaRefiForm() {
             </form>
           </CardContent>
         </Card>
+
+        {/* Toggle DTI Button - Only show after calculation */}
+        {vaRefiResult && (
+          <Button
+            onClick={() => setShowDtiSection(!showDtiSection, 'vaRefi')}
+            className="bg-white hover:bg-slate-50 text-[#2a8bb3] font-black border-none shadow-sm w-fit mx-auto mt-2 transition-transform hover:scale-105"
+          >
+            {showDtiSection ? 'Hide DTI Section' : 'Show DTI Section'}
+          </Button>
+        )}
       </div>
 
-      <div className="lg:col-span-7">
+      <div className="lg:col-span-12 xl:col-span-7">
         <div className="h-full sticky top-4">
           {vaRefiResult ? (
             <ResultSummary
               activeTab={activeTab === 'closing' ? 'closing-cash' : (activeTab === 'loan-payment' ? 'pitia' : undefined)}
+              closingTab={activeTab === 'closing' ? (closingSubTab === 'general' ? 'prepaid' : closingSubTab) : undefined}
               result={vaRefiResult}
               config={config}
               loanType={t('vaRefi.title')}
@@ -388,12 +457,14 @@ export function VaRefiForm() {
                   <h3 className="text-2xl font-bold text-slate-800 mb-3">{t('calculator.readyToCalculate')}</h3>
                   <p className="text-slate-500 text-lg mb-8">{t('calculator.readyDescription')}</p>
                   <Button variant="outline" onClick={() => setActiveTab('loan-payment')} className="border-blue-200 text-blue-600 hover:bg-blue-50">
-                    Start with Loan Details
+                    Start with Property Details
                   </Button>
                 </div>
               </CardContent>
             </Card>
           )}
+
+          {showDtiSection && <DtiSection />}
         </div>
       </div>
     </div>

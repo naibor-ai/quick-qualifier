@@ -73,6 +73,7 @@ export const BasePurchaseInputSchema = z.object({
   lenderCreditAmount: z.number().min(0).default(0),
   depositAmount: z.number().min(0).default(0),
   closingCostsTotal: z.number().min(0).default(0),
+  miscFee: z.number().min(0).default(0),
   // Fee overrides
   processingFee: z.number().min(0).optional(),
   underwritingFee: z.number().min(0).optional(),
@@ -144,6 +145,7 @@ export const BaseRefinanceInputSchema = z.object({
   loanFeePercent: z.number().min(0).default(0),
   loanFeeMode: z.enum(['amount', 'percent']).default('amount'),
   closingCostsTotal: z.number().min(0).default(0),
+  miscFee: z.number().min(0).default(0),
   // Fee overrides
   processingFee: z.number().min(0).optional(),
   underwritingFee: z.number().min(0).optional(),
@@ -280,6 +282,9 @@ export const ClosingCostsBreakdownSchema = z.object({
   sellerCredit: z.number(),
   lenderCredit: z.number(),
   totalCredits: z.number(),
+
+  // Section E - Other
+  miscFee: z.number(),
 
   // Totals
   totalClosingCosts: z.number(),

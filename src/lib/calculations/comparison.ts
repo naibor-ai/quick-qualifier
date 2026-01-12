@@ -89,10 +89,11 @@ function calculateScenario(
           prepaidTaxMonths: 6,
           prepaidInsuranceMonths: 15,
           closingCostsTotal: 0,
+          miscFee: 0,
+          mortgageTax: 0,
         },
         config
       );
-
     case 'fha':
       return calculateFhaPurchase(
         {
@@ -115,6 +116,8 @@ function calculateScenario(
           prepaidTaxMonths: 6,
           prepaidInsuranceMonths: 15,
           closingCostsTotal: 0,
+          miscFee: 0,
+          mortgageTax: 0,
         },
         config
       );
@@ -143,6 +146,8 @@ function calculateScenario(
           prepaidTaxMonths: 6,
           prepaidInsuranceMonths: 15,
           closingCostsTotal: 0,
+          miscFee: 0,
+          mortgageTax: 0,
         },
         config
       );
@@ -171,6 +176,8 @@ function calculateScenario(
           prepaidTaxMonths: 6,
           prepaidInsuranceMonths: 15,
           closingCostsTotal: 0,
+          miscFee: 0,
+          mortgageTax: 0,
         },
         config
       );

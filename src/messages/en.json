@@ -101,9 +101,9 @@
       "closingPrepaids": "Closing & Prepaids",
       "fhaClosing": "FHA & Closing",
       "vaOptionsClosing": "VA Options & Closing",
-      "general": "General",
+      "general": "Pre-paids",
       "lender": "Lender Fees",
-      "title": "Title Fees"
+      "title": "Third Party Fees"
     },
     "results": {
       "title": "Loan Summary",
@@ -137,7 +137,7 @@
       "creditReportFee": "Credit Report Fee",
       "floodCertFee": "Flood Certification Fee",
       "taxServiceFee": "Tax Service Fee",
-      "titleFees": "Title Fees",
+      "titleFees": "Third Party Fees",
       "lenderTitlePolicy": "Lender's Title Policy",
       "ownerTitlePolicy": "Owner's Title Policy",
       "titleInsurance": "Title Insurance",
