@@ -66,7 +66,7 @@ export function DtiSection() {
         }
 
         const frontendRatio = (piti / totalIncome) * 100;
-        const backendRatio = ((totalPayments + piti) / totalIncome)) * 100;
+        const backendRatio = ((totalPayments + piti) / totalIncome) * 100;
 
         setDtiResult({
             frontendRatio: Math.round(frontendRatio * 100) / 100,
