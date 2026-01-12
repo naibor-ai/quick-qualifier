@@ -154,7 +154,7 @@ export function DtiSection() {
                                                 {dtiResult.frontendRatio <= frontThreshold ? '😊' : '🙁'}
                                             </div>
                                             <div>
-                                                <p className="text-xs font-semibold text-emerald-600 uppercase tracking-wider mb-1">Frontend Ratio)</p>
+                                                <p className="text-xs font-semibold text-emerald-600 uppercase tracking-wider mb-1">Frontend Ratio</p>
                                                 <p className="text-2xl font-bold text-emerald-900">
                                                     {dtiResult.frontendRatio}%
                                                 </p>
