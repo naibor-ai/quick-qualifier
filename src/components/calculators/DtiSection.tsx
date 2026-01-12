@@ -151,10 +151,10 @@ export function DtiSection() {
                                     <>
                                         <div className="relative bg-emerald-50 pl-10 pr-6 py-5 rounded-2xl border border-emerald-100 flex items-center justify-between shadow-sm">
                                             <div className="absolute -left-6 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-yellow-400 flex items-center justify-center text-3xl shadow-[0_0_20px_rgba(250,204,21,0.6)] border-2 border-white z-10 transition-transform hover:scale-110">
-                                                {dtiResult.frontendRatio <= frontThreshold ? '😊' : '☹'}
+                                                {dtiResult.frontendRatio <= frontThreshold ? '😊' : '🙁'}
                                             </div>
                                             <div>
-                                                <p className="text-xs font-semibold text-emerald-600 uppercase tracking-wider mb-1">Pmt Ratio (Front)</p>
+                                                <p className="text-xs font-semibold text-emerald-600 uppercase tracking-wider mb-1">Frontend Ratio)</p>
                                                 <p className="text-2xl font-bold text-emerald-900">
                                                     {dtiResult.frontendRatio}%
                                                 </p>
@@ -162,13 +162,13 @@ export function DtiSection() {
                                         </div>
                                         <div className="relative bg-emerald-50 pl-6 pr-10 py-5 rounded-2xl border border-emerald-100 flex items-center justify-between shadow-sm">
                                             <div>
-                                                <p className="text-xs font-semibold text-emerald-600 uppercase tracking-wider mb-1">Debt Ratio (Back)</p>
+                                                <p className="text-xs font-semibold text-emerald-600 uppercase tracking-wider mb-1">Backend Ratio</p>
                                                 <p className="text-2xl font-bold text-emerald-900">
                                                     {dtiResult.backendRatio}%
                                                 </p>
                                             </div>
                                             <div className="absolute -right-6 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-yellow-400 flex items-center justify-center text-3xl shadow-[0_0_20px_rgba(250,204,21,0.6)] border-2 border-white z-10 transition-transform hover:scale-110">
-                                                {dtiResult.backendRatio <= backThreshold ? '😊' : '☹'}
+                                                {dtiResult.backendRatio <= backThreshold ? '😊' : '🙁'}
                                             </div>
                                         </div>
                                     </>
