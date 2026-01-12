@@ -194,10 +194,10 @@ export default function CalculatorsLayout({ children }: CalculatorsLayoutProps) 
                   <>
                     <div className="relative flex items-center min-w-[180px] bg-white/40 backdrop-blur-sm pl-10 pr-6 py-3 rounded-2xl border border-white/20 shadow-sm mr-4 md:mr-0">
                       <div className="absolute -left-6 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-yellow-400 flex items-center justify-center text-3xl shadow-[0_0_20px_rgba(250,204,21,0.7)] border-2 border-white z-10 scale-110 md:scale-100 transition-transform hover:scale-110">
-                        {frontHappy ? '😊' : '☹'}
+                        {frontHappy ? '😊' : '🙁'}
                       </div>
                       <div className="flex flex-col">
-                        <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest leading-none mb-1">Pmt Ratio</span>
+                        <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest leading-none mb-1">Front-End Ratio</span>
                         <span className="text-2xl font-black text-slate-800">
                           {dtiResult.frontendRatio}%
                         </span>
@@ -206,13 +206,13 @@ export default function CalculatorsLayout({ children }: CalculatorsLayoutProps) 
 
                     <div className="relative flex items-center min-w-[180px] bg-white/40 backdrop-blur-sm pl-6 pr-10 py-3 rounded-2xl border border-white/20 shadow-sm ml-4 md:ml-0">
                       <div className="flex flex-col">
-                        <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest leading-none mb-1">Debt Ratio</span>
+                        <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest leading-none mb-1">Back-End Ratio</span>
                         <span className="text-2xl font-black text-slate-800">
                           {dtiResult.backendRatio}%
                         </span>
                       </div>
                       <div className="absolute -right-6 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-yellow-400 flex items-center justify-center text-3xl shadow-[0_0_20px_rgba(250,204,21,0.7)] border-2 border-white z-10 scale-110 md:scale-100 transition-transform hover:scale-110">
-                        {backHappy ? '😊' : '☹'}
+                        {backHappy ? '😊' : '🙁'}
                       </div>
                     </div>
                   </>
