@@ -41,6 +41,7 @@ const formSchema = z.object({
   lenderCreditAmount: z.number().min(0),
   depositAmount: z.number().min(0),
   closingCostsTotal: z.number().min(0),
+  miscFee: z.number().min(0),
   // Fee Overrides with defaults
   processingFee: z.number().min(0).default(995),
   underwritingFee: z.number().min(0).default(1495),
@@ -110,6 +111,7 @@ export function VaForm() {
       lenderCreditAmount: vaInputs.lenderCreditAmount || 0,
       depositAmount: vaInputs.depositAmount || 0,
       closingCostsTotal: vaInputs.closingCostsTotal || 0,
+      miscFee: vaInputs.miscFee || 0,
       processingFee: vaInputs.processingFee ?? 995,
       underwritingFee: vaInputs.underwritingFee ?? 1495,
       docPrepFee: vaInputs.docPrepFee ?? 295,
@@ -195,6 +197,7 @@ export function VaForm() {
         propertyTaxMonthly: data.propertyTaxAnnual / 12,
         homeInsuranceMonthly: data.homeInsuranceAnnual / 12,
         closingCostsTotal: isManualOverride ? data.closingCostsTotal : 0,
+        miscFee: data.miscFee,
         prepaidInterestAmount: 0,
         prepaidTaxAmount: 0,
         prepaidInsuranceAmount: 0,
@@ -308,7 +311,22 @@ export function VaForm() {
                       )}
                       <div className="grid grid-cols-2 gap-4">
                         <Controller name="interestRate" control={control} render={({ field }) => <InputGroup label={t('calculator.interestRate')} name="interestRate" type="number" value={field.value} onChange={(v) => field.onChange(Number(v))} suffix="%" step="0.125" required />} />
-                        <Controller name="termYears" control={control} render={({ field }) => <SelectToggle label={t('calculator.term')} name="termYears" value={String(field.value)} onChange={(v) => field.onChange(Number(v))} options={termOptions} />} />
+                        <Controller
+                          name="termYears"
+                          control={control}
+                          render={({ field }) => (
+                            <InputGroup
+                              label={t('calculator.term')}
+                              name="termYears"
+                              type="number"
+                              value={field.value}
+                              onChange={(v) => field.onChange(Number(v) || 0)}
+                              suffix="Years"
+                              error={errors.termYears?.message}
+                              required
+                            />
+                          )}
+                        />
                       </div>
 
                       <div className="space-y-1">
@@ -420,7 +438,22 @@ export function VaForm() {
                           <Controller name="prepaidTaxMonths" control={control} render={({ field }) => <InputGroup label="Tax Mo." name="prepaidTaxMonths" type="number" value={field.value} onChange={(v) => field.onChange(Number(v))} suffix="m" />} />
                           <Controller name="prepaidInsuranceMonths" control={control} render={({ field }) => <InputGroup label="Ins. Mo." name="prepaidInsuranceMonths" type="number" value={field.value} onChange={(v) => field.onChange(Number(v))} suffix="m" />} />
                         </div>
-                        <div className="pt-2 border-t border-slate-100">
+                        <div className="pt-2 border-t border-slate-100 space-y-4">
+                          <Controller
+                            name="miscFee"
+                            control={control}
+                            render={({ field }) => (
+                              <InputGroup
+                                label="Miscellaneous"
+                                name="miscFee"
+                                type="number"
+                                value={field.value}
+                                onChange={(val) => field.onChange(Number(val) || 0)}
+                                prefix="$"
+                                helperText="Additional miscellaneous fees"
+                              />
+                            )}
+                          />
                           <Controller name="closingCostsTotal" control={control} render={({ field }) => <InputGroup label="Closing Costs" name="closingCostsTotal" type="number" value={field.value} onChange={(v) => field.onChange(Number(v))} prefix="$" className="text-lg font-semibold" />} />
                         </div>
                       </div>
@@ -431,7 +464,6 @@ export function VaForm() {
                         <Controller name="processingFee" control={control} render={({ field }) => <InputGroup label="Processing" name="processingFee" type="number" value={field.value} onChange={(v) => field.onChange(Number(v))} prefix="$" />} />
                         <Controller name="underwritingFee" control={control} render={({ field }) => <InputGroup label="Underwriting" name="underwritingFee" type="number" value={field.value} onChange={(v) => field.onChange(Number(v))} prefix="$" />} />
                         <Controller name="docPrepFee" control={control} render={({ field }) => <InputGroup label="Doc Prep" name="docPrepFee" type="number" value={field.value} onChange={(v) => field.onChange(Number(v))} prefix="$" />} />
-                        <Controller name="appraisalFee" control={control} render={({ field }) => <InputGroup label="Appraisal" name="appraisalFee" type="number" value={field.value} onChange={(v) => field.onChange(Number(v))} prefix="$" />} />
                         <Controller name="creditReportFee" control={control} render={({ field }) => <InputGroup label="Credit Report" name="creditReportFee" type="number" value={field.value} onChange={(v) => field.onChange(Number(v))} prefix="$" />} />
                         <Controller name="floodCertFee" control={control} render={({ field }) => <InputGroup label="Flood Cert" name="floodCertFee" type="number" value={field.value} onChange={(v) => field.onChange(Number(v))} prefix="$" />} />
                         <Controller name="taxServiceFee" control={control} render={({ field }) => <InputGroup label="Tax Service" name="taxServiceFee" type="number" value={field.value} onChange={(v) => field.onChange(Number(v))} prefix="$" />} />
@@ -441,6 +473,7 @@ export function VaForm() {
                     {closingSubTab === 'title' && (
                       <div className="grid grid-cols-2 gap-3 animate-in fade-in duration-200">
                         <Controller name="escrowFee" control={control} render={({ field }) => <InputGroup label="Escrow Fee" name="escrowFee" type="number" value={field.value} onChange={(v) => field.onChange(Number(v))} prefix="$" />} />
+                        <Controller name="appraisalFee" control={control} render={({ field }) => <InputGroup label="Appraisal" name="appraisalFee" type="number" value={field.value} onChange={(v) => field.onChange(Number(v))} prefix="$" />} />
                         <Controller name="notaryFee" control={control} render={({ field }) => <InputGroup label="Notary Fee" name="notaryFee" type="number" value={field.value} onChange={(v) => field.onChange(Number(v))} prefix="$" />} />
                         <Controller name="recordingFee" control={control} render={({ field }) => <InputGroup label="Recording Fee" name="recordingFee" type="number" value={field.value} onChange={(v) => field.onChange(Number(v))} prefix="$" />} />
                         <Controller name="ownerTitlePolicy" control={control} render={({ field }) => <InputGroup label="Owner Title" name="ownerTitlePolicy" type="number" value={field.value} onChange={(v) => field.onChange(Number(v))} prefix="$" />} />

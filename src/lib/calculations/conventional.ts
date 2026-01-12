@@ -166,7 +166,6 @@ export function calculateConventionalClosingCosts(
     adminFee +
     processingFee +
     underwritingFee +
-    appraisalFee +
     creditReportFee +
     floodCertFee +
     taxServiceFee +
@@ -180,6 +179,7 @@ export function calculateConventionalClosingCosts(
     notaryFee +
     recordingFee +
     courierFee +
+    appraisalFee +
     ownerTitlePolicy +
     lenderTitlePolicy +
     pestInspectionFee +
@@ -211,9 +211,11 @@ export function calculateConventionalClosingCosts(
     : (sellerCreditAmount || 0);
   const totalCredits = sellerCredit + (lenderCreditAmount || 0);
 
+  const miscFee = feeOverrides?.miscFee || 0;
+
   // Totals
   const calculatedTotalClosingCosts =
-    totalLenderFees + totalThirdPartyFees + totalPrepaids;
+    totalLenderFees + totalThirdPartyFees + totalPrepaids + miscFee;
 
   let totalClosingCosts = calculatedTotalClosingCosts;
   let adjustment = 0;
@@ -263,6 +265,9 @@ export function calculateConventionalClosingCosts(
     sellerCredit,
     lenderCredit: lenderCreditAmount || 0,
     totalCredits: roundToCents(totalCredits),
+
+    // Other
+    miscFee,
 
     // Totals
     totalClosingCosts: roundToCents(totalClosingCosts),
@@ -544,7 +549,6 @@ export function calculateConventionalRefinance(
     adminFee +
     processingFee +
     underwritingFee +
-    appraisalFee +
     creditReportFee +
     floodCertFee +
     taxServiceFee +
@@ -571,6 +575,7 @@ export function calculateConventionalRefinance(
     recordingFee +
     courierFee +
     lenderTitlePolicy +
+    appraisalFee +
     ownerTitlePolicy +
     pestInspectionFee +
     propertyInspectionFee +
@@ -598,8 +603,9 @@ export function calculateConventionalRefinance(
 
   const totalPrepaids = prepaidInterest + taxReserves + insuranceReserves;
 
+  const miscFee = input.miscFee || 0;
   const totalCredits = 0;
-  const calculatedTotalClosingCosts = totalLenderFees + totalThirdPartyFees + totalPrepaids;
+  const calculatedTotalClosingCosts = totalLenderFees + totalThirdPartyFees + totalPrepaids + miscFee;
 
   let totalClosingCosts = calculatedTotalClosingCosts;
   let adjustment = 0;
@@ -645,6 +651,8 @@ export function calculateConventionalRefinance(
     sellerCredit: 0,
     lenderCredit: 0,
     totalCredits: 0,
+
+    miscFee,
 
     totalClosingCosts: roundToCents(totalClosingCosts),
     netClosingCosts: roundToCents(netClosingCosts),

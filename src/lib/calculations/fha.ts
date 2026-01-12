@@ -159,7 +159,6 @@ export function calculateFhaClosingCosts(
     adminFee +
     processingFee +
     underwritingFee +
-    appraisalFee +
     creditReportFee +
     floodCertFee +
     taxServiceFee +
@@ -170,6 +169,7 @@ export function calculateFhaClosingCosts(
     escrowFee +
     notaryFee +
     recordingFee +
+    appraisalFee +
     ownerTitlePolicy +
     lenderTitlePolicy +
     pestInspectionFee +
@@ -201,9 +201,11 @@ export function calculateFhaClosingCosts(
   const totalCredits = sellerCreditAmount + lenderCreditAmount;
 
   // Totals
+  const miscFee = feeOverrides?.miscFee || 0;
+
   // Totals
   const calculatedTotalClosingCosts =
-    totalLenderFees + totalThirdPartyFees + totalPrepaids;
+    totalLenderFees + totalThirdPartyFees + totalPrepaids + miscFee;
 
   let totalClosingCosts = calculatedTotalClosingCosts;
   let adjustment = 0;
@@ -249,6 +251,8 @@ export function calculateFhaClosingCosts(
     sellerCredit: sellerCreditAmount,
     lenderCredit: lenderCreditAmount,
     totalCredits: roundToCents(totalCredits),
+
+    miscFee,
 
     totalClosingCosts: roundToCents(totalClosingCosts),
     netClosingCosts: roundToCents(netClosingCosts),
@@ -495,7 +499,6 @@ export function calculateFhaRefinance(
     originationFee +
     processingFee +
     underwritingFee +
-    appraisalFee +
     creditReportFee +
     floodCertFee +
     taxServiceFee +
@@ -506,6 +509,7 @@ export function calculateFhaRefinance(
     escrowFee +
     notaryFee +
     recordingFee +
+    appraisalFee +
     lenderTitlePolicy;
 
   // Prepaids
@@ -527,7 +531,8 @@ export function calculateFhaRefinance(
 
   const totalPrepaids = prepaidInterest + taxReserves + insuranceReserves;
 
-  const calculatedTotalClosingCosts = totalLenderFees + totalThirdPartyFees + totalPrepaids;
+  const miscFee = input.miscFee || 0;
+  const calculatedTotalClosingCosts = totalLenderFees + totalThirdPartyFees + totalPrepaids + miscFee;
 
   let totalClosingCosts = calculatedTotalClosingCosts;
   let adjustment = 0;
@@ -573,6 +578,8 @@ export function calculateFhaRefinance(
     sellerCredit: 0,
     lenderCredit: 0,
     totalCredits: 0,
+
+    miscFee,
 
     totalClosingCosts: roundToCents(totalClosingCosts),
     netClosingCosts: roundToCents(netClosingCosts),

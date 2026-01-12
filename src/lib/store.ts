@@ -51,6 +51,7 @@ interface ConventionalInputs {
   loanFeePercent: number;
   loanFeeMode: 'amount' | 'percent';
   closingCostsTotal: number;
+  miscFee: number;
   depositAmount: number;
   processingFee?: number;
   underwritingFee?: number;
@@ -94,6 +95,7 @@ interface FhaInputs {
   loanFeePercent: number;
   loanFeeMode: 'amount' | 'percent';
   closingCostsTotal: number;
+  miscFee: number;
   sellerCreditAmount: number;
   lenderCreditAmount: number;
   depositAmount: number;
@@ -141,6 +143,7 @@ interface VaInputs {
   loanFeePercent: number;
   loanFeeMode: 'amount' | 'percent';
   closingCostsTotal: number;
+  miscFee: number;
   sellerCreditAmount: number;
   lenderCreditAmount: number;
   depositAmount: number;
@@ -186,6 +189,7 @@ interface ConventionalRefiInputs {
   loanFeePercent: number;
   loanFeeMode: 'amount' | 'percent';
   closingCostsTotal: number;
+  miscFee: number;
   processingFee?: number;
   underwritingFee?: number;
   docPrepFee?: number;
@@ -226,6 +230,7 @@ interface FhaRefiInputs {
   loanFeePercent: number;
   loanFeeMode: 'amount' | 'percent';
   closingCostsTotal: number;
+  miscFee: number;
   processingFee?: number;
   underwritingFee?: number;
   docPrepFee?: number;
@@ -269,6 +274,7 @@ interface VaRefiInputs {
   loanFeePercent: number;
   loanFeeMode: 'amount' | 'percent';
   closingCostsTotal: number;
+  miscFee: number;
   processingFee?: number;
   underwritingFee?: number;
   docPrepFee?: number;
@@ -402,6 +408,7 @@ const defaultConventionalInputs: ConventionalInputs = {
   loanFeePercent: 1.0,
   loanFeeMode: 'amount',
   closingCostsTotal: 0,
+  miscFee: 0,
   depositAmount: 1000,
   processingFee: 995,
   underwritingFee: 1495,
@@ -445,6 +452,7 @@ const defaultFhaInputs: FhaInputs = {
   loanFeePercent: 1.0,
   loanFeeMode: 'amount',
   closingCostsTotal: 0,
+  miscFee: 0,
   sellerCreditAmount: 0,
   lenderCreditAmount: 0,
   depositAmount: 0,
@@ -492,6 +500,7 @@ const defaultVaInputs: VaInputs = {
   loanFeePercent: 1.0,
   loanFeeMode: 'amount',
   closingCostsTotal: 0,
+  miscFee: 0,
   sellerCreditAmount: 0,
   lenderCreditAmount: 0,
   depositAmount: 0,
@@ -579,6 +588,7 @@ const defaultConventionalRefiInputs: ConventionalRefiInputs = {
   loanFeePercent: 1.0,
   loanFeeMode: 'amount',
   closingCostsTotal: 0,
+  miscFee: 0,
   processingFee: 895,
   underwritingFee: 995,
   docPrepFee: 595,
@@ -619,6 +629,7 @@ const defaultFhaRefiInputs: FhaRefiInputs = {
   loanFeePercent: 1.0,
   loanFeeMode: 'amount',
   closingCostsTotal: 0,
+  miscFee: 0,
   processingFee: 895,
   underwritingFee: 995,
   docPrepFee: 595,
@@ -662,6 +673,7 @@ const defaultVaRefiInputs: VaRefiInputs = {
   loanFeePercent: 1.0,
   loanFeeMode: 'amount',
   closingCostsTotal: 0,
+  miscFee: 0,
   processingFee: 895,
   underwritingFee: 995,
   docPrepFee: 595,

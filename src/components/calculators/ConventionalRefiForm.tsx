@@ -36,6 +36,7 @@ const formSchema = z.object({
   loanFeePercent: z.number().min(0).max(10).default(0),
   loanFeeMode: z.enum(['amount', 'percent']).default('amount'),
   closingCostsTotal: z.number().min(0),
+  miscFee: z.number().min(0),
   // Fee Overrides
   processingFee: z.number().min(0).default(895),
   underwritingFee: z.number().min(0).default(995),
@@ -99,6 +100,7 @@ export function ConventionalRefiForm() {
       poolInspectionFee: conventionalRefiInputs.poolInspectionFee ?? 0,
       transferTax: conventionalRefiInputs.transferTax ?? 0,
       mortgageTax: conventionalRefiInputs.mortgageTax ?? 0,
+      miscFee: conventionalRefiInputs.miscFee || 0,
     },
   });
 
@@ -138,6 +140,7 @@ export function ConventionalRefiForm() {
         payoffDays: 30,
         cashOutAmount: 0,
         closingCostsTotal: isManualOverride ? data.closingCostsTotal : 0,
+        miscFee: data.miscFee,
         prepaidInterestAmount: 0,
         prepaidTaxAmount: 0,
         prepaidInsuranceAmount: 0,
@@ -325,7 +328,22 @@ export function ConventionalRefiForm() {
                           <Controller name="prepaidTaxMonths" control={control} render={({ field }) => <InputGroup label="Tax Mo." name="prepaidTaxMonths" type="number" value={field.value} onChange={(v) => field.onChange(Number(v))} suffix="m" />} />
                           <Controller name="prepaidInsuranceMonths" control={control} render={({ field }) => <InputGroup label="Ins. Mo." name="prepaidInsuranceMonths" type="number" value={field.value} onChange={(v) => field.onChange(Number(v))} suffix="m" />} />
                         </div>
-                        <div className="pt-2 border-t border-slate-100">
+                        <div className="pt-2 border-t border-slate-100 space-y-4">
+                          <Controller
+                            name="miscFee"
+                            control={control}
+                            render={({ field }) => (
+                              <InputGroup
+                                label="Miscellaneous"
+                                name="miscFee"
+                                type="number"
+                                value={field.value}
+                                onChange={(val) => field.onChange(Number(val) || 0)}
+                                prefix="$"
+                                helperText="Additional miscellaneous fees"
+                              />
+                            )}
+                          />
                           <Controller name="closingCostsTotal" control={control} render={({ field }) => <InputGroup label="Closing Costs" name="closingCostsTotal" type="number" value={field.value} onChange={(v) => field.onChange(Number(v))} prefix="$" className="text-lg font-semibold" />} />
                         </div>
                       </div>
@@ -336,7 +354,6 @@ export function ConventionalRefiForm() {
                         <Controller name="processingFee" control={control} render={({ field }) => <InputGroup label="Processing" name="processingFee" type="number" value={field.value} onChange={(v) => field.onChange(Number(v))} prefix="$" />} />
                         <Controller name="underwritingFee" control={control} render={({ field }) => <InputGroup label="Underwriting" name="underwritingFee" type="number" value={field.value} onChange={(v) => field.onChange(Number(v))} prefix="$" />} />
                         <Controller name="docPrepFee" control={control} render={({ field }) => <InputGroup label="Doc Prep" name="docPrepFee" type="number" value={field.value} onChange={(v) => field.onChange(Number(v))} prefix="$" />} />
-                        <Controller name="appraisalFee" control={control} render={({ field }) => <InputGroup label="Appraisal" name="appraisalFee" type="number" value={field.value} onChange={(v) => field.onChange(Number(v))} prefix="$" />} />
                         <Controller name="creditReportFee" control={control} render={({ field }) => <InputGroup label="Credit Report" name="creditReportFee" type="number" value={field.value} onChange={(v) => field.onChange(Number(v))} prefix="$" />} />
                         <Controller name="floodCertFee" control={control} render={({ field }) => <InputGroup label="Flood Cert" name="floodCertFee" type="number" value={field.value} onChange={(v) => field.onChange(Number(v))} prefix="$" />} />
                         <Controller name="taxServiceFee" control={control} render={({ field }) => <InputGroup label="Tax Service" name="taxServiceFee" type="number" value={field.value} onChange={(v) => field.onChange(Number(v))} prefix="$" />} />
@@ -346,6 +363,7 @@ export function ConventionalRefiForm() {
                     {closingSubTab === 'title' && (
                       <div className="grid grid-cols-2 gap-3">
                         <Controller name="escrowFee" control={control} render={({ field }) => <InputGroup label="Escrow Fee" name="escrowFee" type="number" value={field.value} onChange={(v) => field.onChange(Number(v))} prefix="$" />} />
+                        <Controller name="appraisalFee" control={control} render={({ field }) => <InputGroup label="Appraisal" name="appraisalFee" type="number" value={field.value} onChange={(v) => field.onChange(Number(v))} prefix="$" />} />
                         <Controller name="notaryFee" control={control} render={({ field }) => <InputGroup label="Notary Fee" name="notaryFee" type="number" value={field.value} onChange={(v) => field.onChange(Number(v))} prefix="$" />} />
                         <Controller name="recordingFee" control={control} render={({ field }) => <InputGroup label="Recording Fee" name="recordingFee" type="number" value={field.value} onChange={(v) => field.onChange(Number(v))} prefix="$" />} />
                         <Controller name="ownerTitlePolicy" control={control} render={({ field }) => <InputGroup label="Owner Title" name="ownerTitlePolicy" type="number" value={field.value} onChange={(v) => field.onChange(Number(v))} prefix="$" />} />

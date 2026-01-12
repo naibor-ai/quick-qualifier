@@ -271,6 +271,12 @@ export function ResultSummary({
                       label={`Prepaid hazard ins (${result.closingCosts.prepaidInsuranceMonths ?? 0} months)`}
                       value={formatCurrency(result.closingCosts.insuranceReserves)}
                     />
+                    {result.closingCosts.miscFee > 0 && (
+                      <ResultItem
+                        label="Miscellaneous Fees"
+                        value={formatCurrency(result.closingCosts.miscFee)}
+                      />
+                    )}
                   </ResultSection>
                   <div className="pt-2 border-t border-slate-100">
                     <ResultItem

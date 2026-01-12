@@ -154,7 +154,6 @@ export function calculateVaClosingCosts(
     docPrepFee +
     processingFee +
     underwritingFee +
-    appraisalFee +
     creditReportFee +
     floodCertFee +
     taxServiceFee;
@@ -164,6 +163,7 @@ export function calculateVaClosingCosts(
     escrowFee +
     notaryFee +
     recordingFee +
+    appraisalFee +
     ownerTitlePolicy +
     lenderTitlePolicy +
     pestInspectionFee +
@@ -191,9 +191,10 @@ export function calculateVaClosingCosts(
 
   const totalPrepaids = prepaidInterest + taxReserves + insuranceReserves;
 
+  const miscFee = feeOverrides?.miscFee || 0;
   const totalCredits = sellerCreditAmount + lenderCreditAmount;
   const calculatedTotalClosingCosts =
-    totalLenderFees + totalThirdPartyFees + totalPrepaids;
+    totalLenderFees + totalThirdPartyFees + totalPrepaids + miscFee;
 
   let totalClosingCosts = calculatedTotalClosingCosts;
   let adjustment = 0;
@@ -239,6 +240,8 @@ export function calculateVaClosingCosts(
     sellerCredit: sellerCreditAmount,
     lenderCredit: lenderCreditAmount,
     totalCredits: roundToCents(totalCredits),
+
+    miscFee,
 
     totalClosingCosts: roundToCents(totalClosingCosts),
     netClosingCosts: roundToCents(netClosingCosts),
@@ -459,7 +462,6 @@ export function calculateVaRefinance(
     originationFee +
     processingFee +
     underwritingFee +
-    appraisalFee +
     creditReportFee +
     floodCertFee +
     taxServiceFee +
@@ -470,6 +472,7 @@ export function calculateVaRefinance(
     escrowFee +
     notaryFee +
     recordingFee +
+    appraisalFee +
     lenderTitlePolicy;
 
   // Prepaids
@@ -489,7 +492,8 @@ export function calculateVaRefinance(
 
   const totalPrepaids = prepaidInterest + taxReserves + insuranceReserves;
 
-  const calculatedTotalClosingCosts = totalLenderFees + totalThirdPartyFees + totalPrepaids;
+  const miscFee = input.miscFee || 0;
+  const calculatedTotalClosingCosts = totalLenderFees + totalThirdPartyFees + totalPrepaids + miscFee;
 
   let totalClosingCosts = calculatedTotalClosingCosts;
   let adjustment = 0;
@@ -554,6 +558,8 @@ export function calculateVaRefinance(
     sellerCredit: 0,
     lenderCredit: 0,
     totalCredits: 0,
+
+    miscFee,
 
     totalClosingCosts: roundToCents(totalClosingCosts),
     netClosingCosts: roundToCents(netClosingCosts),

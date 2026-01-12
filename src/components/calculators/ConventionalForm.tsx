@@ -41,6 +41,7 @@ const formSchema = z.object({
   prepaidTaxAmount: z.number().min(0),
   prepaidInsuranceAmount: z.number().min(0),
   closingCostsTotal: z.number().min(0),
+  miscFee: z.number().min(0),
   // Fee Overrides
   processingFee: z.number().min(0).optional(),
   underwritingFee: z.number().min(0).optional(),
@@ -109,6 +110,7 @@ export function ConventionalForm() {
       closingCostsTotal: conventionalInputs.closingCostsTotal || 0,
       loanFeePercent: conventionalInputs.loanFeePercent || 1.0,
       loanFeeMode: conventionalInputs.loanFeeMode || 'percent',
+      miscFee: conventionalInputs.miscFee || 0,
       processingFee: conventionalInputs.processingFee ?? 995,
       underwritingFee: conventionalInputs.underwritingFee ?? 1495,
       docPrepFee: conventionalInputs.docPrepFee ?? 295,
@@ -228,6 +230,7 @@ export function ConventionalForm() {
         loanFeePercent: data.loanFeePercent,
         loanFee: data.loanFee,
         closingCostsTotal: isManualOverride ? data.closingCostsTotal : 0,
+        miscFee: data.miscFee,
         // Fee Overrides
         processingFee: data.processingFee,
         underwritingFee: data.underwritingFee,
@@ -461,12 +464,15 @@ export function ConventionalForm() {
                           name="termYears"
                           control={control}
                           render={({ field }) => (
-                            <SelectToggle
+                            <InputGroup
                               label={t('calculator.term')}
                               name="termYears"
-                              value={String(field.value)}
-                              onChange={(val) => field.onChange(Number(val))}
-                              options={termOptions}
+                              type="number"
+                              value={field.value}
+                              onChange={(val) => field.onChange(Number(val) || 0)}
+                              suffix="Years"
+                              error={errors.termYears?.message}
+                              required
                             />
                           )}
                         />
@@ -817,7 +823,22 @@ export function ConventionalForm() {
                         />
                       </div>
 
-                      <div className="pt-2 border-t border-slate-100">
+                      <div className="pt-2 border-t border-slate-100 space-y-4">
+                        <Controller
+                          name="miscFee"
+                          control={control}
+                          render={({ field }) => (
+                            <InputGroup
+                              label="Miscellaneous"
+                              name="miscFee"
+                              type="number"
+                              value={field.value}
+                              onChange={(val) => field.onChange(Number(val) || 0)}
+                              prefix="$"
+                              helperText="Additional miscellaneous fees"
+                            />
+                          )}
+                        />
                         <Controller
                           name="closingCostsTotal"
                           control={control}
@@ -843,7 +864,6 @@ export function ConventionalForm() {
                       <Controller name="processingFee" control={control} render={({ field }) => <InputGroup label="Processing" name="processingFee" type="number" value={field.value} onChange={(v) => field.onChange(Number(v))} prefix="$" />} />
                       <Controller name="underwritingFee" control={control} render={({ field }) => <InputGroup label="Underwriting" name="underwritingFee" type="number" value={field.value} onChange={(v) => field.onChange(Number(v))} prefix="$" />} />
                       <Controller name="docPrepFee" control={control} render={({ field }) => <InputGroup label="Doc Prep" name="docPrepFee" type="number" value={field.value} onChange={(v) => field.onChange(Number(v))} prefix="$" />} />
-                      <Controller name="appraisalFee" control={control} render={({ field }) => <InputGroup label="Appraisal" name="appraisalFee" type="number" value={field.value} onChange={(v) => field.onChange(Number(v))} prefix="$" />} />
                       <Controller name="creditReportFee" control={control} render={({ field }) => <InputGroup label="Credit Report" name="creditReportFee" type="number" value={field.value} onChange={(v) => field.onChange(Number(v))} prefix="$" />} />
                       <Controller name="floodCertFee" control={control} render={({ field }) => <InputGroup label="Flood Cert" name="floodCertFee" type="number" value={field.value} onChange={(v) => field.onChange(Number(v))} prefix="$" />} />
                       <Controller name="taxServiceFee" control={control} render={({ field }) => <InputGroup label="Tax Service" name="taxServiceFee" type="number" value={field.value} onChange={(v) => field.onChange(Number(v))} prefix="$" />} />
@@ -853,6 +873,7 @@ export function ConventionalForm() {
                   {closingSubTab === 'title' && (
                     <div className="grid grid-cols-2 gap-3 animate-in fade-in duration-200">
                       <Controller name="escrowFee" control={control} render={({ field }) => <InputGroup label="Escrow Fee" name="escrowFee" type="number" value={field.value} onChange={(v) => field.onChange(Number(v))} prefix="$" />} />
+                      <Controller name="appraisalFee" control={control} render={({ field }) => <InputGroup label="Appraisal" name="appraisalFee" type="number" value={field.value} onChange={(v) => field.onChange(Number(v))} prefix="$" />} />
                       <Controller name="notaryFee" control={control} render={({ field }) => <InputGroup label="Notary Fee" name="notaryFee" type="number" value={field.value} onChange={(v) => field.onChange(Number(v))} prefix="$" />} />
                       <Controller name="recordingFee" control={control} render={({ field }) => <InputGroup label="Recording Fee" name="recordingFee" type="number" value={field.value} onChange={(v) => field.onChange(Number(v))} prefix="$" />} />
                       <Controller name="ownerTitlePolicy" control={control} render={({ field }) => <InputGroup label="Owner Title" name="ownerTitlePolicy" type="number" value={field.value} onChange={(v) => field.onChange(Number(v))} prefix="$" />} />
