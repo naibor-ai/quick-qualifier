@@ -246,9 +246,9 @@
 <td><input name="txtTrIn" type="text" id="txtTrIn" class="ArPr" keypress="return onlyNos(event,this);" /></td>
 <td class="Alc">Total/Mo</td>
 <td><input name="txtBrIn" type="text" id="txtBrIn" class="ArPr" keypress="return onlyNos(event,this);" /></td></tr>
-<tr><td class="Alc">Pmt Ratio</td>
+<tr><td class="Alc">Front-End Ratio</td>
 <td><input name="txtTrOut" type="text" id="txtTrOut" class="ArPr" /></td>
-<td class="Alc">Debt Ratio</td>
+<td class="Alc">Back-End Ratio</td>
 <td><input name="txtBrOut" type="text" id="txtBrOut" class="ArPr" /></td></tr>
 </table> <br/>
 <input type="submit" name="btnCalcRatios" value="Calculate Totals &amp; View Ratios" onclick="javascript:WebForm_DoPostBackWithOptions(new WebForm_PostBackOptions(&quot;btnCalcRatios&quot;, &quot;&quot;, true, &quot;&quot;, &quot;&quot;, false, false))" id="btnCalcRatios" />&nbsp;
@@ -307,4 +307,5 @@ Sys.Application.add_init(function() {
 <script type = "text/javascript" src="./JS/PlaySound.js"></script>
 <script type="text/javascript">
 window.onload = function () { CacheItems("ListBox1") };
+
 </script>
