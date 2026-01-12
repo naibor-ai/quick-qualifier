@@ -9,6 +9,7 @@ import { useCalculatorStore } from '@/lib/store';
 import { calculateConventionalPurchase } from '@/lib/calculations/conventional';
 import { InputGroup, SelectGroup, SelectToggle, Button, Card, CardHeader, CardTitle, CardDescription, CardContent, AgentSelector } from '@/components/shared';
 import { ResultSummary } from '@/components/shared/ResultSummary';
+import { DtiSection } from './DtiSection';
 import { CreditScoreTier, PmiType } from '@/lib/schemas';
 
 const formSchema = z.object({
@@ -74,7 +75,11 @@ export function ConventionalForm() {
     resetCalculator,
     config,
     configLoading,
+    showDtiSections,
+    setShowDtiSection
   } = useCalculatorStore();
+
+  const showDtiSection = showDtiSections.conventional;
 
   const [isMounted, setIsMounted] = useState(false);
   useEffect(() => setIsMounted(true), []);
@@ -900,6 +905,17 @@ export function ConventionalForm() {
             </form>
           </CardContent>
         </Card>
+
+        {/* Toggle DTI Button - Only show after calculation */}
+        {/* Toggle DTI Button - Only show after calculation */}
+        {conventionalResult && (
+          <Button
+            onClick={() => setShowDtiSection(!showDtiSection, 'conventional')}
+            className="bg-white text-[#2a8bb3] font-black border-none shadow-sm w-fit mx-auto mt-2 transition-transform hover:scale-105"
+          >
+            {showDtiSection ? 'Hide DTI Section' : 'Show DTI Section'}
+          </Button>
+        )}
       </div>
 
       {/* Right Panel - Results */}
@@ -935,6 +951,8 @@ export function ConventionalForm() {
               </CardContent>
             </Card>
           )}
+
+          {showDtiSection && <DtiSection />}
         </div>
       </div>
     </div>

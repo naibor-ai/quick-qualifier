@@ -25,6 +25,18 @@ import type {
 // TYPES
 // ============================================================================
 
+export interface DtiResult {
+  frontendRatio: number;
+  backendRatio: number;
+}
+
+export interface DtiInputs {
+  incomes: number[];
+  payments: number[];
+}
+
+export type CalculatorType = 'conventional' | 'fha' | 'va' | 'conventionalRefi' | 'fhaRefi' | 'vaRefi';
+
 interface ConventionalInputs {
   salesPrice: number;
   downPaymentAmount: number;
@@ -350,6 +362,14 @@ interface CalculatorState {
   fhaRefiResult: LoanCalculationResult | null;
   vaRefiResult: LoanCalculationResult | null;
 
+  // DTI (Now dynamic per calculator)
+  dtiInputs: Record<string, DtiInputs>;
+  dtiResults: Record<string, DtiResult | null>;
+  showDtiSections: Record<string, boolean>;
+  // Deprecated single fields (retained for migration/compatibility if needed, but we'll try to move everything)
+  dtiResult: DtiResult | null;
+  showDtiSection: boolean;
+
   // Actions
   setConfig: (config: GhlConfig) => void;
   setConfigLoading: (loading: boolean) => void;
@@ -374,6 +394,10 @@ interface CalculatorState {
   setConventionalRefiResult: (result: LoanCalculationResult | null) => void;
   setFhaRefiResult: (result: LoanCalculationResult | null) => void;
   setVaRefiResult: (result: LoanCalculationResult | null) => void;
+
+  updateDtiInputs: (inputs: Partial<DtiInputs>, type?: string) => void;
+  setDtiResult: (result: DtiResult | null, type?: string) => void;
+  setShowDtiSection: (show: boolean, type?: string) => void;
 
   resetCalculator: (type: 'conventional' | 'fha' | 'va' | 'sellerNet' | 'comparison' | 'conventionalRefi' | 'fhaRefi' | 'vaRefi') => void;
 }
@@ -693,6 +717,38 @@ const defaultVaRefiInputs: VaRefiInputs = {
   mortgageTax: 0,
 };
 
+const defaultDtiInputs: DtiInputs = {
+  incomes: [0, 0, 0, 0, 0, 0],
+  payments: [0, 0, 0, 0, 0, 0],
+};
+
+const initialDtiInputs: Record<string, DtiInputs> = {
+  conventional: defaultDtiInputs,
+  fha: defaultDtiInputs,
+  va: defaultDtiInputs,
+  conventionalRefi: defaultDtiInputs,
+  fhaRefi: defaultDtiInputs,
+  vaRefi: defaultDtiInputs,
+};
+
+const initialDtiResults: Record<string, DtiResult | null> = {
+  conventional: null,
+  fha: null,
+  va: null,
+  conventionalRefi: null,
+  fhaRefi: null,
+  vaRefi: null,
+};
+
+const initialShowDtiSections: Record<string, boolean> = {
+  conventional: false,
+  fha: false,
+  va: false,
+  conventionalRefi: false,
+  fhaRefi: false,
+  vaRefi: false,
+};
+
 // ============================================================================
 // STORE
 // ============================================================================
@@ -729,6 +785,13 @@ export const useCalculatorStore = create<CalculatorState>()(
       conventionalRefiResult: null,
       fhaRefiResult: null,
       vaRefiResult: null,
+
+      // DTI
+      dtiInputs: initialDtiInputs,
+      dtiResults: initialDtiResults,
+      showDtiSections: initialShowDtiSections,
+      dtiResult: null, // Legacy
+      showDtiSection: false, // Legacy
 
       // Actions
       setConfig: (config) => set({ config, configError: null }),
@@ -790,19 +853,70 @@ export const useCalculatorStore = create<CalculatorState>()(
       setFhaRefiResult: (fhaRefiResult) => set({ fhaRefiResult }),
       setVaRefiResult: (vaRefiResult) => set({ vaRefiResult }),
 
+      updateDtiInputs: (inputs, type) =>
+        set((state) => {
+          if (!type) {
+            // Legacy fallback if no type provided
+            return { dtiInputs: { ...state.dtiInputs, default: { ...state.dtiInputs.default, ...inputs } } };
+          }
+          return {
+            dtiInputs: {
+              ...state.dtiInputs,
+              [type]: { ...(state.dtiInputs[type] || defaultDtiInputs), ...inputs },
+            },
+          };
+        }),
+      setDtiResult: (dtiResult, type) =>
+        set((state) => {
+          if (!type) return { dtiResult }; // Legacy
+          return {
+            dtiResults: {
+              ...state.dtiResults,
+              [type]: dtiResult,
+            },
+            dtiResult, // Keep sync for now for layout usage
+          };
+        }),
+      setShowDtiSection: (show, type) =>
+        set((state) => {
+          if (!type) return { showDtiSection: show }; // Legacy
+          return {
+            showDtiSections: {
+              ...state.showDtiSections,
+              [type]: show,
+            },
+            showDtiSection: show, // Keep sync for now
+          };
+        }),
+
       resetCalculator: (type) => {
         switch (type) {
           case 'conventional':
-            set({
+            set((state) => ({
               conventionalInputs: defaultConventionalInputs,
               conventionalResult: null,
-            });
+              dtiInputs: { ...state.dtiInputs, conventional: defaultDtiInputs },
+              dtiResults: { ...state.dtiResults, conventional: null },
+              showDtiSections: { ...state.showDtiSections, conventional: false },
+            }));
             break;
           case 'fha':
-            set({ fhaInputs: defaultFhaInputs, fhaResult: null });
+            set((state) => ({
+              fhaInputs: defaultFhaInputs,
+              fhaResult: null,
+              dtiInputs: { ...state.dtiInputs, fha: defaultDtiInputs },
+              dtiResults: { ...state.dtiResults, fha: null },
+              showDtiSections: { ...state.showDtiSections, fha: false },
+            }));
             break;
           case 'va':
-            set({ vaInputs: defaultVaInputs, vaResult: null });
+            set((state) => ({
+              vaInputs: defaultVaInputs,
+              vaResult: null,
+              dtiInputs: { ...state.dtiInputs, va: defaultDtiInputs },
+              dtiResults: { ...state.dtiResults, va: null },
+              showDtiSections: { ...state.showDtiSections, va: false },
+            }));
             break;
           case 'sellerNet':
             set({ sellerNetInputs: defaultSellerNetInputs });
@@ -811,22 +925,31 @@ export const useCalculatorStore = create<CalculatorState>()(
             set({ comparisonScenarios: defaultComparisonScenarios });
             break;
           case 'conventionalRefi':
-            set({
+            set((state) => ({
               conventionalRefiInputs: defaultConventionalRefiInputs,
               conventionalRefiResult: null,
-            });
+              dtiInputs: { ...state.dtiInputs, conventionalRefi: defaultDtiInputs },
+              dtiResults: { ...state.dtiResults, conventionalRefi: null },
+              showDtiSections: { ...state.showDtiSections, conventionalRefi: false },
+            }));
             break;
           case 'fhaRefi':
-            set({
+            set((state) => ({
               fhaRefiInputs: defaultFhaRefiInputs,
               fhaRefiResult: null,
-            });
+              dtiInputs: { ...state.dtiInputs, fhaRefi: defaultDtiInputs },
+              dtiResults: { ...state.dtiResults, fhaRefi: null },
+              showDtiSections: { ...state.showDtiSections, fhaRefi: false },
+            }));
             break;
           case 'vaRefi':
-            set({
+            set((state) => ({
               vaRefiInputs: defaultVaRefiInputs,
               vaRefiResult: null,
-            });
+              dtiInputs: { ...state.dtiInputs, vaRefi: defaultDtiInputs },
+              dtiResults: { ...state.dtiResults, vaRefi: null },
+              showDtiSections: { ...state.showDtiSections, vaRefi: false },
+            }));
             break;
         }
       },

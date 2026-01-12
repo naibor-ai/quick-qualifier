@@ -9,6 +9,8 @@ import { useCalculatorStore } from '@/lib/store';
 import { calculateFhaPurchase } from '@/lib/calculations/fha';
 import { InputGroup, SelectToggle, CheckboxGroup, Button, Card, CardHeader, CardTitle, CardContent } from '@/components/shared';
 import { ResultSummary } from '@/components/shared/ResultSummary';
+import { DtiSection } from './DtiSection';
+import { CreditScoreTier, PmiType } from '@/lib/schemas';
 
 const formSchema = z.object({
   salesPrice: z.number().min(10000).max(100000000),
@@ -71,7 +73,11 @@ export function FhaForm() {
     resetCalculator,
     config,
     configLoading,
+    showDtiSections,
+    setShowDtiSection
   } = useCalculatorStore();
+
+  const showDtiSection = showDtiSections.fha;
 
   const [isMounted, setIsMounted] = useState(false);
   useEffect(() => setIsMounted(true), []);
@@ -762,6 +768,16 @@ export function FhaForm() {
             </form>
           </CardContent>
         </Card>
+
+        {/* Toggle DTI Button - Only show after calculation */}
+        {fhaResult && (
+          <Button
+            onClick={() => setShowDtiSection(!showDtiSection, 'fha')}
+            className="bg-white hover:bg-slate-50 text-[#2a8bb3] font-black border-none shadow-sm w-fit mx-auto mt-2 transition-transform hover:scale-105"
+          >
+            {showDtiSection ? 'Hide DTI Section' : 'Show DTI Section'}
+          </Button>
+        )}
       </div>
 
       <div className="lg:col-span-7">
@@ -796,6 +812,8 @@ export function FhaForm() {
               </CardContent>
             </Card>
           )}
+
+          {showDtiSection && <DtiSection />}
         </div>
       </div>
     </div>

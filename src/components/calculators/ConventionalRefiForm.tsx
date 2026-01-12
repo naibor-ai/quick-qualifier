@@ -9,6 +9,7 @@ import { useCalculatorStore } from '@/lib/store';
 import { calculateConventionalRefinance } from '@/lib/calculations/conventional';
 import { InputGroup, SelectToggle, Button, Card, CardHeader, CardTitle, CardContent } from '@/components/shared';
 import { ResultSummary } from '@/components/shared/ResultSummary';
+import { DtiSection } from './DtiSection';
 import { CreditScoreTier } from '@/lib/schemas';
 
 const ConventionalRefinanceType = z.enum(['rate_term', 'cash_out']);
@@ -69,7 +70,11 @@ export function ConventionalRefiForm() {
     resetCalculator,
     config,
     configLoading,
+    showDtiSections,
+    setShowDtiSection
   } = useCalculatorStore();
+
+  const showDtiSection = showDtiSections.conventionalRefi;
 
   const [isMounted, setIsMounted] = useState(false);
   useEffect(() => setIsMounted(true), []);
@@ -390,6 +395,16 @@ export function ConventionalRefiForm() {
             </form>
           </CardContent>
         </Card>
+
+        {/* Toggle DTI Button - Only show after calculation */}
+        {conventionalRefiResult && (
+          <Button
+            onClick={() => setShowDtiSection(!showDtiSection, 'conventionalRefi')}
+            className="bg-white hover:bg-slate-50 text-[#2a8bb3] font-black border-none shadow-sm w-fit mx-auto mt-2 transition-transform hover:scale-105"
+          >
+            {showDtiSection ? 'Hide DTI Section' : 'Show DTI Section'}
+          </Button>
+        )}
       </div>
 
       <div className="lg:col-span-7">
@@ -418,12 +433,14 @@ export function ConventionalRefiForm() {
                   <h3 className="text-2xl font-bold text-slate-800 mb-3">{t('calculator.readyToCalculate')}</h3>
                   <p className="text-slate-500 text-lg mb-8">{t('calculator.readyDescription')}</p>
                   <Button variant="outline" onClick={() => setActiveTab('loan-payment')} className="border-blue-200 text-blue-600 hover:bg-blue-50">
-                    Start with Loan Details
+                    Start with Property Details
                   </Button>
                 </div>
               </CardContent>
             </Card>
           )}
+
+          {showDtiSection && <DtiSection />}
         </div>
       </div>
     </div>
