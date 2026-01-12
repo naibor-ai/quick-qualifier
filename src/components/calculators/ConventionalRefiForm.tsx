@@ -379,6 +379,7 @@ export function ConventionalRefiForm() {
           {conventionalRefiResult ? (
             <ResultSummary
               activeTab={activeTab === 'closing' ? 'closing-cash' : (activeTab === 'loan-payment' ? 'pitia' : undefined)}
+              closingTab={activeTab === 'closing' ? (closingSubTab === 'general' ? 'prepaid' : closingSubTab) : undefined}
               result={conventionalRefiResult}
               config={config}
               loanType={t('conventionalRefi.title')}

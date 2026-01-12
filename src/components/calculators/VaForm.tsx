@@ -345,6 +345,37 @@ export function VaForm() {
                           </div>
                         </div>
                       </div>
+
+                      <div className="grid grid-cols-2 gap-4">
+                        <Controller
+                          name="sellerCreditAmount"
+                          control={control}
+                          render={({ field }) => (
+                            <InputGroup
+                              label={t('calculator.sellerCredit')}
+                              name="sellerCreditAmount"
+                              type="number"
+                              value={field.value}
+                              onChange={(v) => field.onChange(Number(v))}
+                              prefix="$"
+                            />
+                          )}
+                        />
+                        <Controller
+                          name="lenderCreditAmount"
+                          control={control}
+                          render={({ field }) => (
+                            <InputGroup
+                              label={t('calculator.lenderCredit')}
+                              name="lenderCreditAmount"
+                              type="number"
+                              value={field.value}
+                              onChange={(v) => field.onChange(Number(v))}
+                              prefix="$"
+                            />
+                          )}
+                        />
+                      </div>
                     </div>
                   )}
 
@@ -384,10 +415,6 @@ export function VaForm() {
 
                     {closingSubTab === 'general' && (
                       <div className="space-y-4">
-                        <div className="grid grid-cols-2 gap-4">
-                          <Controller name="sellerCreditAmount" control={control} render={({ field }) => <InputGroup label={t('calculator.sellerCredit')} name="sellerCreditAmount" type="number" value={field.value} onChange={(v) => field.onChange(Number(v))} prefix="$" />} />
-                          <Controller name="lenderCreditAmount" control={control} render={({ field }) => <InputGroup label={t('calculator.lenderCredit')} name="lenderCreditAmount" type="number" value={field.value} onChange={(v) => field.onChange(Number(v))} prefix="$" />} />
-                        </div>
                         <div className="grid grid-cols-3 gap-3">
                           <Controller name="prepaidInterestDays" control={control} render={({ field }) => <InputGroup label="Int. Days" name="prepaidInterestDays" type="number" value={field.value} onChange={(v) => field.onChange(Number(v))} suffix="d" />} />
                           <Controller name="prepaidTaxMonths" control={control} render={({ field }) => <InputGroup label="Tax Mo." name="prepaidTaxMonths" type="number" value={field.value} onChange={(v) => field.onChange(Number(v))} suffix="m" />} />
@@ -451,6 +478,7 @@ export function VaForm() {
           {vaResult ? (
             <ResultSummary
               activeTab={activeTab === 'closing' ? 'closing-cash' : (activeTab === 'loan-payment' ? 'pitia' : undefined)}
+              closingTab={activeTab === 'closing' ? (closingSubTab === 'general' ? 'prepaid' : closingSubTab) : undefined}
               result={vaResult}
               config={config}
               loanType={t('va.title')}

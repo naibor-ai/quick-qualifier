@@ -48,6 +48,7 @@ function ResultSection({ title, children }: ResultSectionProps) {
 
 interface ResultSummaryProps {
   activeTab?: string;
+  closingTab?: string;
   result: LoanCalculationResult;
   showClosingCosts?: boolean;
   showMonthlyBreakdown?: boolean;
@@ -59,6 +60,7 @@ interface ResultSummaryProps {
 
 export function ResultSummary({
   activeTab: externalActiveTab,
+  closingTab: externalClosingTab,
   result,
   showClosingCosts = true,
   showMonthlyBreakdown = true,
@@ -76,6 +78,12 @@ export function ResultSummary({
       setActiveTab(externalActiveTab);
     }
   }, [externalActiveTab]);
+
+  useEffect(() => {
+    if (externalClosingTab) {
+      setClosingTab(externalClosingTab);
+    }
+  }, [externalClosingTab]);
 
   const isRefi = formId?.includes('refi');
 

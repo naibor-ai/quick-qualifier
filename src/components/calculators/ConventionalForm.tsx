@@ -533,6 +533,37 @@ export function ConventionalForm() {
                           </div>
                         </div>
                       </div>
+
+                      <div className="grid grid-cols-2 gap-4">
+                        <Controller
+                          name="sellerCreditAmount"
+                          control={control}
+                          render={({ field }) => (
+                            <InputGroup
+                              label={t('calculator.sellerCredit')}
+                              name="sellerCreditAmount"
+                              type="number"
+                              value={field.value}
+                              onChange={(val) => field.onChange(Number(val) || 0)}
+                              prefix="$"
+                            />
+                          )}
+                        />
+                        <Controller
+                          name="lenderCreditAmount"
+                          control={control}
+                          render={({ field }) => (
+                            <InputGroup
+                              label={t('calculator.lenderCredit')}
+                              name="lenderCreditAmount"
+                              type="number"
+                              value={field.value}
+                              onChange={(val) => field.onChange(Number(val) || 0)}
+                              prefix="$"
+                            />
+                          )}
+                        />
+                      </div>
                     </div>
                   )}
 
@@ -709,37 +740,6 @@ export function ConventionalForm() {
               <div className={activeTab === 'closing' ? 'block space-y-5' : 'hidden'}>
                 <div className="grid grid-cols-2 gap-4">
                   <Controller
-                    name="sellerCreditAmount"
-                    control={control}
-                    render={({ field }) => (
-                      <InputGroup
-                        label={t('calculator.sellerCredit')}
-                        name="sellerCreditAmount"
-                        type="number"
-                        value={field.value}
-                        onChange={(val) => field.onChange(Number(val) || 0)}
-                        prefix="$"
-                      />
-                    )}
-                  />
-                  <Controller
-                    name="lenderCreditAmount"
-                    control={control}
-                    render={({ field }) => (
-                      <InputGroup
-                        label={t('calculator.lenderCredit')}
-                        name="lenderCreditAmount"
-                        type="number"
-                        value={field.value}
-                        onChange={(val) => field.onChange(Number(val) || 0)}
-                        prefix="$"
-                      />
-                    )}
-                  />
-                </div>
-
-                <div className="grid grid-cols-2 gap-4">
-                  <Controller
                     name="depositAmount"
                     control={control}
                     render={({ field }) => (
@@ -887,6 +887,7 @@ export function ConventionalForm() {
           {conventionalResult ? (
             <ResultSummary
               activeTab={activeTab === 'closing' ? 'closing-cash' : (activeTab === 'loan-payment' ? 'pitia' : undefined)}
+              closingTab={activeTab === 'closing' ? (closingSubTab === 'general' ? 'prepaid' : closingSubTab) : undefined}
               result={conventionalResult}
               config={config}
               loanType={t('conventional.title')}

@@ -382,6 +382,7 @@ export function FhaRefiForm() {
           {fhaRefiResult ? (
             <ResultSummary
               activeTab={activeTab === 'closing' ? 'closing-cash' : (activeTab === 'loan-payment' ? 'pitia' : undefined)}
+              closingTab={activeTab === 'closing' ? (closingSubTab === 'general' ? 'prepaid' : closingSubTab) : undefined}
               result={fhaRefiResult}
               config={config}
               loanType={t('fhaRefi.title')}

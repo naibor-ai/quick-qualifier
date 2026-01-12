@@ -368,6 +368,7 @@ export function VaRefiForm() {
           {vaRefiResult ? (
             <ResultSummary
               activeTab={activeTab === 'closing' ? 'closing-cash' : (activeTab === 'loan-payment' ? 'pitia' : undefined)}
+              closingTab={activeTab === 'closing' ? (closingSubTab === 'general' ? 'prepaid' : closingSubTab) : undefined}
               result={vaRefiResult}
               config={config}
               loanType={t('vaRefi.title')}

@@ -472,6 +472,37 @@ export function FhaForm() {
                           </div>
                         </div>
                       </div>
+
+                      <div className="grid grid-cols-2 gap-4">
+                        <Controller
+                          name="sellerCreditAmount"
+                          control={control}
+                          render={({ field }) => (
+                            <InputGroup
+                              label={t('calculator.sellerCredit')}
+                              name="sellerCreditAmount"
+                              type="number"
+                              value={field.value}
+                              onChange={(v) => field.onChange(Number(v))}
+                              prefix="$"
+                            />
+                          )}
+                        />
+                        <Controller
+                          name="lenderCreditAmount"
+                          control={control}
+                          render={({ field }) => (
+                            <InputGroup
+                              label={t('calculator.lenderCredit')}
+                              name="lenderCreditAmount"
+                              type="number"
+                              value={field.value}
+                              onChange={(v) => field.onChange(Number(v))}
+                              prefix="$"
+                            />
+                          )}
+                        />
+                      </div>
                     </div>
                   )}
 
@@ -647,18 +678,6 @@ export function FhaForm() {
                     <div className="space-y-4 animate-in fade-in duration-200">
                       <div className="grid grid-cols-2 gap-4">
                         <Controller
-                          name="sellerCreditAmount"
-                          control={control}
-                          render={({ field }) => <InputGroup label={t('calculator.sellerCredit')} name="sellerCreditAmount" type="number" value={field.value} onChange={(v) => field.onChange(Number(v))} prefix="$" />}
-                        />
-                        <Controller
-                          name="lenderCreditAmount"
-                          control={control}
-                          render={({ field }) => <InputGroup label={t('calculator.lenderCredit')} name="lenderCreditAmount" type="number" value={field.value} onChange={(v) => field.onChange(Number(v))} prefix="$" />}
-                        />
-                      </div>
-                      <div className="grid grid-cols-2 gap-4">
-                        <Controller
                           name="depositAmount"
                           control={control}
                           render={({ field }) => <InputGroup label="Deposit" name="depositAmount" type="number" value={field.value} onChange={(v) => field.onChange(Number(v))} prefix="$" />}
@@ -729,6 +748,7 @@ export function FhaForm() {
           {fhaResult ? (
             <ResultSummary
               activeTab={activeTab === 'closing' ? 'closing-cash' : (activeTab === 'loan-payment' ? 'pitia' : undefined)}
+              closingTab={activeTab === 'closing' ? (closingSubTab === 'general' ? 'prepaid' : closingSubTab) : undefined}
               result={fhaResult}
               config={config}
               loanType={t('fha.title')}
