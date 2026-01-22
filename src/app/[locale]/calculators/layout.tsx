@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useTranslations, useLocale } from 'next-intl';
@@ -17,6 +17,12 @@ export default function CalculatorsLayout({ children }: CalculatorsLayoutProps) 
   const pathname = usePathname();
   const { configLoading, configError, dtiResults } = useCalculatorStore();
   const { loadConfig } = useLoadConfig();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  // Close mobile menu when route changes
+  useEffect(() => {
+    setMobileMenuOpen(false);
+  }, [pathname]);
 
   const calculatorType = useMemo(() => {
     if (pathname.includes('/conventional-refi')) return 'conventionalRefi';
@@ -42,53 +48,27 @@ export default function CalculatorsLayout({ children }: CalculatorsLayoutProps) 
       style={{ backgroundImage: 'url("/bg-dashboard.jpeg")' }}
     >
       {/* Navigation */}
-      {/* Navigation */}
       <nav className="sticky top-0 z-50 bg-white/95 backdrop-blur-sm border-b border-slate-200 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col">
-            <div className="flex items-center justify-between h-16">
-              <Link
-                href={`/${locale}`}
-                className="flex items-center h-10 mr-8"
-              >
-                <Image
-                  src="/Naibor_Logo_Black_High_Quality_No_BG.png"
-                  alt="Naibor"
-                  width={140}
-                  height={35}
-                  className="h-9 w-auto"
-                  priority
-                />
-              </Link>
+          <div className="flex items-center justify-between h-16">
+            <Link
+              href={`/${locale}`}
+              className="flex items-center h-10"
+            >
+              <Image
+                src="/Naibor_Logo_Black_High_Quality_No_BG.png"
+                alt="Naibor"
+                width={140}
+                height={35}
+                className="h-9 w-auto"
+                priority
+              />
+            </Link>
 
-              {/* Desktop Main Navigation - Centered */}
-              <div className="hidden md:flex items-center justify-center space-x-2 flex-1 overflow-x-auto no-scrollbar">
-                {[
-                  { id: 'conventional', label: t('conventionalMain'), href: `/${locale}/calculators/conventional`, isActive: pathname.includes('/conventional') },
-                  { id: 'fha', label: t('fhaMain'), href: `/${locale}/calculators/fha`, isActive: pathname.includes('/fha') },
-                  { id: 'va', label: t('vaMain'), href: `/${locale}/calculators/va`, isActive: pathname.includes('/va') },
-                  { id: 'seller-net', label: t('sellerNet'), href: `/${locale}/calculators/seller-net`, isActive: pathname.includes('/seller-net') },
-                  { id: 'compare', label: t('compare'), href: `/${locale}/calculators/comparison`, isActive: pathname.includes('/comparison') },
-                ].map((item) => (
-                  <Link
-                    key={item.id}
-                    href={item.href}
-                    className={`px-4 py-2 rounded-full text-sm font-semibold transition-all whitespace-nowrap ${item.isActive
-                      ? 'bg-blue-600 text-white shadow-md'
-                      : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
-                      }`}
-                  >
-                    {item.label}
-                  </Link>
-                ))}
-              </div>
-              <div className="w-[140px] hidden md:block"></div> {/* Spacer to balance logo width */}
-            </div>
-
-            {/* Mobile Main Navigation */}
-            <div className="md:hidden pb-3 flex overflow-x-auto gap-2 no-scrollbar">
+            {/* Desktop Main Navigation - Centered */}
+            <div className="hidden md:flex items-center justify-center space-x-2 flex-1 overflow-x-auto no-scrollbar">
               {[
-                { id: 'conventional', label: t('conventionalMain'), href: `/${locale}/calculators/conventional`, isActive: pathname.includes('/conventional') },
+                { id: 'conventional', label: t('conventionalMain'), href: `/${locale}/calculators/conventional`, isActive: pathname.includes('/conventional') && !pathname.includes('/comparison') },
                 { id: 'fha', label: t('fhaMain'), href: `/${locale}/calculators/fha`, isActive: pathname.includes('/fha') },
                 { id: 'va', label: t('vaMain'), href: `/${locale}/calculators/va`, isActive: pathname.includes('/va') },
                 { id: 'seller-net', label: t('sellerNet'), href: `/${locale}/calculators/seller-net`, isActive: pathname.includes('/seller-net') },
@@ -97,16 +77,58 @@ export default function CalculatorsLayout({ children }: CalculatorsLayoutProps) 
                 <Link
                   key={item.id}
                   href={item.href}
-                  className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors whitespace-nowrap ${item.isActive
-                    ? 'bg-blue-600 text-white'
-                    : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                  className={`px-4 py-2 rounded-full text-sm font-semibold transition-all whitespace-nowrap ${item.isActive
+                    ? 'bg-blue-600 text-white shadow-md'
+                    : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
                     }`}
                 >
                   {item.label}
                 </Link>
               ))}
             </div>
+            <div className="w-[140px] hidden md:block"></div> {/* Spacer to balance logo width */}
+
+            {/* Mobile hamburger button */}
+            <button
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="md:hidden p-2 rounded-lg text-slate-600 hover:bg-slate-100 transition-colors"
+              aria-label="Toggle menu"
+            >
+              {mobileMenuOpen ? (
+                <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              ) : (
+                <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+                </svg>
+              )}
+            </button>
           </div>
+
+          {/* Mobile dropdown menu */}
+          {mobileMenuOpen && (
+            <div className="md:hidden border-t border-slate-200 py-3 space-y-1">
+              {[
+                { id: 'conventional', label: t('conventionalMain'), href: `/${locale}/calculators/conventional`, isActive: pathname.includes('/conventional') && !pathname.includes('/comparison') },
+                { id: 'fha', label: t('fhaMain'), href: `/${locale}/calculators/fha`, isActive: pathname.includes('/fha') },
+                { id: 'va', label: t('vaMain'), href: `/${locale}/calculators/va`, isActive: pathname.includes('/va') },
+                { id: 'seller-net', label: t('sellerNet'), href: `/${locale}/calculators/seller-net`, isActive: pathname.includes('/seller-net') },
+                { id: 'compare', label: t('compare'), href: `/${locale}/calculators/comparison`, isActive: pathname.includes('/comparison') },
+              ].map((item) => (
+                <Link
+                  key={item.id}
+                  href={item.href}
+                  className={`block px-4 py-3 rounded-lg text-sm font-semibold transition-colors ${item.isActive
+                    ? 'bg-blue-600 text-white'
+                    : 'text-slate-600 hover:bg-slate-100'
+                    }`}
+                >
+                  {item.label}
+                </Link>
+              ))}
+            </div>
+          )}
         </div>
       </nav>
 
