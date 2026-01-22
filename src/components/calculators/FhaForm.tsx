@@ -82,7 +82,7 @@ export function FhaForm() {
   const [isMounted, setIsMounted] = useState(false);
   useEffect(() => setIsMounted(true), []);
 
-  const { control, handleSubmit, watch, setValue, formState: { errors } } = useForm<FormValues>({
+  const { control, handleSubmit, watch, setValue, reset, formState: { errors } } = useForm<FormValues>({
     resolver: zodResolver(formSchema) as any,
     defaultValues: {
       salesPrice: fhaInputs.salesPrice,
@@ -132,6 +132,60 @@ export function FhaForm() {
       mortgageTax: fhaInputs.mortgageTax ?? 0,
     },
   });
+
+  // Reset calculator to defaults on mount
+  useEffect(() => {
+    resetCalculator('fha');
+    const defaults = useCalculatorStore.getState().fhaInputs;
+    reset({
+      salesPrice: defaults.salesPrice,
+      downPaymentAmount: defaults.downPaymentAmount,
+      downPaymentPercent: defaults.downPaymentPercent,
+      downPaymentMode: defaults.downPaymentMode,
+      interestRate: defaults.interestRate,
+      termYears: defaults.termYears,
+      propertyTaxAnnual: defaults.propertyTaxAnnual,
+      homeInsuranceAnnual: defaults.homeInsuranceAnnual,
+      propertyTaxMonthly: defaults.propertyTaxAnnual / 12,
+      homeInsuranceMonthly: defaults.homeInsuranceAnnual / 12,
+      mortgageInsuranceMonthly: defaults.mortgageInsuranceMonthly || 0,
+      hoaDuesMonthly: defaults.hoaDuesMonthly,
+      floodInsuranceMonthly: defaults.floodInsuranceMonthly,
+      is203k: defaults.is203k,
+      prepaidInterestDays: defaults.prepaidInterestDays ?? 15,
+      prepaidTaxMonths: defaults.prepaidTaxMonths ?? 6,
+      prepaidInsuranceMonths: defaults.prepaidInsuranceMonths ?? 15,
+      prepaidInterestAmount: defaults.prepaidInterestAmount || 0,
+      prepaidTaxAmount: defaults.prepaidTaxAmount || 0,
+      prepaidInsuranceAmount: defaults.prepaidInsuranceAmount || 0,
+      loanFee: defaults.loanFee || 0,
+      loanFeePercent: defaults.loanFeePercent || 1.0,
+      loanFeeMode: defaults.loanFeeMode || 'amount',
+      sellerCreditAmount: defaults.sellerCreditAmount || 0,
+      lenderCreditAmount: defaults.lenderCreditAmount || 0,
+      depositAmount: defaults.depositAmount || 0,
+      closingCostsTotal: defaults.closingCostsTotal || 0,
+      miscFee: defaults.miscFee || 0,
+      processingFee: defaults.processingFee,
+      underwritingFee: defaults.underwritingFee,
+      docPrepFee: defaults.docPrepFee,
+      appraisalFee: defaults.appraisalFee,
+      creditReportFee: defaults.creditReportFee,
+      floodCertFee: defaults.floodCertFee,
+      taxServiceFee: defaults.taxServiceFee,
+      escrowFee: defaults.escrowFee,
+      notaryFee: defaults.notaryFee,
+      recordingFee: defaults.recordingFee,
+      ownerTitlePolicy: defaults.ownerTitlePolicy,
+      lenderTitlePolicy: defaults.lenderTitlePolicy,
+      pestInspectionFee: defaults.pestInspectionFee,
+      propertyInspectionFee: defaults.propertyInspectionFee,
+      poolInspectionFee: defaults.poolInspectionFee,
+      transferTax: defaults.transferTax,
+      mortgageTax: defaults.mortgageTax,
+    });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const [closingSubTab, setClosingSubTab] = useState<'general' | 'lender' | 'title'>('general');
   const watchedValues = watch();
