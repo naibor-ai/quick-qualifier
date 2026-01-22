@@ -38,28 +38,44 @@ export default function Home() {
       className="min-h-screen bg-fixed bg-cover bg-center bg-no-repeat"
       style={{ backgroundImage: 'url("/bg-dashboard.jpeg")' }}
     >
-      <header className="border-b border-slate-200 bg-white/80 backdrop-blur-md sticky top-0 z-50">
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4">
-          <Link href={`/${locale}`} className="flex items-center h-10">
-            <Image
-              src="/Naibor_Logo_Black_High_Quality_No_BG.png"
-              alt="Naibor"
-              width={180}
-              height={45}
-              className="h-10 w-auto"
-              priority
-            />
-          </Link>
-          <LanguageSwitcher />
+      <header className="sticky top-0 z-50">
+        {/* Naibor blue accent bar */}
+        <div className="h-1 bg-gradient-to-r from-[#2A8BB3] via-[#409ec1] to-[#2A8BB3]" />
+        <div className="border-b border-slate-200/50 bg-white/95 backdrop-blur-lg shadow-sm">
+          <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
+            <Link href={`/${locale}`} className="flex items-center gap-3 group">
+              <Image
+                src="/Naibor_Logo_Black_High_Quality_No_BG.png"
+                alt="Naibor"
+                width={160}
+                height={40}
+                className="h-9 w-auto transition-transform group-hover:scale-105"
+                priority
+              />
+            </Link>
+            <div className="flex items-center gap-4">
+              <LanguageSwitcher />
+            </div>
+          </div>
         </div>
       </header>
 
       <main className="mx-auto max-w-7xl px-4 py-12">
-        <div className="mb-8 text-center">
-          <h2 className="text-3xl font-semibold text-slate-800">
-            Naibor Qualify
-          </h2>
-          <p className="mt-2 text-slate-500">{t('home.selectCalculator')}</p>
+        <div className="mb-10 text-center">
+          <div className="inline-block mb-4">
+            <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#2A8BB3]/10 text-[#2A8BB3] text-sm font-medium">
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+              </svg>
+              Mortgage Calculators
+            </span>
+          </div>
+          <h1 className="text-4xl md:text-5xl font-bold text-slate-800 tracking-tight">
+            Naibor <span className="text-[#2A8BB3]">Qualify</span>
+          </h1>
+          <p className="mt-4 text-lg text-slate-600 max-w-md mx-auto">
+            {t('home.selectCalculator')}
+          </p>
         </div>
 
         {/* Loan Calculators - 3x2 Grid */}

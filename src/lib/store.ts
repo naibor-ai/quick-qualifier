@@ -10,7 +10,6 @@
  */
 
 import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
 import type {
   GhlConfig,
   LoanCalculationResult,
@@ -754,7 +753,6 @@ const initialShowDtiSections: Record<string, boolean> = {
 // ============================================================================
 
 export const useCalculatorStore = create<CalculatorState>()(
-  persist(
     (set) => ({
       // Config
       config: null,
@@ -953,39 +951,7 @@ export const useCalculatorStore = create<CalculatorState>()(
             break;
         }
       },
-    }),
-    {
-      name: 'quick-qualifier-storage',
-      partialize: (state) => ({
-        // Only persist inputs, not results or config
-        conventionalInputs: state.conventionalInputs,
-        fhaInputs: state.fhaInputs,
-        vaInputs: state.vaInputs,
-        sellerNetInputs: state.sellerNetInputs,
-        comparisonScenarios: state.comparisonScenarios,
-        conventionalRefiInputs: state.conventionalRefiInputs,
-        fhaRefiInputs: state.fhaRefiInputs,
-        vaRefiInputs: state.vaRefiInputs,
-        selectedAgent: state.selectedAgent,
-      }),
-      merge: (persistedState, currentState) => {
-        const state = (persistedState as Partial<CalculatorState>) || {};
-        return {
-          ...currentState,
-          ...state,
-          conventionalInputs: { ...currentState.conventionalInputs, ...state.conventionalInputs },
-          fhaInputs: { ...currentState.fhaInputs, ...state.fhaInputs },
-          vaInputs: { ...currentState.vaInputs, ...state.vaInputs },
-          sellerNetInputs: { ...currentState.sellerNetInputs, ...state.sellerNetInputs },
-          comparisonScenarios: state.comparisonScenarios ?? currentState.comparisonScenarios,
-          conventionalRefiInputs: { ...currentState.conventionalRefiInputs, ...state.conventionalRefiInputs },
-          fhaRefiInputs: { ...currentState.fhaRefiInputs, ...state.fhaRefiInputs },
-          vaRefiInputs: { ...currentState.vaRefiInputs, ...state.vaRefiInputs },
-          selectedAgent: state.selectedAgent ?? currentState.selectedAgent,
-        };
-      },
-    }
-  )
+    })
 );
 
 // ============================================================================

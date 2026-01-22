@@ -78,7 +78,7 @@ export function VaRefiForm() {
   const [isMounted, setIsMounted] = useState(false);
   useEffect(() => setIsMounted(true), []);
 
-  const { control, handleSubmit, watch, setValue, formState: { errors } } = useForm<FormValues>({
+  const { control, handleSubmit, watch, setValue, reset, formState: { errors } } = useForm<FormValues>({
     resolver: zodResolver(formSchema) as any,
     defaultValues: {
       ...vaRefiInputs,
@@ -110,6 +110,42 @@ export function VaRefiForm() {
       vaUsage: vaRefiInputs.vaUsage ?? 'first',
     },
   });
+
+  // Reset calculator to defaults on mount
+  useEffect(() => {
+    resetCalculator('vaRefi');
+    const defaults = useCalculatorStore.getState().vaRefiInputs;
+    reset({
+      ...defaults,
+      prepaidInterestDays: defaults.prepaidInterestDays ?? 15,
+      prepaidTaxMonths: defaults.prepaidTaxMonths ?? 0,
+      prepaidInsuranceMonths: defaults.prepaidInsuranceMonths ?? 0,
+      loanFeePercent: defaults.loanFeePercent || 1.0,
+      loanFeeMode: defaults.loanFeeMode || 'amount',
+      processingFee: defaults.processingFee ?? 895,
+      underwritingFee: defaults.underwritingFee ?? 995,
+      docPrepFee: defaults.docPrepFee ?? 595,
+      appraisalFee: defaults.appraisalFee ?? 650,
+      creditReportFee: defaults.creditReportFee ?? 150,
+      floodCertFee: defaults.floodCertFee ?? 30,
+      taxServiceFee: defaults.taxServiceFee ?? 59,
+      escrowFee: defaults.escrowFee ?? 400,
+      notaryFee: defaults.notaryFee ?? 350,
+      recordingFee: defaults.recordingFee ?? 275,
+      lenderTitlePolicy: defaults.lenderTitlePolicy ?? 1115,
+      ownerTitlePolicy: defaults.ownerTitlePolicy ?? 0,
+      pestInspectionFee: defaults.pestInspectionFee ?? 0,
+      propertyInspectionFee: defaults.propertyInspectionFee ?? 0,
+      poolInspectionFee: defaults.poolInspectionFee ?? 0,
+      transferTax: defaults.transferTax ?? 0,
+      mortgageTax: defaults.mortgageTax ?? 0,
+      miscFee: defaults.miscFee || 0,
+      isIrrrl: defaults.isIrrrl ?? false,
+      isDisabledVeteran: defaults.isDisabledVeteran ?? false,
+      vaUsage: defaults.vaUsage ?? 'first',
+    });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const [closingSubTab, setClosingSubTab] = useState<'general' | 'lender' | 'title'>('general');
   const [loanSubTab, setLoanSubTab] = useState<'details' | 'expenses'>('details');

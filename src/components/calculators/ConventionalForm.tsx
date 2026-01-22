@@ -84,7 +84,7 @@ export function ConventionalForm() {
   const [isMounted, setIsMounted] = useState(false);
   useEffect(() => setIsMounted(true), []);
 
-  const { control, handleSubmit, watch, setValue, register, formState: { errors } } = useForm<FormValues>({
+  const { control, handleSubmit, watch, setValue, register, reset, formState: { errors } } = useForm<FormValues>({
     resolver: zodResolver(formSchema) as any,
     defaultValues: {
       salesPrice: conventionalInputs.salesPrice,
@@ -135,6 +135,62 @@ export function ConventionalForm() {
       mortgageTax: conventionalInputs.mortgageTax ?? 0,
     },
   });
+
+  // Reset calculator to defaults on mount
+  useEffect(() => {
+    resetCalculator('conventional');
+    // Get fresh default values from store after reset
+    const defaults = useCalculatorStore.getState().conventionalInputs;
+    reset({
+      salesPrice: defaults.salesPrice,
+      downPaymentAmount: defaults.downPaymentAmount,
+      downPaymentPercent: defaults.downPaymentPercent,
+      downPaymentMode: defaults.downPaymentMode,
+      interestRate: defaults.interestRate,
+      termYears: defaults.termYears,
+      propertyTaxAnnual: defaults.propertyTaxAnnual,
+      homeInsuranceAnnual: defaults.homeInsuranceAnnual,
+      propertyTaxMonthly: defaults.propertyTaxAnnual / 12,
+      homeInsuranceMonthly: defaults.homeInsuranceAnnual / 12,
+      mortgageInsuranceMonthly: defaults.mortgageInsuranceMonthly || 0,
+      hoaDuesMonthly: defaults.hoaDuesMonthly,
+      floodInsuranceMonthly: defaults.floodInsuranceMonthly,
+      creditScoreTier: defaults.creditScoreTier,
+      pmiType: defaults.pmiType,
+      sellerCreditAmount: defaults.sellerCreditAmount,
+      lenderCreditAmount: defaults.lenderCreditAmount,
+      depositAmount: defaults.depositAmount,
+      prepaidInterestDays: defaults.prepaidInterestDays || 15,
+      prepaidTaxMonths: defaults.prepaidTaxMonths || 6,
+      prepaidInsuranceMonths: defaults.prepaidInsuranceMonths || 15,
+      prepaidInterestAmount: defaults.prepaidInterestAmount || 0,
+      prepaidTaxAmount: defaults.prepaidTaxAmount || 0,
+      prepaidInsuranceAmount: defaults.prepaidInsuranceAmount || 0,
+      loanFee: defaults.loanFee || 0,
+      closingCostsTotal: defaults.closingCostsTotal || 0,
+      loanFeePercent: defaults.loanFeePercent || 1.0,
+      loanFeeMode: defaults.loanFeeMode || 'percent',
+      miscFee: defaults.miscFee || 0,
+      processingFee: defaults.processingFee,
+      underwritingFee: defaults.underwritingFee,
+      docPrepFee: defaults.docPrepFee,
+      appraisalFee: defaults.appraisalFee,
+      creditReportFee: defaults.creditReportFee,
+      floodCertFee: defaults.floodCertFee,
+      taxServiceFee: defaults.taxServiceFee,
+      escrowFee: defaults.escrowFee,
+      notaryFee: defaults.notaryFee,
+      recordingFee: defaults.recordingFee,
+      ownerTitlePolicy: defaults.ownerTitlePolicy,
+      lenderTitlePolicy: defaults.lenderTitlePolicy,
+      pestInspectionFee: defaults.pestInspectionFee,
+      propertyInspectionFee: defaults.propertyInspectionFee,
+      poolInspectionFee: defaults.poolInspectionFee,
+      transferTax: defaults.transferTax,
+      mortgageTax: defaults.mortgageTax,
+    });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const watchedValues = watch();
   const salesPrice = watch('salesPrice');
