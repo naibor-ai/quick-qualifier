@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslations, useLocale } from 'next-intl';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -12,6 +12,7 @@ export default function Home() {
   const locale = useLocale();
   const { loadConfig } = useLoadConfig();
   const config = useCalculatorStore((state) => state.config);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   useEffect(() => {
     loadConfig();
@@ -42,21 +43,47 @@ export default function Home() {
         {/* Naibor blue accent bar */}
         <div className="h-1 bg-gradient-to-r from-[#2A8BB3] via-[#409ec1] to-[#2A8BB3]" />
         <div className="border-b border-slate-200/50 bg-white/95 backdrop-blur-lg shadow-sm">
-          <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
+          <div className="mx-auto flex max-w-7xl items-center justify-between px-4 md:px-6 py-4">
             <Link href={`/${locale}`} className="flex items-center gap-3 group">
               <Image
                 src="/Naibor_Logo_Black_High_Quality_No_BG.png"
                 alt="Naibor"
                 width={160}
                 height={40}
-                className="h-9 w-auto transition-transform group-hover:scale-105"
+                className="h-8 md:h-9 w-auto transition-transform group-hover:scale-105"
                 priority
               />
             </Link>
-            <div className="flex items-center gap-4">
+
+            {/* Desktop menu */}
+            <div className="hidden md:flex items-center gap-4">
               <LanguageSwitcher />
             </div>
+
+            {/* Mobile hamburger button */}
+            <button
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="md:hidden p-2 rounded-lg text-slate-600 hover:bg-slate-100 transition-colors"
+              aria-label="Toggle menu"
+            >
+              {mobileMenuOpen ? (
+                <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              ) : (
+                <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+                </svg>
+              )}
+            </button>
           </div>
+
+          {/* Mobile menu dropdown */}
+          {mobileMenuOpen && (
+            <div className="md:hidden border-t border-slate-200/50 bg-white/95 backdrop-blur-lg px-4 py-4">
+              <LanguageSwitcher />
+            </div>
+          )}
         </div>
       </header>
 
