@@ -109,24 +109,111 @@ export default function CalculatorsLayout({ children }: CalculatorsLayoutProps) 
           {/* Mobile dropdown menu */}
           {mobileMenuOpen && (
             <div className="md:hidden border-t border-slate-200 py-3 space-y-1">
-              {[
-                { id: 'conventional', label: t('conventionalMain'), href: `/${locale}/calculators/conventional`, isActive: pathname.includes('/conventional') && !pathname.includes('/comparison') },
-                { id: 'fha', label: t('fhaMain'), href: `/${locale}/calculators/fha`, isActive: pathname.includes('/fha') },
-                { id: 'va', label: t('vaMain'), href: `/${locale}/calculators/va`, isActive: pathname.includes('/va') },
-                { id: 'seller-net', label: t('sellerNet'), href: `/${locale}/calculators/seller-net`, isActive: pathname.includes('/seller-net') },
-                { id: 'compare', label: t('compare'), href: `/${locale}/calculators/comparison`, isActive: pathname.includes('/comparison') },
-              ].map((item) => (
+              {/* Conventional with sub-menu */}
+              <div className="space-y-1">
+                <div className="px-4 py-2 text-xs font-bold text-slate-400 uppercase tracking-wider">
+                  {t('conventionalMain')}
+                </div>
                 <Link
-                  key={item.id}
-                  href={item.href}
-                  className={`block px-4 py-3 rounded-lg text-sm font-semibold transition-colors ${item.isActive
+                  href={`/${locale}/calculators/conventional`}
+                  className={`block px-6 py-2.5 rounded-lg text-sm font-medium transition-colors ${
+                    pathname.includes('/conventional') && !pathname.includes('-refi') && !pathname.includes('/comparison')
+                      ? 'bg-blue-600 text-white'
+                      : 'text-slate-600 hover:bg-slate-100'
+                  }`}
+                >
+                  {t('purchase')}
+                </Link>
+                <Link
+                  href={`/${locale}/calculators/conventional-refi`}
+                  className={`block px-6 py-2.5 rounded-lg text-sm font-medium transition-colors ${
+                    pathname.includes('/conventional-refi')
+                      ? 'bg-blue-600 text-white'
+                      : 'text-slate-600 hover:bg-slate-100'
+                  }`}
+                >
+                  {t('refinance')}
+                </Link>
+              </div>
+
+              {/* FHA with sub-menu */}
+              <div className="space-y-1 pt-2">
+                <div className="px-4 py-2 text-xs font-bold text-slate-400 uppercase tracking-wider">
+                  {t('fhaMain')}
+                </div>
+                <Link
+                  href={`/${locale}/calculators/fha`}
+                  className={`block px-6 py-2.5 rounded-lg text-sm font-medium transition-colors ${
+                    pathname.includes('/fha') && !pathname.includes('-refi')
+                      ? 'bg-blue-600 text-white'
+                      : 'text-slate-600 hover:bg-slate-100'
+                  }`}
+                >
+                  {t('purchase')}
+                </Link>
+                <Link
+                  href={`/${locale}/calculators/fha-refi`}
+                  className={`block px-6 py-2.5 rounded-lg text-sm font-medium transition-colors ${
+                    pathname.includes('/fha-refi')
+                      ? 'bg-blue-600 text-white'
+                      : 'text-slate-600 hover:bg-slate-100'
+                  }`}
+                >
+                  {t('refinance')}
+                </Link>
+              </div>
+
+              {/* VA with sub-menu */}
+              <div className="space-y-1 pt-2">
+                <div className="px-4 py-2 text-xs font-bold text-slate-400 uppercase tracking-wider">
+                  {t('vaMain')}
+                </div>
+                <Link
+                  href={`/${locale}/calculators/va`}
+                  className={`block px-6 py-2.5 rounded-lg text-sm font-medium transition-colors ${
+                    pathname.includes('/va') && !pathname.includes('-refi')
+                      ? 'bg-blue-600 text-white'
+                      : 'text-slate-600 hover:bg-slate-100'
+                  }`}
+                >
+                  {t('purchase')}
+                </Link>
+                <Link
+                  href={`/${locale}/calculators/va-refi`}
+                  className={`block px-6 py-2.5 rounded-lg text-sm font-medium transition-colors ${
+                    pathname.includes('/va-refi')
+                      ? 'bg-blue-600 text-white'
+                      : 'text-slate-600 hover:bg-slate-100'
+                  }`}
+                >
+                  {t('refinance')}
+                </Link>
+              </div>
+
+              {/* Divider */}
+              <div className="border-t border-slate-200 my-2"></div>
+
+              {/* Other tools */}
+              <Link
+                href={`/${locale}/calculators/seller-net`}
+                className={`block px-4 py-3 rounded-lg text-sm font-semibold transition-colors ${
+                  pathname.includes('/seller-net')
                     ? 'bg-blue-600 text-white'
                     : 'text-slate-600 hover:bg-slate-100'
-                    }`}
-                >
-                  {item.label}
-                </Link>
-              ))}
+                }`}
+              >
+                {t('sellerNet')}
+              </Link>
+              <Link
+                href={`/${locale}/calculators/comparison`}
+                className={`block px-4 py-3 rounded-lg text-sm font-semibold transition-colors ${
+                  pathname.includes('/comparison')
+                    ? 'bg-blue-600 text-white'
+                    : 'text-slate-600 hover:bg-slate-100'
+                }`}
+              >
+                {t('compare')}
+              </Link>
             </div>
           )}
         </div>
@@ -153,10 +240,10 @@ export default function CalculatorsLayout({ children }: CalculatorsLayoutProps) 
         </div>
       )}
 
-      {/* Sub-Navigation (Purchase vs Refinance) - Outside Header */}
-      {(pathname.includes('/conventional') || pathname.includes('/fha') || pathname.includes('/va')) && !pathname.includes('seller-net') && (
+      {/* Sub-Navigation (Purchase vs Refinance) - Desktop only */}
+      {(pathname.includes('/conventional') || pathname.includes('/fha') || pathname.includes('/va')) && !pathname.includes('seller-net') && !pathname.includes('/comparison') && (
         <>
-          <div className="flex justify-center pt-6 pb-2">
+          <div className="hidden md:flex justify-center pt-6 pb-2">
             <div className="flex bg-white/80 backdrop-blur-md p-1 rounded-full shadow-sm border border-slate-200/60">
               {[
                 { type: 'purchase', label: t('purchase'), href: pathname.includes('refi') ? pathname.replace('-refi', '') : pathname },
